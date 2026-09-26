@@ -104,7 +104,6 @@
     margin: 0; font-family: var(--serif); font-weight: 700;
     font-size: clamp(26px, 4vw, 34px); color: var(--ink); letter-spacing: -0.01em;
   }
-  .header-left .report-date { margin: 8px 0 0; color: var(--faint); font-size: 13px; }
   .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
   .sync-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
   .sync-badge {
@@ -329,7 +328,6 @@
       <div class="header-left">
         <p class="eyebrow">PT Perintis Perkasa, Medan</p>
         <h1 class="page-title">Piutang Flamboyan</h1>
-        <p class="report-date" id="todayLabel"></p>
       </div>
       <div class="header-right">
         <div class="sync-row" id="syncRow">
@@ -492,7 +490,6 @@ function fmtDateShort(s) {
   return `${dd}/${mm}/${d.getFullYear()}`;
 }
 
-document.getElementById('todayLabel').textContent = REPORT_DATE_LABEL;
 
 let activeFilter = "all";
 let searchTerm = "";
@@ -822,8 +819,7 @@ function applyNewData(list, reportDateLabel, syncedAt) {
   document.getElementById('sourceCount').textContent = rows.length;
   if (reportDateLabel) {
     REPORT_DATE_LABEL = reportDateLabel;
-    document.getElementById('todayLabel').textContent = REPORT_DATE_LABEL;
-  }
+      }
   const bulanFull = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
   const jam = String(syncedAt.getHours()).padStart(2,'0');
   const menit = String(syncedAt.getMinutes()).padStart(2,'0');
