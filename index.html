@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Piutang Flamboyan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&family=IBM+Plex+Serif:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root {
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+
+    --bg: #F5F6F8;
+    --surface: #FFFFFF;
+    --surface-2: #FAFBFC;
+    --ink: #1B2430;
+    --muted: #667085;
+    --faint: #98A2B3;
+    --border: #E4E7EC;
+
+    --cat-belum: #E8B400;
+    --cat-belum-wash: #FDF6DE;
+    --cat-7: #1B8FB0;
+    --cat-7-wash: #E3F4F8;
+    --cat-14: #C24A3E;
+    --cat-14-wash: #FBE9E7;
+    --cat-26: #E8B400;
+    --cat-26-wash: #FDF6DE;
+    --cat-over: #7A1815;
+    --cat-over-wash: #F7E4E3;
+    --cat-notdue: #667085;
+    --cat-notdue-wash: #EEF0F3;
+
+    --radius: 10px;
+    --sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+    --serif: 'IBM Plex Serif', Georgia, 'Times New Roman', serif;
+    --header-grad: linear-gradient(120deg, #FCF4F1 0%, #F6F2F8 50%, #F1F4FB 100%);
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --bg: #14171C;
+      --surface: #1C2027;
+      --surface-2: #20242C;
+      --ink: #E7E9EC;
+      --muted: #9AA3B2;
+      --faint: #6B7280;
+      --border: #2B303A;
+      --cat-belum-wash: #2E2911;
+      --cat-7-wash: #10262C;
+      --cat-14-wash: #2E1815;
+      --cat-26-wash: #2E2911;
+      --cat-over-wash: #2A1211;
+      --cat-notdue-wash: #23262D;
+      --header-grad: linear-gradient(120deg, #1C1E27 0%, #1E2029 55%, #1A2230 100%);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14171C;
+    --surface: #1C2027;
+    --surface-2: #20242C;
+    --ink: #E7E9EC;
+    --muted: #9AA3B2;
+    --faint: #6B7280;
+    --border: #2B303A;
+    --cat-belum-wash: #2E2911;
+    --cat-7-wash: #10262C;
+    --cat-14-wash: #2E1815;
+    --cat-26-wash: #2E2911;
+    --cat-over-wash: #2A1211;
+    --cat-notdue-wash: #23262D;
+    --header-grad: linear-gradient(120deg, #1C1E27 0%, #1E2029 55%, #1A2230 100%);
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 28px 20px 64px; }
+
+  /* ---- Header banner ---- */
+  .header-banner {
+    background: var(--header-grad);
+    border-radius: var(--radius);
+    padding: 22px 24px 18px;
+    margin-bottom: 8px;
+  }
+  .header-grid {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px 32px;
+  }
+  .header-left .eyebrow { margin: 0 0 6px; color: var(--muted); font-size: 13.5px; }
+  .header-left .page-title {
+    margin: 0; font-family: var(--serif); font-weight: 700;
+    font-size: clamp(26px, 4vw, 34px); color: var(--ink); letter-spacing: -0.01em;
+  }
+  .header-left .report-date { margin: 8px 0 0; color: var(--faint); font-size: 13px; }
+  .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+  .sync-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+  .sync-badge {
+    width: 22px; height: 22px; border-radius: 6px; flex: none;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: #3D7DFF; color: #FFFFFF; transition: background .2s ease;
+  }
+  .sync-badge svg { width: 13px; height: 13px; }
+  .sync-row.stale .sync-badge { background: var(--cat-14); }
+  .sync-row.error .sync-badge { background: var(--cat-over); }
+  .sync-row.live .sync-badge svg { animation: none; }
+  .sync-text { color: var(--muted); font-size: 13.5px; white-space: normal; }
+  .sync-text strong { color: var(--ink); font-weight: 600; }
+  .refresh-btn {
+    appearance: none; border: 1px solid var(--border); background: var(--surface);
+    color: var(--ink); font-family: var(--sans); font-size: 13px; font-weight: 500;
+    padding: 6px 14px; border-radius: 8px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 7px;
+    box-shadow: 0 1px 2px rgba(16,24,40,0.04);
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .refresh-btn:hover { border-color: var(--faint); background: var(--surface-2); }
+  .refresh-btn:disabled { opacity: 0.6; cursor: default; }
+  .refresh-btn .refresh-icon { width: 15px; height: 15px; color: #3D7DFF; flex: none; transition: transform .5s ease; }
+  .refresh-btn.spinning .refresh-icon { animation: spin 0.8s linear infinite; }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .source-line { margin: 0; color: var(--muted); font-size: 13.5px; }
+  .header-divider { border: none; border-top: 1px solid var(--border); margin: 18px 0 24px; }
+
+  .tabs { display: flex; gap: 4px; margin: 0 0 24px; border-bottom: 1px solid var(--border); }
+  .tab {
+    appearance: none; border: none; background: transparent; cursor: pointer;
+    padding: 9px 4px; margin-right: 20px; font-family: var(--sans); font-size: 14px;
+    color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px;
+  }
+  .tab.active { color: var(--ink); font-weight: 600; border-bottom-color: var(--ink); }
+  .tab:hover { color: var(--ink); }
+
+  .matrix-wrap {
+    overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius);
+    background: var(--surface); margin-bottom: 28px;
+  }
+  table.matrix { border-collapse: collapse; width: 100%; min-width: 760px; }
+  table.matrix th {
+    background: var(--surface-2); text-align: right; font-weight: 500;
+    color: var(--muted); font-size: 12px; padding: 10px 12px;
+    border-bottom: 1px solid var(--border); white-space: nowrap;
+  }
+  table.matrix th:first-child, table.matrix td.leasing-name { text-align: left; }
+  table.matrix td {
+    padding: 10px 12px; border-bottom: 1px solid var(--border);
+    font-family: var(--mono); font-size: 13px; text-align: right;
+    font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
+  table.matrix td.leasing-name { font-family: var(--sans); font-weight: 500; }
+  table.matrix tr:last-child td { border-bottom: none; }
+  table.matrix tr.grand td { background: var(--surface-2); font-weight: 600; border-top: 2px solid var(--border); }
+  table.matrix .zero { color: var(--faint); }
+
+  .leasing-section { margin-bottom: 24px; }
+  .leasing-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 12px; padding: 12px 16px; border-radius: var(--radius) var(--radius) 0 0;
+    background: #203864; color: #FFFFFF;
+  }
+  .leasing-head .name { font-weight: 600; font-size: 15px; }
+  .leasing-head .meta { font-family: var(--mono); font-size: 13px; opacity: 0.85; white-space: nowrap; }
+  .leasing-table-scroll {
+    overflow-x: auto; border: 1px solid var(--border); border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius); background: var(--surface);
+  }
+  table.detail { border-collapse: collapse; width: 100%; min-width: 900px; }
+  table.detail thead th {
+    background: var(--surface-2); text-align: left; font-weight: 500;
+    color: var(--muted); font-size: 12px; padding: 9px 12px;
+    border-bottom: 1px solid var(--border); white-space: nowrap;
+  }
+  table.detail thead th.num { text-align: right; }
+  table.detail tbody td {
+    padding: 10px 12px; border-bottom: 1px solid var(--border);
+    font-size: 13px; vertical-align: top;
+  }
+  table.detail tbody tr:last-child td { border-bottom: none; }
+  table.detail td.money, table.detail td.hari { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+  table.detail td.nama { font-weight: 500; }
+
+  @media (max-width: 640px) {
+    .header-grid { flex-direction: column; }
+    .header-right { align-items: flex-start; width: 100%; }
+    .sync-row { justify-content: flex-start; }
+  }
+
+
+  .hero {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 28px 40px;
+    align-items: end;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-figure .label { color: var(--muted); font-size: 13px; margin: 0 0 6px; }
+  .hero-figure .value {
+    font-family: var(--mono); font-weight: 600;
+    font-size: clamp(34px, 6vw, 54px);
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .hero-figure .value small { font-size: 0.4em; font-weight: 500; color: var(--muted); margin-right: 4px; }
+  .hero-stats { display: flex; gap: 32px; flex-wrap: wrap; }
+  .hero-stat .n { font-family: var(--mono); font-weight: 600; font-size: 22px; font-variant-numeric: tabular-nums; }
+  .hero-stat .l { color: var(--muted); font-size: 13px; margin-top: 2px; }
+
+  .composition {
+    margin-top: 18px;
+    display: flex; height: 10px; border-radius: 999px; overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .composition span { height: 100%; }
+
+  /* ---- Filter pills ---- */
+  .pills {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin: 24px 0 16px;
+  }
+  .pill {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 14px 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    cursor: pointer;
+    font-size: 13.5px;
+    color: var(--ink);
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .pill:hover { border-color: var(--faint); }
+  .pill .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .pill .cnt { font-family: var(--mono); color: var(--muted); }
+  .pill.active { border-color: var(--ink); background: var(--surface-2); }
+  .pill.active .cnt { color: var(--ink); }
+
+  .toolbar {
+    display: flex; gap: 12px; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; margin-bottom: 14px;
+  }
+  .search {
+    flex: 1; min-width: 220px; max-width: 340px;
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 14px;
+  }
+  .search:focus { outline: 2px solid var(--ink); outline-offset: 1px; }
+  .result-count { color: var(--muted); font-size: 13px; }
+
+  /* ---- Table ---- */
+  .table-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+  table { border-collapse: collapse; width: 100%; min-width: 920px; }
+  thead th {
+    position: sticky; top: env(safe-area-inset-top, 0px);
+    background: var(--surface-2);
+    text-align: left;
+    font-weight: 500;
+    color: var(--muted);
+    font-size: 12.5px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  thead th.num, td.num { text-align: right; }
+  tbody td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    font-size: 13.5px;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  td.money, td.hari { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td.nama { font-weight: 500; }
+  td.sub { color: var(--muted); font-size: 12.5px; margin-top: 2px; display: block; }
+  .rowcat { border-left: 3px solid transparent; }
+
+  .grouphead td {
+    background: var(--surface-2);
+    font-weight: 600;
+    font-size: 12.5px;
+    padding: 9px 14px;
+    position: sticky; top: calc(env(safe-area-inset-top, 0px) + 37px);
+    border-bottom: 1px solid var(--border);
+  }
+  .grouphead .swatch {
+    display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 8px;
+  }
+  .grouphead .ghcount { color: var(--muted); font-weight: 400; margin-left: 6px; }
+  .grouphead .ghtotal { float: right; font-family: var(--mono); font-weight: 500; color: var(--muted); }
+
+  .empty { padding: 40px 20px; text-align: center; color: var(--muted); font-size: 14px; }
+
+  footer { margin-top: 22px; color: var(--faint); font-size: 12px; }
+
+  @media (max-width: 640px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-stats { gap: 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header-banner">
+    <div class="header-grid">
+      <div class="header-left">
+        <p class="eyebrow">PT Perintis Perkasa, Medan</p>
+        <h1 class="page-title">Piutang Flamboyan</h1>
+        <p class="report-date" id="todayLabel"></p>
+      </div>
+      <div class="header-right">
+        <div class="sync-row" id="syncRow">
+          <span class="sync-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 0 1 15.3-6.4L21 8"/><path d="M21 3v5h-5"/>
+              <path d="M21 12a9 9 0 0 1-15.3 6.4L3 16"/><path d="M3 21v-5h5"/>
+            </svg>
+          </span>
+          <span class="sync-text" id="syncText">Memuat status sinkronisasi&hellip;</span>
+          <button type="button" class="refresh-btn" id="refreshBtn" title="Segarkan sekarang">
+            <svg class="refresh-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 0 1 15.3-6.4L21 8"/><path d="M21 3v5h-5"/>
+              <path d="M21 12a9 9 0 0 1-15.3 6.4L3 16"/><path d="M3 21v-5h5"/>
+            </svg>
+            Refresh
+          </button>
+        </div>
+        <p class="source-line">Sumber: Laporan Piutang Per Nama (<span id="sourceCount">0</span> faktur)</p>
+      </div>
+    </div>
+  </div>
+  <hr class="header-divider">
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-tab="umur">Umur Piutang</button>
+    <button class="tab" data-tab="leasing">Per Leasing</button>
+  </div>
+
+  <div class="tabpanel" id="tabpanel-umur">
+  <div class="hero">
+    <div class="hero-figure">
+      <p class="label">Total piutang berjalan</p>
+      <div class="value"><small>Rp</small><span id="totalAmount">0</span></div>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="n" id="totalCount">0</div><div class="l">debitur</div></div>
+      <div class="hero-stat"><div class="n" id="overCount">0</div><div class="l">&gt; 26 hari</div></div>
+      <div class="hero-stat"><div class="n" id="within7Count">0</div><div class="l">1&ndash;7 hari</div></div>
+    </div>
+  </div>
+  <div class="composition" id="composition"></div>
+
+  <div class="pills" id="pills"></div>
+
+  <div class="toolbar">
+    <input class="search" id="search" type="text" placeholder="Cari nama, faktur, atau salesman...">
+    <span class="result-count" id="resultCount"></span>
+  </div>
+
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>Nama Debitur</th>
+          <th>Faktur No.</th>
+          <th>Tipe Unit</th>
+          <th>Jth. Tempo</th>
+          <th class="num">Jumlah</th>
+          <th>Leasing</th>
+          <th>Salesman</th>
+          <th>Supervisor</th>
+          <th class="num">Hari</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="empty" id="emptyState" style="display:none;">Tidak ada data yang cocok dengan pencarian atau filter ini.</div>
+  </div>
+  </div>
+
+  <div class="tabpanel" id="tabpanel-leasing" hidden>
+    <div class="matrix-wrap">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th>Leasing</th>
+            <th>Jml Debitur</th>
+            <th>Belum Buat Tagihan</th>
+            <th>1&ndash;7 Hari</th>
+            <th>8&ndash;14 Hari</th>
+            <th>15&ndash;26 Hari</th>
+            <th>&gt; 26 Hari</th>
+            <th>Total Piutang</th>
+          </tr>
+        </thead>
+        <tbody id="matrixBody"></tbody>
+      </table>
+    </div>
+    <div id="leasingSections"></div>
+  </div>
+
+  <footer>Kategori dihitung otomatis dari Tgl. Jatuh Tempo setiap kali halaman ini dibuka &mdash; angka &ldquo;Hari&rdquo; selalu mengikuti tanggal hari ini.</footer>
+</div>
+
+<script>
+
+const REPORT_DATE_LABEL_INITIAL = "Per : 26-Sep-2026";
+let REPORT_DATE_LABEL = REPORT_DATE_LABEL_INITIAL;
+const RAW = [{"noCust": "C0031385PUT", "nama": "PUTRI NURLIA KHAIRUNNISA", "faktur": "000226/FKT/PP/0926", "top": "-", "tglJto": "2026-09-26", "jumlah": 159550000.0, "type": "AGYA STYLIX 1.2 G CVT", "cara": "Kredit", "leasing": "TAF", "salesman": "DENNY FRANATA SEMBIRING", "supervisor": "PUTRA", "tglTagih": "Belum Buat Tagihan", "tglBarcode": "-", "followup": null}, {"noCust": "C0031775CVR", "nama": "CV ROCKY GULTOM", "faktur": "000191/FKT/PP/0926", "top": "-", "tglJto": "2026-09-23", "jumlah": 410900000.0, "type": "HILUX DOUBLE CABIN 2.8 G (4X4) DSL M/T", "cara": "Kredit", "leasing": "ACC", "salesman": "ALEXANDRO SITUNGKIR", "supervisor": "ZAIN", "tglTagih": "2026-09-24", "tglBarcode": "2026-09-23", "followup": null}, {"noCust": "C0031867MIT", "nama": "CV MITRA SETIA", "faktur": "000113/FKT/PP/0926", "top": "-", "tglJto": "2026-09-17", "jumlah": 292000000.0, "type": "KIJANG INNOVA ZENIX 2.0 Q HV CVT TSS MODELISTA", "cara": "Kredit", "leasing": "TAF", "salesman": "NIA HENDRIATY", "supervisor": "LIK SIONG", "tglTagih": "2026-09-18", "tglBarcode": "2026-09-18", "followup": null}, {"noCust": "C0032092JER", "nama": "JEREMIA ALEXANDER AGUNG SEMBIRING", "faktur": "000088/FKT/PP/0926", "top": "-", "tglJto": "2026-09-11", "jumlah": 157500000.0, "type": "RUSH 1.5 S M/T GR SPORT", "cara": "Kredit", "leasing": "IMFS", "salesman": "GANDA MARTUA SITUMORANG SE", "supervisor": "LIK SIONG", "tglTagih": "2026-09-12", "tglBarcode": "-", "followup": null}, {"noCust": "C0032206AZR", "nama": "AZRAI RIDHO HANAFIAH SE M SI", "faktur": "000204/FKT/PP/0926", "top": "-", "tglJto": "2026-09-24", "jumlah": 166500000.0, "type": "CALYA 1.2 G A/T", "cara": "Kredit", "leasing": "ACC", "salesman": "ALFIAN R STEFANUS HUTAGALUNG", "supervisor": "PRODIPA", "tglTagih": "2026-09-25", "tglBarcode": "2026-09-25", "followup": null}, {"noCust": "C0032254MAI", "nama": "MAINSYAH PUTRA", "faktur": "000165/FKT/PP/0926", "top": "-", "tglJto": "2026-09-21", "jumlah": 194400000.0, "type": "AVANZA 1.5 G M/T", "cara": "Kredit", "leasing": "ACC", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "tglTagih": "2026-09-22", "tglBarcode": "2026-09-21", "followup": null}, {"noCust": "C0032268DOL", "nama": "DOLLY HAGANTHA", "faktur": "000171/FKT/PP/0926", "top": "-", "tglJto": "2026-09-21", "jumlah": 210400000.0, "type": "AVANZA 1.5 G M/T", "cara": "Kredit", "leasing": "TAF", "salesman": "YOSA AFANDI", "supervisor": "LIK SIONG", "tglTagih": "2026-09-22", "tglBarcode": "2026-09-21", "followup": null}, {"noCust": "C0032419MHD", "nama": "MHD SYAHRIR HAMZAH", "faktur": "000210/FKT/PP/0926", "top": "-", "tglJto": "2026-09-25", "jumlah": 206200000.0, "type": "RUSH 1.5 S A/T GR SPORT", "cara": "Kredit", "leasing": "ACC", "salesman": "DEDI ISWANTO SPD", "supervisor": "LIK SIONG", "tglTagih": "2026-09-26", "tglBarcode": "-", "followup": null}, {"noCust": "C0032469ARI", "nama": "ARIMA NADELA NAINGGOLAN", "faktur": "000141/FKT/PP/0926", "top": "-", "tglJto": "2026-09-18", "jumlah": 207199997.0, "type": "RUSH 1.5 S A/T GR SPORT", "cara": "Kredit", "leasing": "ACC", "salesman": "YOSA AFANDI", "supervisor": "LIK SIONG", "tglTagih": "2026-09-19", "tglBarcode": "-", "followup": null}, {"noCust": "C0032470MAN", "nama": "MANGANTAR SIMBOLON", "faktur": "000167/FKT/PP/0926", "top": "-", "tglJto": "2026-09-21", "jumlah": 125000000.0, "type": "VELOZ 1.5 Q HYBRID CVT MODELLISTA", "cara": "Kredit", "leasing": "ACC", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "tglTagih": "2026-09-22", "tglBarcode": "2026-09-21", "followup": null}, {"noCust": "C0032486MIN", "nama": "MINAH", "faktur": "000219/FKT/PP/0926", "top": "-", "tglJto": "2026-09-26", "jumlah": 404301205.0, "type": "KIJANG INNOVA ZENIX 2.0 V HV CVT MODELISTA", "cara": "Kredit", "leasing": "KKB", "salesman": "FRANKY LUMBANRAJA", "supervisor": "PRODIPA", "tglTagih": "Belum Buat Tagihan", "tglBarcode": "-", "followup": null}, {"noCust": "C0032511DIS", "nama": "DISON PRIMA ANTONI SIMBOLON", "faktur": "000174/FKT/PP/0926", "top": "-", "tglJto": "2026-09-21", "jumlah": 135940000.0, "type": "RAIZE 1.0T GR SPORT CVT TWO TONE", "cara": "Kredit", "leasing": "TAF", "salesman": "MUSA IRAWAN", "supervisor": "LIK SIONG", "tglTagih": "2026-09-22", "tglBarcode": "2026-09-21", "followup": null}, {"noCust": "C0032552YAY", "nama": "YAYASAN UNIVERSITAS PEMBINAAN MASYARAKAT INDONESIA SYAHRUDDIN", "faktur": "000193/FKT/PP/0926", "top": "-", "tglJto": "2026-09-23", "jumlah": 1262600000.0, "type": "ALPHARD 2.5 HYBRID CVT", "cara": "Kredit", "leasing": "ADM", "salesman": "MUHAMMAD FIRQIN QUFRAN", "supervisor": "LIK SIONG", "tglTagih": "2026-09-25", "tglBarcode": "2026-09-23", "followup": null}, {"noCust": "C0032559SIS", "nama": "SISWANTO", "faktur": "000200/FKT/PP/0926", "top": "-", "tglJto": "2026-09-24", "jumlah": 214550000.0, "type": "AVANZA 1.3 E CVT", "cara": "Kredit", "leasing": "ACC", "salesman": "HARDI WIJAYA", "supervisor": "LIK SIONG", "tglTagih": "2026-09-25", "tglBarcode": "2026-09-25", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000055/FKT/PP/0826", "top": "-", "tglJto": "2026-08-11", "jumlah": 446600000.0, "type": "KIJANG INNOVA ZENIX 2.0 V HV CVT MODELISTA", "cara": "Tunai", "leasing": "Cash", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "tglTagih": "2026-08-11", "tglBarcode": "2026-08-11", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000075/FKT/PP/0826", "top": "-", "tglJto": "2026-08-13", "jumlah": 478000000.0, "type": "HILUX DOUBLE CABIN 2.8 V (4X4) A/T", "cara": "Tunai", "leasing": "Cash", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "tglTagih": "2026-08-13", "tglBarcode": "2026-08-14", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000001/FKT/PP/0926", "top": "-", "tglJto": "2026-09-01", "jumlah": 164700000.0, "type": "CALYA 1.2 G A/T", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "tglTagih": "2026-09-01", "tglBarcode": "2026-09-01", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000123/FKT/PP/0926", "top": "-", "tglJto": "2026-09-18", "jumlah": 337200000.0, "type": "KIJANG INNOVA 2.4 G M/T", "cara": "Tunai", "leasing": "Cash", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "tglTagih": "2026-09-18", "tglBarcode": "-", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000139/FKT/PP/0926", "top": "-", "tglJto": "2026-09-18", "jumlah": 251400000.0, "type": "RUSH 1.5 S M/T GR SPORT", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "tglTagih": "2026-09-18", "tglBarcode": "2026-09-19", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000189/FKT/PP/0926", "top": "-", "tglJto": "2026-09-23", "jumlah": 354600000.0, "type": "KIJANG INNOVA 2.4 G A/T", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "tglTagih": "2026-09-23", "tglBarcode": "2026-09-23", "followup": null}]
+
+;
+
+const CATS = {
+  belum:   { label: "Belum Buat Tagihan", color: "var(--cat-belum)",  wash: "var(--cat-belum-wash)" },
+  notdue:  { label: "Belum Jatuh Tempo",  color: "var(--cat-notdue)", wash: "var(--cat-notdue-wash)" },
+  d7:      { label: "Piutang 1\u20137 Hari",   color: "var(--cat-7)",      wash: "var(--cat-7-wash)" },
+  d14:     { label: "Piutang 8\u201314 Hari",  color: "var(--cat-14)",     wash: "var(--cat-14-wash)" },
+  d26:     { label: "Piutang 15\u201326 Hari", color: "var(--cat-26)",     wash: "var(--cat-26-wash)" },
+  over:    { label: "Piutang &gt; 26 Hari",  color: "var(--cat-over)",   wash: "var(--cat-over-wash)" },
+};
+const CAT_ORDER = ["belum","notdue","d7","d14","d26","over"];
+
+function parseDate(s) {
+  if (!s) return null;
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s);
+  if (!m) return null;
+  return new Date(+m[1], +m[2]-1, +m[3]);
+}
+
+const today = new Date();
+today.setHours(0,0,0,0);
+
+function computeHari(tglJto) {
+  const d = parseDate(tglJto);
+  if (!d) return null;
+  return Math.round((today - d) / 86400000);
+}
+
+const NO_TAGIH_MARKERS = ["belum buat tagihan", "-", ""];
+function categorize(row) {
+  const raw = (row.tglTagih || "").toString().trim().toLowerCase();
+  const hasTagih = raw !== "" && !NO_TAGIH_MARKERS.includes(raw);
+  const hari = computeHari(row.tglJto);
+  if (!hasTagih) return "belum";
+  if (hari === null) return "notdue";
+  if (hari < 1) return "notdue";
+  if (hari <= 7) return "d7";
+  if (hari <= 14) return "d14";
+  if (hari <= 26) return "d26";
+  return "over";
+}
+
+let rows = RAW.map(r => ({...r, hari: computeHari(r.tglJto), cat: categorize(r)}));
+
+function sortGroup(list) {
+  return list.sort((a, b) => {
+    const l = (a.leasing || "").localeCompare(b.leasing || "");
+    if (l !== 0) return l;
+    return (b.hari ?? -999) - (a.hari ?? -999);
+  });
+}
+
+function fmtMoney(n) { return Math.round(n).toLocaleString('id-ID'); }
+function fmtDateShort(s) {
+  const d = parseDate(s);
+  if (!d) return s || "\u2013";
+  const dd = String(d.getDate()).padStart(2, '0');
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  return `${dd}/${mm}/${d.getFullYear()}`;
+}
+
+document.getElementById('todayLabel').textContent = REPORT_DATE_LABEL;
+
+let activeFilter = "all";
+let searchTerm = "";
+
+function buildPills() {
+  const el = document.getElementById('pills');
+  const counts = {};
+  const totals = {};
+  CAT_ORDER.forEach(c => { counts[c]=0; totals[c]=0; });
+  rows.forEach(r => { counts[r.cat]++; totals[r.cat]+=Number(r.jumlah)||0; });
+
+  const allTotal = rows.reduce((s,r)=>s+(Number(r.jumlah)||0),0);
+  let html = `<div class="pill ${activeFilter==='all'?'active':''}" data-cat="all">
+      <span class="dot" style="background:var(--ink)"></span>
+      Semua <span class="cnt">${rows.length}</span>
+    </div>`;
+  CAT_ORDER.forEach(c => {
+    if (counts[c] === 0 && c === 'notdue') return; // hide empty "belum jatuh tempo" bucket most of the time
+    html += `<div class="pill ${activeFilter===c?'active':''}" data-cat="${c}">
+        <span class="dot" style="background:${CATS[c].color}"></span>
+        ${CATS[c].label} <span class="cnt">${counts[c]}</span>
+      </div>`;
+  });
+  el.innerHTML = html;
+  el.querySelectorAll('.pill').forEach(p => {
+    p.addEventListener('click', () => {
+      activeFilter = p.dataset.cat;
+      render();
+    });
+  });
+
+  // hero stats
+  document.getElementById('totalAmount').textContent = fmtMoney(allTotal);
+  document.getElementById('totalCount').textContent = rows.length;
+  document.getElementById('overCount').textContent = counts.over;
+  document.getElementById('within7Count').textContent = counts.d7;
+
+  // composition bar
+  const comp = document.getElementById('composition');
+  comp.innerHTML = "";
+  CAT_ORDER.forEach(c => {
+    if (!totals[c]) return;
+    const pct = (totals[c]/allTotal*100).toFixed(2);
+    const span = document.createElement('span');
+    span.style.width = pct + "%";
+    span.style.background = CATS[c].color;
+    span.title = CATS[c].label + ": " + pct + "%";
+    comp.appendChild(span);
+  });
+}
+
+function matchesSearch(r) {
+  if (!searchTerm) return true;
+  const hay = (r.nama + " " + r.faktur + " " + r.salesman + " " + r.noCust).toLowerCase();
+  return hay.includes(searchTerm);
+}
+
+function render() {
+  buildPills();
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = "";
+
+  let visible = rows.filter(matchesSearch);
+  if (activeFilter !== "all") visible = visible.filter(r => r.cat === activeFilter);
+
+  document.getElementById('resultCount').textContent = visible.length + " dari " + rows.length + " baris";
+  document.getElementById('emptyState').style.display = visible.length ? "none" : "block";
+
+  if (activeFilter === "all") {
+    CAT_ORDER.forEach(c => {
+      const group = sortGroup(visible.filter(r => r.cat === c));
+      if (!group.length) return;
+      const groupTotal = group.reduce((s,r)=>s+(Number(r.jumlah)||0),0);
+      const gh = document.createElement('tr');
+      gh.className = 'grouphead';
+      gh.innerHTML = `<td colspan="9">
+          <span class="swatch" style="background:${CATS[c].color}"></span>${CATS[c].label}
+          <span class="ghcount">${group.length} debitur</span>
+          <span class="ghtotal">Rp ${fmtMoney(groupTotal)}</span>
+        </td>`;
+      tbody.appendChild(gh);
+      group.forEach(r => tbody.appendChild(renderRow(r)));
+    });
+  } else {
+    sortGroup(visible).forEach(r => tbody.appendChild(renderRow(r)));
+  }
+}
+
+function renderRow(r) {
+  const tr = document.createElement('tr');
+  tr.className = 'rowcat';
+  tr.style.borderLeftColor = CATS[r.cat].color;
+  tr.innerHTML = `
+    <td class="nama">${r.nama}</td>
+    <td>${r.faktur}</td>
+    <td>${r.type||""}</td>
+    <td>${fmtDateShort(r.tglJto)}</td>
+    <td class="num money">${fmtMoney(r.jumlah)}</td>
+    <td>${r.leasing}</td>
+    <td>${r.salesman||"\u2013"}</td>
+    <td>${r.supervisor||"\u2013"}</td>
+    <td class="num hari">${r.hari===null?"\u2013":r.hari}</td>`;
+  return tr;
+}
+
+document.getElementById('search').addEventListener('input', (e) => {
+  searchTerm = e.target.value.trim().toLowerCase();
+  render();
+});
+
+/* ---------- Tab: Per Leasing ---------- */
+const BUCKET_KEYS = ["belum", "d7", "d14", "d26", "over"];
+
+function groupByLeasing(list) {
+  const map = new Map();
+  list.forEach(r => {
+    const key = r.leasing || "Lainnya";
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push(r);
+  });
+  return [...map.entries()]
+    .map(([leasing, items]) => ({
+      leasing,
+      items: sortGroup(items.slice()),
+      total: items.reduce((s,r)=>s+(Number(r.jumlah)||0), 0),
+      bucketTotals: BUCKET_KEYS.reduce((acc,k) => {
+        acc[k] = items.filter(r=>r.cat===k).reduce((s,r)=>s+(Number(r.jumlah)||0), 0);
+        return acc;
+      }, {}),
+    }))
+    .sort((a,b) => b.total - a.total);
+}
+
+function renderLeasingTab() {
+  const groups = groupByLeasing(rows);
+
+  const tbody = document.getElementById('matrixBody');
+  tbody.innerHTML = "";
+  let grand = { count:0, belum:0, d7:0, d14:0, d26:0, over:0, total:0 };
+  const cell = (v) => v ? `Rp ${fmtMoney(v)}` : `<span class="zero">&ndash;</span>`;
+  groups.forEach(g => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="leasing-name">${g.leasing}</td>
+      <td>${g.items.length}</td>
+      <td>${cell(g.bucketTotals.belum)}</td>
+      <td>${cell(g.bucketTotals.d7)}</td>
+      <td>${cell(g.bucketTotals.d14)}</td>
+      <td>${cell(g.bucketTotals.d26)}</td>
+      <td>${cell(g.bucketTotals.over)}</td>
+      <td><strong>Rp ${fmtMoney(g.total)}</strong></td>`;
+    tbody.appendChild(tr);
+    grand.count += g.items.length;
+    grand.belum += g.bucketTotals.belum; grand.d7 += g.bucketTotals.d7;
+    grand.d14 += g.bucketTotals.d14; grand.d26 += g.bucketTotals.d26; grand.over += g.bucketTotals.over;
+    grand.total += g.total;
+  });
+  const gr = document.createElement('tr');
+  gr.className = 'grand';
+  gr.innerHTML = `
+    <td class="leasing-name">Total Flamboyan</td>
+    <td>${grand.count}</td>
+    <td>Rp ${fmtMoney(grand.belum)}</td>
+    <td>Rp ${fmtMoney(grand.d7)}</td>
+    <td>Rp ${fmtMoney(grand.d14)}</td>
+    <td>Rp ${fmtMoney(grand.d26)}</td>
+    <td>Rp ${fmtMoney(grand.over)}</td>
+    <td>Rp ${fmtMoney(grand.total)}</td>`;
+  tbody.appendChild(gr);
+
+  const el = document.getElementById('leasingSections');
+  el.innerHTML = "";
+  groups.forEach(g => {
+    const section = document.createElement('div');
+    section.className = 'leasing-section';
+    section.innerHTML = `
+      <div class="leasing-head">
+        <span class="name">${g.leasing}</span>
+        <span class="meta">${g.items.length} debitur &middot; Rp ${fmtMoney(g.total)}</span>
+      </div>
+      <div class="leasing-table-scroll">
+        <table class="detail">
+          <thead>
+            <tr>
+              <th>Nama Debitur</th>
+              <th>Faktur No.</th>
+              <th>Tipe Unit</th>
+              <th>Jth. Tempo</th>
+              <th class="num">Jumlah</th>
+              <th>Cara Bayar</th>
+              <th>Salesman</th>
+              <th>Supervisor</th>
+              <th class="num">Hari</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>`;
+    const tb = section.querySelector('tbody');
+    g.items.forEach(r => {
+      const tr = document.createElement('tr');
+      tr.className = 'rowcat';
+      tr.style.borderLeftColor = CATS[r.cat] ? CATS[r.cat].color : 'transparent';
+      tr.innerHTML = `
+        <td class="nama">${r.nama}</td>
+        <td>${r.faktur}</td>
+        <td>${r.type||""}</td>
+        <td>${fmtDateShort(r.tglJto)}</td>
+        <td class="money">${fmtMoney(r.jumlah)}</td>
+        <td>${r.cara||"\u2013"}</td>
+        <td>${r.salesman||"\u2013"}</td>
+        <td>${r.supervisor||"\u2013"}</td>
+        <td class="hari">${r.hari===null?"\u2013":r.hari}</td>`;
+      tb.appendChild(tr);
+    });
+    el.appendChild(section);
+  });
+}
+
+/* ---------- Tab switching ---------- */
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const target = btn.dataset.tab;
+    document.getElementById('tabpanel-umur').hidden = target !== 'umur';
+    document.getElementById('tabpanel-leasing').hidden = target !== 'leasing';
+  });
+});
+
+render();
+renderLeasingTab();
+document.getElementById('sourceCount').textContent = rows.length;
+
+/* ================= Live sync dari Google Sheet (tiap 2 menit) ================= */
+const FILE_ID = "1ul2WqwEb4X66Q6CYdycNvtyaLu08axFkZL75FI-qdmM";
+const XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+const TARGET_DIVISI = "Flamboyan";
+const KNOWN_DIVISI = ["Gatsu", "Flamboyan", "Gagak Hitam"];
+const syncRowEl = document.getElementById('syncRow');
+const syncTextEl = document.getElementById('syncText');
+let lastSyncedLabel = null; // tanggal-jam refresh terakhir yang BERHASIL, tetap tampil walau status berubah
+
+function setSync(state, message) {
+  syncRowEl.className = 'sync-row ' + state;
+  const suffix = lastSyncedLabel
+    ? ` &middot; Terakhir refresh: <strong>${lastSyncedLabel}</strong>`
+    : '';
+  syncTextEl.innerHTML = message + suffix;
+}
+
+function isoFromExcelDate(v) {
+  if (v == null || v === "") return null;
+  if (v instanceof Date) return v.toISOString().slice(0, 10);
+  if (typeof v === "number") {
+    const d = XLSX.SSF.parse_date_code(v);
+    if (!d) return null;
+    return `${d.y.toString().padStart(4,'0')}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;
+  }
+  return String(v); // free text like "Belum Buat Tagihan" or "Kontrak Go Rental"
+}
+
+function cellVal(ws, colLetter, r) {
+  const addr = colLetter + (r + 1); // r is 0-based row index
+  const cell = ws[addr];
+  return cell ? cell.v : undefined;
+}
+
+function extractGatsuFromWorkbook(wb) {
+  const ws = wb.Sheets["Sheet1"];
+  if (!ws || !ws['!ref']) throw new Error("Sheet 'Sheet1' tidak ditemukan");
+  const range = XLSX.utils.decode_range(ws['!ref']);
+
+  // Baris 4 (index 3) berisi label "Per : DD-Mmm-YYYY" persis seperti yang tertulis di spreadsheet.
+  let reportDateLabel = REPORT_DATE_LABEL;
+  const a4 = cellVal(ws, 'A', 3);
+  if (typeof a4 === 'string' && a4.trim() !== "") reportDateLabel = a4.trim();
+
+  // Sheet1 adalah laporan final: sudah mengecualikan faktur yang lunas dan sudah
+  // menghitung Divisi/Leasing/Salesman dengan benar. Kolom: A=No, B=No.Cust,
+  // C=Nama Debitur, D=Faktur No., E=TOP, F=Tgl.Jto, G=Jumlah, H=Giro, I=Type,
+  // J=Divisi, K=Cara Pembelian, L=Leasing, M=Salesman ("KODE=Nama Lengkap"),
+  // N=Supervisor, O=Tgl Buat Tagihan, P=Tgl Barcode, Q=Hasil Followup.
+  const out = [];
+  for (let r = range.s.r + 9; r <= range.e.r; r++) { // baris data dimulai dari baris ke-10 (index 9)
+    const nama = cellVal(ws, 'C', r);
+    if (nama == null || nama === "") continue; // lewati baris kosong/sisa template & baris "Total:"
+    const divisi = cellVal(ws, 'J', r);
+    if (divisi !== TARGET_DIVISI) continue; // dashboard ini khusus divisi ini
+
+    let salesman = cellVal(ws, 'M', r);
+    if (typeof salesman === 'string' && salesman.includes('=')) {
+      salesman = salesman.slice(salesman.indexOf('=') + 1).trim();
+    }
+    const followupRaw = cellVal(ws, 'Q', r);
+
+    out.push({
+      noCust: cellVal(ws, 'B', r),
+      nama: nama,
+      faktur: cellVal(ws, 'D', r),
+      top: cellVal(ws, 'E', r) || 0,
+      tglJto: isoFromExcelDate(cellVal(ws, 'F', r)),
+      jumlah: cellVal(ws, 'G', r) || 0,
+      type: cellVal(ws, 'I', r),
+      cara: cellVal(ws, 'K', r) || "-",
+      leasing: cellVal(ws, 'L', r) || "-",
+      salesman: salesman,
+      supervisor: cellVal(ws, 'N', r),
+      tglTagih: isoFromExcelDate(cellVal(ws, 'O', r)),
+      tglBarcode: isoFromExcelDate(cellVal(ws, 'P', r)),
+      followup: (followupRaw === "#N/A" ? null : followupRaw),
+    });
+  }
+  return { rows: out, reportDateLabel };
+}
+
+function applyNewData(list, reportDateLabel, syncedAt) {
+  rows = list.map(r => ({...r, hari: computeHari(r.tglJto), cat: categorize(r)}));
+  render();
+  renderLeasingTab();
+  document.getElementById('sourceCount').textContent = rows.length;
+  if (reportDateLabel) {
+    REPORT_DATE_LABEL = reportDateLabel;
+    document.getElementById('todayLabel').textContent = REPORT_DATE_LABEL;
+  }
+  const bulanFull = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+  const jam = String(syncedAt.getHours()).padStart(2,'0');
+  const menit = String(syncedAt.getMinutes()).padStart(2,'0');
+  lastSyncedLabel = `${syncedAt.getDate()} ${bulanFull[syncedAt.getMonth()]} ${syncedAt.getFullYear()}, ${jam}:${menit}`;
+  setSync('live', `Live &middot; otomatis tiap 2 menit`);
+}
+
+async function handleWatchEvent(ev) {
+  if (ev.type === 'error') {
+    const code = ev.error && ev.error.code;
+    if (code === 'needs_reauth') setSync('error', 'Google Drive perlu disambungkan ulang di Setelan &rarr; Connectors.');
+    else if (code === 'server_not_connected') setSync('error', 'Google Drive belum terhubung di akun ini. Menampilkan data statis.');
+    else if (code === 'not_in_manifest' || code === 'blocked_by_policy') setSync('error', 'Akses Google Drive tidak diizinkan untuk halaman ini. Menampilkan data statis.');
+    else setSync('stale', 'Sinkronisasi tertunda, menampilkan data terakhir yang berhasil dimuat.');
+    return;
+  }
+  try {
+    const payload = ev.result && ev.result.payload;
+    const base64 = payload && payload.content;
+    if (!base64) { setSync('stale', 'Format data tak dikenali, menampilkan data terakhir.'); return; }
+    const wb = XLSX.read(base64, { type: 'base64', cellDates: true });
+    const { rows: list, reportDateLabel } = extractGatsuFromWorkbook(wb);
+    applyNewData(list, reportDateLabel, new Date());
+  } catch (err) {
+    console.error(err);
+    setSync('stale', 'Gagal memproses data terbaru, menampilkan data terakhir.');
+  } finally {
+    setRefreshBtnSpinning(false);
+  }
+}
+
+let mcpHandle = null;
+let gvizPollTimer = null;
+const refreshBtn = document.getElementById('refreshBtn');
+function setRefreshBtnSpinning(on) {
+  refreshBtn.disabled = on;
+  refreshBtn.classList.toggle('spinning', on);
+}
+refreshBtn.addEventListener('click', async () => {
+  if (mcpHandle) {
+    setRefreshBtnSpinning(true);
+    setSync('stale', 'Menyegarkan data&hellip;');
+    try {
+      await mcpHandle.invalidate('Google Drive', 'download_file_content', { fileId: FILE_ID, exportMimeType: XLSX_MIME });
+      setTimeout(() => setRefreshBtnSpinning(false), 4000);
+    } catch (e) {
+      console.error(e);
+      setSync('error', 'Gagal menyegarkan data secara manual.');
+      setRefreshBtnSpinning(false);
+    }
+  } else if (window.__gvizFetchNow) {
+    setRefreshBtnSpinning(true);
+    window.__gvizFetchNow();
+  }
+});
+
+/* ---------- Jalur A: dalam Claude (artifact viewer), via Google Drive mcp capability ---------- */
+async function tryMcpSync() {
+  if (typeof XLSX === 'undefined') return false;
+  let mcp = null;
+  try { mcp = await claude.use('mcp'); } catch (e) { mcp = null; }
+  if (!mcp) return false;
+  mcpHandle = mcp;
+  setSync('stale', 'Menghubungkan ke Google Drive&hellip;');
+  try {
+    mcp.watchTool(
+      'Google Drive',
+      'download_file_content',
+      { fileId: FILE_ID, exportMimeType: XLSX_MIME },
+      (ev) => { handleWatchEvent(ev); },
+      { refetchInterval: 120000 }
+    );
+    return true;
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
+}
+
+/* ---------- Jalur B: di luar Claude (mis. situs yang di-deploy ke Vercel), via endpoint publik Google Sheets ---------- */
+function gvizCell(rows, r, c) {
+  const row = rows[r];
+  if (!row || !row.c) return null;
+  const cell = row.c[c];
+  return cell ? cell.v : null;
+}
+function gvizDateToIso(v) {
+  if (v == null || v === "") return null;
+  if (typeof v === 'string' && v.startsWith('Date(')) {
+    const parts = v.slice(5, -1).split(',').map(Number);
+    const [y, m, d] = parts;
+    return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+  }
+  return v; // sudah teks biasa (mis. "Belum Buat Tagihan")
+}
+function extractFromGvizTable(table) {
+  const trows = table.rows;
+
+  // Cari baris "Per : ..." di kolom A secara isi, bukan asumsi posisi baris.
+  let reportDateLabel = REPORT_DATE_LABEL;
+  for (let r = 0; r < Math.min(trows.length, 20); r++) {
+    const v = gvizCell(trows, r, 0);
+    if (typeof v === 'string' && v.trim().toLowerCase().startsWith('per')) {
+      reportDateLabel = v.trim();
+      break;
+    }
+  }
+
+  // Cari baris header asli ("Nama Debitur" di kolom C) alih-alih menebak nomor barisnya —
+  // supaya tidak bergantung pada bagaimana Google menyusun ulang baris saat dikirim ke browser.
+  let headerRowIdx = -1;
+  for (let r = 0; r < Math.min(trows.length, 30); r++) {
+    const v = gvizCell(trows, r, 2);
+    if (typeof v === 'string' && v.trim().toLowerCase() === 'nama debitur') { headerRowIdx = r; break; }
+  }
+  const startRow = headerRowIdx >= 0 ? headerRowIdx + 1 : 9; // 9 = fallback lama kalau header tak ketemu
+
+  const out = [];
+  for (let r = startRow; r < trows.length; r++) {
+    const nama = gvizCell(trows, r, 2); // C
+    if (nama == null || nama === "" || nama === "Nama Debitur") continue;
+    if (typeof nama === 'string' && nama.trim().toLowerCase() === 'total:') continue;
+    const divisi = gvizCell(trows, r, 9); // J
+    if (divisi !== TARGET_DIVISI) continue;
+
+    let salesman = gvizCell(trows, r, 12); // M
+    if (typeof salesman === 'string' && salesman.includes('=')) {
+      salesman = salesman.slice(salesman.indexOf('=') + 1).trim();
+    }
+    const followupRaw = gvizCell(trows, r, 16); // Q
+
+    out.push({
+      noCust: gvizCell(trows, r, 1),
+      nama: nama,
+      faktur: gvizCell(trows, r, 3),
+      top: gvizCell(trows, r, 4) || 0,
+      tglJto: gvizDateToIso(gvizCell(trows, r, 5)),
+      jumlah: gvizCell(trows, r, 6) || 0,
+      type: gvizCell(trows, r, 8),
+      cara: gvizCell(trows, r, 10) || "-",
+      leasing: gvizCell(trows, r, 11) || "-",
+      salesman: salesman,
+      supervisor: gvizCell(trows, r, 13),
+      tglTagih: gvizDateToIso(gvizCell(trows, r, 14)),
+      tglBarcode: gvizDateToIso(gvizCell(trows, r, 15)),
+      followup: (followupRaw === "#N/A" ? null : followupRaw),
+    });
+  }
+  return { rows: out, reportDateLabel };
+}
+
+function startGvizFallback() {
+  refreshBtn.disabled = false;
+  function fetchOnce() {
+    setSync('stale', 'Menghubungkan ke Google Sheets&hellip;');
+    const cbName = '__gvizCb_' + Date.now();
+    let settled = false;
+    const script = document.createElement('script');
+    const cleanup = () => {
+      delete window[cbName];
+      script.remove();
+      setRefreshBtnSpinning(false);
+    };
+    window[cbName] = function (resp) {
+      settled = true;
+      try {
+        const { rows: list, reportDateLabel } = extractFromGvizTable(resp.table);
+        if (list.length === 0 && rows.length > 0) {
+          setSync('stale', 'Data dari Google Sheets kosong/tidak cocok, menampilkan data terakhir yang valid.');
+        } else {
+          applyNewData(list, reportDateLabel, new Date());
+        }
+      } catch (err) {
+        console.error(err);
+        setSync('stale', 'Gagal memproses data dari Google Sheets.');
+      } finally {
+        cleanup();
+      }
+    };
+    script.src = `https://docs.google.com/spreadsheets/d/${FILE_ID}/gviz/tq?tqx=out:json;responseHandler:${cbName}&sheet=Sheet1&range=A1:Q500&headers=0&_ts=${Date.now()}`;
+    script.onerror = function () {
+      setSync('error', 'Tidak bisa memuat data dari Google Sheets. Pastikan sheet dibagikan sebagai "Siapa saja yang memiliki link" (Anyone with the link).');
+      cleanup();
+    };
+    setTimeout(() => { if (!settled) { setSync('error', 'Waktu tunggu Google Sheets habis. Coba segarkan lagi.'); cleanup(); } }, 15000);
+    document.body.appendChild(script);
+  }
+  window.__gvizFetchNow = fetchOnce;
+  fetchOnce();
+  gvizPollTimer = setInterval(fetchOnce, 120000);
+}
+
+(async function initLiveSync() {
+  const okMcp = await tryMcpSync();
+  if (okMcp) return;
+  startGvizFallback();
+})();
+</script>
+</body>
+</html>
