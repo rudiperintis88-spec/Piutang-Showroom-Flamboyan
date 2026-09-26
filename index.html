@@ -422,7 +422,7 @@
     <div id="leasingSections"></div>
   </div>
 
-  <footer>Kategori dihitung otomatis dari Tgl. Jatuh Tempo setiap kali halaman ini dibuka &mdash; angka &ldquo;Hari&rdquo; selalu mengikuti tanggal hari ini.</footer>
+  <footer>Kategori dihitung otomatis dari Tgl. Jatuh Tempo setiap kali halaman ini dibuka &mdash; angka &ldquo;Hari&rdquo; selalu mengikuti tanggal hari ini.<br>Versi build: 2026-09-26-v4 (refresh 30 detik, label Per dicari berdasarkan isi)</footer>
 </div>
 
 <script>
@@ -766,10 +766,16 @@ function extractGatsuFromWorkbook(wb) {
   if (!ws || !ws['!ref']) throw new Error("Sheet 'Sheet1' tidak ditemukan");
   const range = XLSX.utils.decode_range(ws['!ref']);
 
-  // Baris 4 (index 3) berisi label "Per : DD-Mmm-YYYY" persis seperti yang tertulis di spreadsheet.
+  // Cari baris "Per : ..." di kolom A berdasarkan ISINYA (bukan asumsi posisi baris ke-4),
+  // supaya tetap benar walau ada baris disisipkan/dihapus di atasnya.
   let reportDateLabel = REPORT_DATE_LABEL;
-  const a4 = cellVal(ws, 'A', 3);
-  if (typeof a4 === 'string' && a4.trim() !== "") reportDateLabel = a4.trim();
+  for (let r = 0; r < 20; r++) {
+    const v = cellVal(ws, 'A', r);
+    if (typeof v === 'string' && v.trim().toLowerCase().startsWith('per')) {
+      reportDateLabel = v.trim();
+      break;
+    }
+  }
 
   // Sheet1 adalah laporan final: sudah mengecualikan faktur yang lunas dan sudah
   // menghitung Divisi/Leasing/Salesman dengan benar. Kolom: A=No, B=No.Cust,
