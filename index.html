@@ -727,7 +727,7 @@ render();
 renderLeasingTab();
 document.getElementById('sourceCount').textContent = rows.length;
 
-/* ================= Live sync dari Google Sheet (tiap 2 menit) ================= */
+/* ================= Live sync dari Google Sheet (tiap 30 detik) ================= */
 const FILE_ID = "1ul2WqwEb4X66Q6CYdycNvtyaLu08axFkZL75FI-qdmM";
 const XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 const TARGET_DIVISI = "Flamboyan";
@@ -822,7 +822,7 @@ function applyNewData(list, reportDateLabel, syncedAt) {
   const jam = String(syncedAt.getHours()).padStart(2,'0');
   const menit = String(syncedAt.getMinutes()).padStart(2,'0');
   lastSyncedLabel = `${syncedAt.getDate()} ${bulanFull[syncedAt.getMonth()]} ${syncedAt.getFullYear()}, ${jam}:${menit}`;
-  setSync('live', `Live &middot; otomatis tiap 2 menit`);
+  setSync('live', `Live &middot; otomatis tiap 30 detik`);
 }
 
 async function handleWatchEvent(ev) {
@@ -888,7 +888,7 @@ async function tryMcpSync() {
       'download_file_content',
       { fileId: FILE_ID, exportMimeType: XLSX_MIME },
       (ev) => { handleWatchEvent(ev); },
-      { refetchInterval: 120000 }
+      { refetchInterval: 30000 }
     );
     return true;
   } catch (e) {
@@ -1007,7 +1007,7 @@ function startGvizFallback() {
   }
   window.__gvizFetchNow = fetchOnce;
   fetchOnce();
-  gvizPollTimer = setInterval(fetchOnce, 120000);
+  gvizPollTimer = setInterval(fetchOnce, 30000);
 }
 
 (async function initLiveSync() {
