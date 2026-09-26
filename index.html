@@ -104,7 +104,6 @@
     margin: 0; font-family: var(--serif); font-weight: 700;
     font-size: clamp(26px, 4vw, 34px); color: var(--ink); letter-spacing: -0.01em;
   }
-  .header-left .report-date { margin: 8px 0 0; color: var(--faint); font-size: 13px; }
   .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
   .sync-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
   .sync-badge {
@@ -363,7 +362,6 @@
       <div class="header-left">
         <p class="eyebrow">PT Perintis Perkasa, Medan</p>
         <h1 class="page-title">Piutang Flamboyan</h1>
-        <p class="report-date" id="todayLabel"></p>
       </div>
       <div class="header-right">
         <div class="sync-row" id="syncRow">
@@ -501,9 +499,8 @@
 
 <script>
 
-const REPORT_DATE_LABEL_INITIAL = "Per : 27-Sep-2026";
+const REPORT_DATE_LABEL_INITIAL = "Per : 26-Sep-2026";
 let REPORT_DATE_LABEL = REPORT_DATE_LABEL_INITIAL;
-document.getElementById('todayLabel').textContent = REPORT_DATE_LABEL;
 const TARGET_DIVISI = "Flamboyan";
 const RAW = [{"noCust": "C0031385PUT", "nama": "PUTRI NURLIA KHAIRUNNISA", "faktur": "000226/FKT/PP/0926", "top": "-", "tglJto": "2026-09-26", "jumlah": 159550000.0, "type": "AGYA STYLIX 1.2 G CVT", "cara": "Kredit", "leasing": "TAF", "salesman": "DENNY FRANATA SEMBIRING", "supervisor": "PUTRA", "tglTagih": "Belum Buat Tagihan", "tglBarcode": "-", "followup": null}, {"noCust": "C0031775CVR", "nama": "CV ROCKY GULTOM", "faktur": "000191/FKT/PP/0926", "top": "-", "tglJto": "2026-09-23", "jumlah": 410900000.0, "type": "HILUX DOUBLE CABIN 2.8 G (4X4) DSL M/T", "cara": "Kredit", "leasing": "ACC", "salesman": "ALEXANDRO SITUNGKIR", "supervisor": "ZAIN", "tglTagih": "2026-09-24", "tglBarcode": "2026-09-23", "followup": null}, {"noCust": "C0031867MIT", "nama": "CV MITRA SETIA", "faktur": "000113/FKT/PP/0926", "top": "-", "tglJto": "2026-09-17", "jumlah": 292000000.0, "type": "KIJANG INNOVA ZENIX 2.0 Q HV CVT TSS MODELISTA", "cara": "Kredit", "leasing": "TAF", "salesman": "NIA HENDRIATY", "supervisor": "LIK SIONG", "tglTagih": "2026-09-18", "tglBarcode": "2026-09-18", "followup": null}, {"noCust": "C0032092JER", "nama": "JEREMIA ALEXANDER AGUNG SEMBIRING", "faktur": "000088/FKT/PP/0926", "top": "-", "tglJto": "2026-09-11", "jumlah": 157500000.0, "type": "RUSH 1.5 S M/T GR SPORT", "cara": "Kredit", "leasing": "IMFS", "salesman": "GANDA MARTUA SITUMORANG SE", "supervisor": "LIK SIONG", "tglTagih": "2026-09-12", "tglBarcode": "-", "followup": null}, {"noCust": "C0032206AZR", "nama": "AZRAI RIDHO HANAFIAH SE M SI", "faktur": "000204/FKT/PP/0926", "top": "-", "tglJto": "2026-09-24", "jumlah": 166500000.0, "type": "CALYA 1.2 G A/T", "cara": "Kredit", "leasing": "ACC", "salesman": "ALFIAN R STEFANUS HUTAGALUNG", "supervisor": "PRODIPA", "tglTagih": "2026-09-25", "tglBarcode": "2026-09-25", "followup": null}, {"noCust": "C0032254MAI", "nama": "MAINSYAH PUTRA", "faktur": "000165/FKT/PP/0926", "top": "-", "tglJto": "2026-09-21", "jumlah": 194400000.0, "type": "AVANZA 1.5 G M/T", "cara": "Kredit", "leasing": "ACC", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "tglTagih": "2026-09-22", "tglBarcode": "2026-09-21", "followup": null}, {"noCust": "C0032268DOL", "nama": "DOLLY HAGANTHA", "faktur": "000171/FKT/PP/0926", "top": "-", "tglJto": "2026-09-21", "jumlah": 210400000.0, "type": "AVANZA 1.5 G M/T", "cara": "Kredit", "leasing": "TAF", "salesman": "YOSA AFANDI", "supervisor": "LIK SIONG", "tglTagih": "2026-09-22", "tglBarcode": "2026-09-21", "followup": null}, {"noCust": "C0032419MHD", "nama": "MHD SYAHRIR HAMZAH", "faktur": "000210/FKT/PP/0926", "top": "-", "tglJto": "2026-09-25", "jumlah": 206200000.0, "type": "RUSH 1.5 S A/T GR SPORT", "cara": "Kredit", "leasing": "ACC", "salesman": "DEDI ISWANTO SPD", "supervisor": "LIK SIONG", "tglTagih": "2026-09-26", "tglBarcode": "-", "followup": null}, {"noCust": "C0032469ARI", "nama": "ARIMA NADELA NAINGGOLAN", "faktur": "000141/FKT/PP/0926", "top": "-", "tglJto": "2026-09-18", "jumlah": 207199997.0, "type": "RUSH 1.5 S A/T GR SPORT", "cara": "Kredit", "leasing": "ACC", "salesman": "YOSA AFANDI", "supervisor": "LIK SIONG", "tglTagih": "2026-09-19", "tglBarcode": "-", "followup": null}, {"noCust": "C0032470MAN", "nama": "MANGANTAR SIMBOLON", "faktur": "000167/FKT/PP/0926", "top": "-", "tglJto": "2026-09-21", "jumlah": 125000000.0, "type": "VELOZ 1.5 Q HYBRID CVT MODELLISTA", "cara": "Kredit", "leasing": "ACC", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "tglTagih": "2026-09-22", "tglBarcode": "2026-09-21", "followup": null}, {"noCust": "C0032486MIN", "nama": "MINAH", "faktur": "000219/FKT/PP/0926", "top": "-", "tglJto": "2026-09-26", "jumlah": 404301205.0, "type": "KIJANG INNOVA ZENIX 2.0 V HV CVT MODELISTA", "cara": "Kredit", "leasing": "KKB", "salesman": "FRANKY LUMBANRAJA", "supervisor": "PRODIPA", "tglTagih": "Belum Buat Tagihan", "tglBarcode": "-", "followup": null}, {"noCust": "C0032511DIS", "nama": "DISON PRIMA ANTONI SIMBOLON", "faktur": "000174/FKT/PP/0926", "top": "-", "tglJto": "2026-09-21", "jumlah": 135940000.0, "type": "RAIZE 1.0T GR SPORT CVT TWO TONE", "cara": "Kredit", "leasing": "TAF", "salesman": "MUSA IRAWAN", "supervisor": "LIK SIONG", "tglTagih": "2026-09-22", "tglBarcode": "2026-09-21", "followup": null}, {"noCust": "C0032552YAY", "nama": "YAYASAN UNIVERSITAS PEMBINAAN MASYARAKAT INDONESIA SYAHRUDDIN", "faktur": "000193/FKT/PP/0926", "top": "-", "tglJto": "2026-09-23", "jumlah": 1262600000.0, "type": "ALPHARD 2.5 HYBRID CVT", "cara": "Kredit", "leasing": "ADM", "salesman": "MUHAMMAD FIRQIN QUFRAN", "supervisor": "LIK SIONG", "tglTagih": "2026-09-25", "tglBarcode": "2026-09-23", "followup": null}, {"noCust": "C0032559SIS", "nama": "SISWANTO", "faktur": "000200/FKT/PP/0926", "top": "-", "tglJto": "2026-09-24", "jumlah": 214550000.0, "type": "AVANZA 1.3 E CVT", "cara": "Kredit", "leasing": "ACC", "salesman": "HARDI WIJAYA", "supervisor": "LIK SIONG", "tglTagih": "2026-09-25", "tglBarcode": "2026-09-25", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000055/FKT/PP/0826", "top": "-", "tglJto": "2026-08-11", "jumlah": 446600000.0, "type": "KIJANG INNOVA ZENIX 2.0 V HV CVT MODELISTA", "cara": "Tunai", "leasing": "Cash", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "tglTagih": "2026-08-11", "tglBarcode": "2026-08-11", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000075/FKT/PP/0826", "top": "-", "tglJto": "2026-08-13", "jumlah": 478000000.0, "type": "HILUX DOUBLE CABIN 2.8 V (4X4) A/T", "cara": "Tunai", "leasing": "Cash", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "tglTagih": "2026-08-13", "tglBarcode": "2026-08-14", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000001/FKT/PP/0926", "top": "-", "tglJto": "2026-09-01", "jumlah": 164700000.0, "type": "CALYA 1.2 G A/T", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "tglTagih": "2026-09-01", "tglBarcode": "2026-09-01", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000123/FKT/PP/0926", "top": "-", "tglJto": "2026-09-18", "jumlah": 337200000.0, "type": "KIJANG INNOVA 2.4 G M/T", "cara": "Tunai", "leasing": "Cash", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "tglTagih": "2026-09-18", "tglBarcode": "-", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000139/FKT/PP/0926", "top": "-", "tglJto": "2026-09-18", "jumlah": 251400000.0, "type": "RUSH 1.5 S M/T GR SPORT", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "tglTagih": "2026-09-18", "tglBarcode": "2026-09-19", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000189/FKT/PP/0926", "top": "-", "tglJto": "2026-09-23", "jumlah": 354600000.0, "type": "KIJANG INNOVA 2.4 G A/T", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "tglTagih": "2026-09-23", "tglBarcode": "2026-09-23", "followup": null}]
 ;
@@ -1020,8 +1017,7 @@ function applyNewData(list, reportDateLabel, syncedAt) {
   document.getElementById('sourceCount').textContent = rows.length;
   if (reportDateLabel) {
     REPORT_DATE_LABEL = reportDateLabel;
-    document.getElementById('todayLabel').textContent = REPORT_DATE_LABEL;
-  }
+      }
   const bulanFull = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
   const jam = String(syncedAt.getHours()).padStart(2,'0');
   const menit = String(syncedAt.getMinutes()).padStart(2,'0');
@@ -1175,70 +1171,43 @@ function extractFromGvizTable(table) {
 
 function startGvizFallback() {
   refreshBtn.disabled = false;
-
-  // Beberapa variasi URL dicoba berurutan secara otomatis kalau salah satu gagal/kosong/timeout,
-  // supaya tidak perlu campur tangan manual kalau satu bentuk permintaan diblokir/berubah perilaku.
-  function buildUrl(variant, cbName) {
-    const base = `https://docs.google.com/spreadsheets/d/${FILE_ID}/gviz/tq`;
-    const cb = `tqx=out:json;responseHandler:${cbName}`;
-    const ts = `_ts=${Date.now()}`;
-    if (variant === 0) return `${base}?${cb}&sheet=Sheet1&range=A1:Q500&headers=0&${ts}`;
-    if (variant === 1) return `${base}?${cb}&sheet=Sheet1&${ts}`; // tanpa range/headers eksplisit
-    return `${base}?${cb}&gid=0&${ts}`; // percobaan terakhir: sheet pertama by gid
-  }
-  const VARIANT_COUNT = 3;
-
-  function attempt(variant, isManual) {
-    const cbName = '__gvizCb_' + Date.now() + '_' + variant;
+  function fetchOnce() {
+    setSync('stale', 'Menghubungkan ke Google Sheets&hellip;');
+    const cbName = '__gvizCb_' + Date.now();
     let settled = false;
     const script = document.createElement('script');
-    const cleanup = () => { delete window[cbName]; script.remove(); };
-
+    const cleanup = () => {
+      delete window[cbName];
+      script.remove();
+      setRefreshBtnSpinning(false);
+    };
     window[cbName] = function (resp) {
       settled = true;
       try {
         const { rows: list, reportDateLabel } = extractFromGvizTable(resp.table);
-        if (list.length === 0) {
-          if (variant + 1 < VARIANT_COUNT) { cleanup(); attempt(variant + 1, isManual); return; }
-          if (rows.length > 0) setSync('stale', 'Data dari Google Sheets kosong/tidak cocok, menampilkan data terakhir yang valid.');
-          else setSync('error', 'Belum ada data yang cocok dari Google Sheets.');
+        if (list.length === 0 && rows.length > 0) {
+          setSync('stale', 'Data dari Google Sheets kosong/tidak cocok, menampilkan data terakhir yang valid.');
         } else {
           applyNewData(list, reportDateLabel, new Date());
         }
       } catch (err) {
         console.error(err);
-        if (variant + 1 < VARIANT_COUNT) { cleanup(); attempt(variant + 1, isManual); return; }
         setSync('stale', 'Gagal memproses data dari Google Sheets.');
       } finally {
         cleanup();
-        setRefreshBtnSpinning(false);
       }
     };
-
-    script.src = buildUrl(variant, cbName);
+    script.src = `https://docs.google.com/spreadsheets/d/${FILE_ID}/gviz/tq?tqx=out:json;responseHandler:${cbName}&sheet=Sheet1&range=A1:Q500&headers=0&_ts=${Date.now()}`;
     script.onerror = function () {
-      cleanup();
-      if (variant + 1 < VARIANT_COUNT) { attempt(variant + 1, isManual); return; }
       setSync('error', 'Tidak bisa memuat data dari Google Sheets. Pastikan sheet dibagikan sebagai "Siapa saja yang memiliki link" (Anyone with the link).');
-      setRefreshBtnSpinning(false);
-    };
-    setTimeout(() => {
-      if (settled) return;
       cleanup();
-      if (variant + 1 < VARIANT_COUNT) { attempt(variant + 1, isManual); return; }
-      setSync('error', 'Waktu tunggu Google Sheets habis. Coba segarkan lagi.');
-      setRefreshBtnSpinning(false);
-    }, 12000);
+    };
+    setTimeout(() => { if (!settled) { setSync('error', 'Waktu tunggu Google Sheets habis. Coba segarkan lagi.'); cleanup(); } }, 15000);
     document.body.appendChild(script);
   }
-
-  function fetchOnce(isManual) {
-    setSync('stale', 'Menghubungkan ke Google Sheets&hellip;');
-    attempt(0, !!isManual);
-  }
-  window.__gvizFetchNow = () => fetchOnce(true);
-  fetchOnce(false);
-  gvizPollTimer = setInterval(() => fetchOnce(false), 30000);
+  window.__gvizFetchNow = fetchOnce;
+  fetchOnce();
+  gvizPollTimer = setInterval(fetchOnce, 30000);
 }
 
 (async function initLiveSync() {
