@@ -1175,43 +1175,70 @@ function extractFromGvizTable(table) {
 
 function startGvizFallback() {
   refreshBtn.disabled = false;
-  function fetchOnce() {
-    setSync('stale', 'Menghubungkan ke Google Sheets&hellip;');
-    const cbName = '__gvizCb_' + Date.now();
+
+  // Beberapa variasi URL dicoba berurutan secara otomatis kalau salah satu gagal/kosong/timeout,
+  // supaya tidak perlu campur tangan manual kalau satu bentuk permintaan diblokir/berubah perilaku.
+  function buildUrl(variant, cbName) {
+    const base = `https://docs.google.com/spreadsheets/d/${FILE_ID}/gviz/tq`;
+    const cb = `tqx=out:json;responseHandler:${cbName}`;
+    const ts = `_ts=${Date.now()}`;
+    if (variant === 0) return `${base}?${cb}&sheet=Sheet1&range=A1:Q500&headers=0&${ts}`;
+    if (variant === 1) return `${base}?${cb}&sheet=Sheet1&${ts}`; // tanpa range/headers eksplisit
+    return `${base}?${cb}&gid=0&${ts}`; // percobaan terakhir: sheet pertama by gid
+  }
+  const VARIANT_COUNT = 3;
+
+  function attempt(variant, isManual) {
+    const cbName = '__gvizCb_' + Date.now() + '_' + variant;
     let settled = false;
     const script = document.createElement('script');
-    const cleanup = () => {
-      delete window[cbName];
-      script.remove();
-      setRefreshBtnSpinning(false);
-    };
+    const cleanup = () => { delete window[cbName]; script.remove(); };
+
     window[cbName] = function (resp) {
       settled = true;
       try {
         const { rows: list, reportDateLabel } = extractFromGvizTable(resp.table);
-        if (list.length === 0 && rows.length > 0) {
-          setSync('stale', 'Data dari Google Sheets kosong/tidak cocok, menampilkan data terakhir yang valid.');
+        if (list.length === 0) {
+          if (variant + 1 < VARIANT_COUNT) { cleanup(); attempt(variant + 1, isManual); return; }
+          if (rows.length > 0) setSync('stale', 'Data dari Google Sheets kosong/tidak cocok, menampilkan data terakhir yang valid.');
+          else setSync('error', 'Belum ada data yang cocok dari Google Sheets.');
         } else {
           applyNewData(list, reportDateLabel, new Date());
         }
       } catch (err) {
         console.error(err);
+        if (variant + 1 < VARIANT_COUNT) { cleanup(); attempt(variant + 1, isManual); return; }
         setSync('stale', 'Gagal memproses data dari Google Sheets.');
       } finally {
         cleanup();
+        setRefreshBtnSpinning(false);
       }
     };
-    script.src = `https://docs.google.com/spreadsheets/d/${FILE_ID}/gviz/tq?tqx=out:json;responseHandler:${cbName}&sheet=Sheet1&range=A1:Q500&headers=0&_ts=${Date.now()}`;
+
+    script.src = buildUrl(variant, cbName);
     script.onerror = function () {
-      setSync('error', 'Tidak bisa memuat data dari Google Sheets. Pastikan sheet dibagikan sebagai "Siapa saja yang memiliki link" (Anyone with the link).');
       cleanup();
+      if (variant + 1 < VARIANT_COUNT) { attempt(variant + 1, isManual); return; }
+      setSync('error', 'Tidak bisa memuat data dari Google Sheets. Pastikan sheet dibagikan sebagai "Siapa saja yang memiliki link" (Anyone with the link).');
+      setRefreshBtnSpinning(false);
     };
-    setTimeout(() => { if (!settled) { setSync('error', 'Waktu tunggu Google Sheets habis. Coba segarkan lagi.'); cleanup(); } }, 15000);
+    setTimeout(() => {
+      if (settled) return;
+      cleanup();
+      if (variant + 1 < VARIANT_COUNT) { attempt(variant + 1, isManual); return; }
+      setSync('error', 'Waktu tunggu Google Sheets habis. Coba segarkan lagi.');
+      setRefreshBtnSpinning(false);
+    }, 12000);
     document.body.appendChild(script);
   }
-  window.__gvizFetchNow = fetchOnce;
-  fetchOnce();
-  gvizPollTimer = setInterval(fetchOnce, 30000);
+
+  function fetchOnce(isManual) {
+    setSync('stale', 'Menghubungkan ke Google Sheets&hellip;');
+    attempt(0, !!isManual);
+  }
+  window.__gvizFetchNow = () => fetchOnce(true);
+  fetchOnce(false);
+  gvizPollTimer = setInterval(() => fetchOnce(false), 30000);
 }
 
 (async function initLiveSync() {
