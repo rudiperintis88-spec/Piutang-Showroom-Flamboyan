@@ -383,6 +383,75 @@
     .hero { grid-template-columns: 1fr; }
     .hero-stats { gap: 22px; }
   }
+
+  .tri-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:6px 0 14px}
+  .tri-head h2{font-family:var(--serif);font-size:20px;margin:0}
+  .tri-head span{color:var(--muted);font-size:13px}
+  .tri{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
+  .bcard{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--c);border-radius:14px;overflow:hidden;flex:0 1 300px;min-width:0;max-width:100%}
+  .bc-h{padding:14px 16px 10px}
+  .bc-h b{display:block;font-family:var(--serif);font-size:17px;margin-bottom:2px}
+  .bc-h small{font-family:var(--mono);color:var(--muted);font-size:12.5px}
+  .bc-body{max-height:560px;overflow-y:auto;overflow-x:hidden}
+  .bcard table{width:100%;min-width:0;table-layout:auto;border-collapse:collapse;font-size:14px}
+  .bcard td,.bcard th{white-space:normal;overflow-wrap:anywhere}
+  .bcard td.num,.bcard th.num{white-space:nowrap;width:1%}
+  .bcard th{position:sticky;top:0;background:var(--surface-2);color:var(--muted);font-size:12px;font-weight:500;text-align:left;padding:8px 16px;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+  .bcard td:first-child{padding-right:28px}
+  .bcard td{padding:8px 16px;border-bottom:1px solid var(--border)}
+  .bcard .num{text-align:right;font-family:var(--mono)}
+  .bcard tfoot td{font-weight:700;border-bottom:0;position:sticky;bottom:0;background:var(--surface)}
+  .bcard td.z{color:var(--faint)}
+  th.sortable{cursor:pointer;user-select:none;white-space:nowrap}
+  th.sortable:hover{color:var(--ink)}
+  th.sortable .arrow{margin-left:4px;font-size:10px}
+
+  .dtoggle{cursor:pointer;user-select:none}
+  .dtoggle .chev{display:inline-block;width:18px;color:var(--muted)}
+  .pr-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:4px 0 12px}
+  .pr-head h3{font-family:var(--serif);font-size:22px;margin:0}
+  .pr-head span{color:var(--muted);font-size:13px;font-family:var(--mono)}
+  .pr-tools{display:flex;gap:8px;align-items:center}
+  .pr-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--cat-14-wash);border:1px solid var(--cat-14);border-bottom:0;border-radius:12px 12px 0 0;padding:16px 22px;color:var(--cat-over)}
+  .pr-banner b{font-family:var(--serif);font-size:19px}
+  .pr-banner .pr-sum{color:var(--ink);font-size:14px}
+  .pr-banner em{font-style:normal;font-family:var(--mono);font-weight:700;color:var(--cat-over)}
+  .pr-dot{display:inline-block;width:12px;height:12px;border-radius:50%;background:#DC2626;margin-right:10px;box-shadow:0 0 0 5px rgba(220,38,38,.18)}
+  .pr-wrap{border:1px solid var(--cat-14);border-radius:0 0 12px 12px;overflow:hidden;background:var(--surface);margin-bottom:26px}
+  .pr-empty{padding:18px 22px;color:var(--muted);border:1px solid var(--border);border-radius:12px;background:var(--surface);margin-bottom:26px}
+  .pr-row{cursor:pointer}
+  .pr-row:hover td{background:var(--surface-2)}
+  .pr-chev{color:var(--muted);display:inline-block;width:16px}
+  .pr-red{color:var(--cat-over);font-weight:600}
+  .pr-badge{background:#DDE6FB;color:#2F4FD0;border-radius:999px;padding:3px 12px;font-size:13px;font-weight:600}
+  .pr-cnt{display:inline-block;margin-left:6px;background:var(--cat-notdue-wash);color:var(--muted);border-radius:999px;padding:1px 8px;font-size:11px}
+  .pr-detail > td{background:var(--surface-2);padding:18px 22px !important}
+  .pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+  @media (max-width:760px){.pr-grid{grid-template-columns:1fr}}
+  .pr-grid h4{margin:0 0 10px;font-size:12px;letter-spacing:.06em;color:var(--muted);font-weight:600}
+  .fu-list{list-style:none;padding:0;margin:0 0 12px;max-height:260px;overflow:auto}
+  .fu-list li{padding:8px 0;border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;gap:2px 10px;align-items:baseline}
+  .fu-list li small{color:var(--muted);font-size:12px}
+  .fu-list li > div{flex-basis:100%}
+  .fu-list li.done span{text-decoration:line-through;color:var(--muted)}
+  .fu-list .z{color:var(--muted)}
+  .fu-form{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap}
+  .fu-in{border:1px solid var(--border);background:var(--surface);color:var(--ink);border-radius:8px;padding:9px 12px;font:inherit;flex:1;min-width:140px}
+  .fu-in.pic{flex:0 0 120px;min-width:90px}
+  .fu-btn{background:#6D28D9;color:#fff;border:0;border-radius:8px;padding:9px 16px;font:inherit;font-weight:600;cursor:pointer}
+  .fu-ghost{background:var(--surface);color:var(--ink);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font:inherit;font-size:12.5px;cursor:pointer}
+  .fu-x{background:none;border:0;color:var(--muted);cursor:pointer;font:inherit;margin-left:auto}
+  .pr-arch{border:1px solid var(--border);border-radius:12px;background:var(--surface);margin-bottom:26px}
+  .pr-arch-h{padding:12px 18px;cursor:pointer;font-weight:600}
+  .pr-arch-h span{color:var(--muted);font-weight:400}
+  .pr-arch-i{padding:12px 18px;border-top:1px solid var(--border)}
+  .pr-arch-i small{color:var(--muted)}
+
+  .tri-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 14px}
+  .tri-chips{display:flex;gap:6px;flex-wrap:wrap}
+  .tri-chip{border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:999px;padding:6px 13px;font:inherit;font-size:13px;cursor:pointer}
+  .tri-chip.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+  .tri-none{color:var(--muted);padding:10px 0}
 </style>
 </head>
 <body>
@@ -421,11 +490,11 @@
     <button class="tab active" data-tab="umur">Umur Piutang</button>
     <button class="tab" data-tab="leasing">Per Leasing</button>
     <button class="tab" data-tab="followup">Follow-up Leasing</button>
-    <button class="tab" data-tab="prioritas">Prioritas Penagihan</button>
     <button class="tab" data-tab="penjualanleasing">Penjualan per Leasing</button>
     <button class="tab" data-tab="penjualanasuransi">Penjualan per Insurance Company</button>
     <button class="tab" data-tab="penjualansupervisor">Penjualan per Supervisor</button>
     <button class="tab" data-tab="salesterbanyak">Sales Terbanyak</button>
+    <button class="tab" data-tab="detailpenjualan">Detail Penjualan</button>
   </div>
 
   <div class="tabpanel" id="tabpanel-umur">
@@ -492,6 +561,7 @@
   </div>
 
   <div class="tabpanel" id="tabpanel-followup" hidden>
+    <div id="prioritasBox"></div>
     <div class="followup-head">
       <h2 class="followup-title">Rincian Faktur</h2>
       <span class="sort-hint">klik header kolom untuk urutkan</span>
@@ -530,53 +600,35 @@
     </div>
   </div>
 
-  <div class="tabpanel" id="tabpanel-prioritas" hidden>
-    <p class="subtitle">Piutang dengan umur &gt; 26 hari &mdash; perlu tindak lanjut segera. Catatan tersimpan otomatis di browser ini.</p>
-    <div class="table-scroll">
-      <table class="detail">
-        <thead>
-          <tr>
-            <th>No</th>
-            <th>Nama Customer</th>
-            <th>Cabang</th>
-            <th>Leasing</th>
-            <th>Faktur No.</th>
-            <th>Tgl Jto</th>
-            <th class="num">Jumlah</th>
-            <th class="num">Hari</th>
-            <th style="min-width:220px;">Catatan</th>
-          </tr>
-        </thead>
-        <tbody id="prioritasBody"></tbody>
-      </table>
+  <div class="tabpanel" id="tabpanel-penjualanleasing" hidden><div id="triLeasing"></div></div>
+
+  <div class="tabpanel" id="tabpanel-penjualanasuransi" hidden><div id="triAsuransi"></div></div>
+
+  <div class="tabpanel" id="tabpanel-penjualansupervisor" hidden><div id="triSupervisor"></div></div>
+
+  <div class="tabpanel" id="tabpanel-salesterbanyak" hidden><div id="triSales"></div></div>
+
+  <div class="tabpanel" id="tabpanel-detailpenjualan" hidden>
+    <div class="followup-head">
+      <h2 class="followup-title">Detail Penjualan</h2>
+      <span class="sort-hint">klik header kolom untuk urutkan naik/turun</span>
     </div>
+    <div class="followup-toolbar">
+      <input class="search" id="dSearch" type="text" placeholder="Cari nama debitur, tipe unit, faktur, atau salesman...">
+      <select class="select-filter" id="dMonth"></select>
+      <select class="select-filter" id="dGroup">
+        <option value="leasing">Kelompokkan: Leasing</option>
+        <option value="asuransi">Kelompokkan: Insurance Company</option>
+        <option value="supervisor">Kelompokkan: Supervisor</option>
+        <option value="salesman">Kelompokkan: Salesman</option>
+      </select>
+      <div class="segmented"><button class="seg-btn" id="dCollapseAll">Minimize semua</button><button class="seg-btn" id="dExpandAll">Buka semua</button></div>
+    </div>
+    <p class="subtitle" id="dInfo"></p>
+    <div id="detailSections"></div>
   </div>
 
-  <div class="tabpanel" id="tabpanel-penjualanleasing" hidden>
-    <div class="summary-card" id="summaryCardLeasing"></div>
-    <p class="subtitle">Rincian per debitur, dikelompokkan per Leasing.</p>
-    <div id="penjualanLeasingSections"></div>
-  </div>
-
-  <div class="tabpanel" id="tabpanel-penjualanasuransi" hidden>
-    <div class="summary-card" id="summaryCardAsuransi"></div>
-    <p class="subtitle">Rincian per debitur, dikelompokkan per Insurance Company.</p>
-    <div id="penjualanAsuransiSections"></div>
-  </div>
-
-  <div class="tabpanel" id="tabpanel-penjualansupervisor" hidden>
-    <div class="summary-card" id="summaryCardSupervisor"></div>
-    <p class="subtitle">Rincian per debitur, dikelompokkan per Supervisor.</p>
-    <div id="penjualanSupervisorSections"></div>
-  </div>
-
-  <div class="tabpanel" id="tabpanel-salesterbanyak" hidden>
-    <div class="summary-card" id="summaryCardSales"></div>
-    <p class="subtitle">Peringkat salesman berdasarkan jumlah unit terjual bulan berjalan.</p>
-    <div id="penjualanSalesSections"></div>
-  </div>
-
-  <footer>Kategori dihitung otomatis dari Tgl. Jatuh Tempo setiap kali halaman ini dibuka &mdash; angka &ldquo;Hari&rdquo; selalu mengikuti tanggal hari ini.<br>Versi build: 2026-09-26-v7 (+ Sales Terbanyak, perbaikan kartu ringkasan)</footer>
+  <footer>Kategori dihitung otomatis dari Tgl. Jatuh Tempo setiap kali halaman ini dibuka &mdash; angka &ldquo;Hari&rdquo; selalu mengikuti tanggal hari ini.<br>Versi build: 2026-09-29-v13 (kartu ringkasan tanpa scroll samping)</footer>
 </div>
 
 <script>
@@ -586,8 +638,7 @@ let REPORT_DATE_LABEL = REPORT_DATE_LABEL_INITIAL;
 const TARGET_DIVISI = "Flamboyan";
 const RAW = [{"noCust": "C0031385PUT", "nama": "PUTRI NURLIA KHAIRUNNISA", "faktur": "000226/FKT/PP/0926", "top": "-", "tglJto": "2026-09-26", "jumlah": 159550000.0, "type": "AGYA STYLIX 1.2 G CVT", "cara": "Kredit", "leasing": "TAF", "salesman": "DENNY FRANATA SEMBIRING", "supervisor": "PUTRA", "tglTagih": "Belum Buat Tagihan", "tglBarcode": "-", "followup": null}, {"noCust": "C0031775CVR", "nama": "CV ROCKY GULTOM", "faktur": "000191/FKT/PP/0926", "top": "-", "tglJto": "2026-09-23", "jumlah": 410900000.0, "type": "HILUX DOUBLE CABIN 2.8 G (4X4) DSL M/T", "cara": "Kredit", "leasing": "ACC", "salesman": "ALEXANDRO SITUNGKIR", "supervisor": "ZAIN", "tglTagih": "2026-09-24", "tglBarcode": "2026-09-23", "followup": null}, {"noCust": "C0031867MIT", "nama": "CV MITRA SETIA", "faktur": "000113/FKT/PP/0926", "top": "-", "tglJto": "2026-09-17", "jumlah": 292000000.0, "type": "KIJANG INNOVA ZENIX 2.0 Q HV CVT TSS MODELISTA", "cara": "Kredit", "leasing": "TAF", "salesman": "NIA HENDRIATY", "supervisor": "LIK SIONG", "tglTagih": "2026-09-18", "tglBarcode": "2026-09-18", "followup": null}, {"noCust": "C0032092JER", "nama": "JEREMIA ALEXANDER AGUNG SEMBIRING", "faktur": "000088/FKT/PP/0926", "top": "-", "tglJto": "2026-09-11", "jumlah": 157500000.0, "type": "RUSH 1.5 S M/T GR SPORT", "cara": "Kredit", "leasing": "IMFS", "salesman": "GANDA MARTUA SITUMORANG SE", "supervisor": "LIK SIONG", "tglTagih": "2026-09-12", "tglBarcode": "-", "followup": null}, {"noCust": "C0032206AZR", "nama": "AZRAI RIDHO HANAFIAH SE M SI", "faktur": "000204/FKT/PP/0926", "top": "-", "tglJto": "2026-09-24", "jumlah": 166500000.0, "type": "CALYA 1.2 G A/T", "cara": "Kredit", "leasing": "ACC", "salesman": "ALFIAN R STEFANUS HUTAGALUNG", "supervisor": "PRODIPA", "tglTagih": "2026-09-25", "tglBarcode": "2026-09-25", "followup": null}, {"noCust": "C0032254MAI", "nama": "MAINSYAH PUTRA", "faktur": "000165/FKT/PP/0926", "top": "-", "tglJto": "2026-09-21", "jumlah": 194400000.0, "type": "AVANZA 1.5 G M/T", "cara": "Kredit", "leasing": "ACC", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "tglTagih": "2026-09-22", "tglBarcode": "2026-09-21", "followup": null}, {"noCust": "C0032268DOL", "nama": "DOLLY HAGANTHA", "faktur": "000171/FKT/PP/0926", "top": "-", "tglJto": "2026-09-21", "jumlah": 210400000.0, "type": "AVANZA 1.5 G M/T", "cara": "Kredit", "leasing": "TAF", "salesman": "YOSA AFANDI", "supervisor": "LIK SIONG", "tglTagih": "2026-09-22", "tglBarcode": "2026-09-21", "followup": null}, {"noCust": "C0032419MHD", "nama": "MHD SYAHRIR HAMZAH", "faktur": "000210/FKT/PP/0926", "top": "-", "tglJto": "2026-09-25", "jumlah": 206200000.0, "type": "RUSH 1.5 S A/T GR SPORT", "cara": "Kredit", "leasing": "ACC", "salesman": "DEDI ISWANTO SPD", "supervisor": "LIK SIONG", "tglTagih": "2026-09-26", "tglBarcode": "-", "followup": null}, {"noCust": "C0032469ARI", "nama": "ARIMA NADELA NAINGGOLAN", "faktur": "000141/FKT/PP/0926", "top": "-", "tglJto": "2026-09-18", "jumlah": 207199997.0, "type": "RUSH 1.5 S A/T GR SPORT", "cara": "Kredit", "leasing": "ACC", "salesman": "YOSA AFANDI", "supervisor": "LIK SIONG", "tglTagih": "2026-09-19", "tglBarcode": "-", "followup": null}, {"noCust": "C0032470MAN", "nama": "MANGANTAR SIMBOLON", "faktur": "000167/FKT/PP/0926", "top": "-", "tglJto": "2026-09-21", "jumlah": 125000000.0, "type": "VELOZ 1.5 Q HYBRID CVT MODELLISTA", "cara": "Kredit", "leasing": "ACC", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "tglTagih": "2026-09-22", "tglBarcode": "2026-09-21", "followup": null}, {"noCust": "C0032486MIN", "nama": "MINAH", "faktur": "000219/FKT/PP/0926", "top": "-", "tglJto": "2026-09-26", "jumlah": 404301205.0, "type": "KIJANG INNOVA ZENIX 2.0 V HV CVT MODELISTA", "cara": "Kredit", "leasing": "KKB", "salesman": "FRANKY LUMBANRAJA", "supervisor": "PRODIPA", "tglTagih": "Belum Buat Tagihan", "tglBarcode": "-", "followup": null}, {"noCust": "C0032511DIS", "nama": "DISON PRIMA ANTONI SIMBOLON", "faktur": "000174/FKT/PP/0926", "top": "-", "tglJto": "2026-09-21", "jumlah": 135940000.0, "type": "RAIZE 1.0T GR SPORT CVT TWO TONE", "cara": "Kredit", "leasing": "TAF", "salesman": "MUSA IRAWAN", "supervisor": "LIK SIONG", "tglTagih": "2026-09-22", "tglBarcode": "2026-09-21", "followup": null}, {"noCust": "C0032552YAY", "nama": "YAYASAN UNIVERSITAS PEMBINAAN MASYARAKAT INDONESIA SYAHRUDDIN", "faktur": "000193/FKT/PP/0926", "top": "-", "tglJto": "2026-09-23", "jumlah": 1262600000.0, "type": "ALPHARD 2.5 HYBRID CVT", "cara": "Kredit", "leasing": "ADM", "salesman": "MUHAMMAD FIRQIN QUFRAN", "supervisor": "LIK SIONG", "tglTagih": "2026-09-25", "tglBarcode": "2026-09-23", "followup": null}, {"noCust": "C0032559SIS", "nama": "SISWANTO", "faktur": "000200/FKT/PP/0926", "top": "-", "tglJto": "2026-09-24", "jumlah": 214550000.0, "type": "AVANZA 1.3 E CVT", "cara": "Kredit", "leasing": "ACC", "salesman": "HARDI WIJAYA", "supervisor": "LIK SIONG", "tglTagih": "2026-09-25", "tglBarcode": "2026-09-25", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000055/FKT/PP/0826", "top": "-", "tglJto": "2026-08-11", "jumlah": 446600000.0, "type": "KIJANG INNOVA ZENIX 2.0 V HV CVT MODELISTA", "cara": "Tunai", "leasing": "Cash", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "tglTagih": "2026-08-11", "tglBarcode": "2026-08-11", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000075/FKT/PP/0826", "top": "-", "tglJto": "2026-08-13", "jumlah": 478000000.0, "type": "HILUX DOUBLE CABIN 2.8 V (4X4) A/T", "cara": "Tunai", "leasing": "Cash", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "tglTagih": "2026-08-13", "tglBarcode": "2026-08-14", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000001/FKT/PP/0926", "top": "-", "tglJto": "2026-09-01", "jumlah": 164700000.0, "type": "CALYA 1.2 G A/T", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "tglTagih": "2026-09-01", "tglBarcode": "2026-09-01", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000123/FKT/PP/0926", "top": "-", "tglJto": "2026-09-18", "jumlah": 337200000.0, "type": "KIJANG INNOVA 2.4 G M/T", "cara": "Tunai", "leasing": "Cash", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "tglTagih": "2026-09-18", "tglBarcode": "-", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000139/FKT/PP/0926", "top": "-", "tglJto": "2026-09-18", "jumlah": 251400000.0, "type": "RUSH 1.5 S M/T GR SPORT", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "tglTagih": "2026-09-18", "tglBarcode": "2026-09-19", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000189/FKT/PP/0926", "top": "-", "tglJto": "2026-09-23", "jumlah": 354600000.0, "type": "KIJANG INNOVA 2.4 G A/T", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "tglTagih": "2026-09-23", "tglBarcode": "2026-09-23", "followup": null}]
 ;
-const SALES_RAW = [{"tanggal": "2026-09-01", "faktur": "000001/FKT/PP/0926", "nama": "PT SUTAN INDO ANEKA MOBIL", "namabrg": "CALYA 1.2 G A/T", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "asuransi": "NON ASURANSI"}, {"tanggal": "2026-09-02", "faktur": "000013/FKT/PP/0926", "nama": "EMMY MONARA", "namabrg": "RUSH 1.5 S A/T GR SPORT", "cara": "Kredit", "leasing": "TAF", "salesman": "ENDA HARTO SEMBIRING", "supervisor": "ZAIN", "asuransi": "GARDA/AAB"}, {"tanggal": "2026-09-03", "faktur": "000014/FKT/PP/0926", "nama": "BINARIA KARO KARO", "namabrg": "HI ACE COMMUTER M/T", "cara": "Kredit", "leasing": "TAF", "salesman": "FIRMANDO GINTING", "supervisor": "LIK SIONG", "asuransi": "MSIG"}, {"tanggal": "2026-09-03", "faktur": "000016/FKT/PP/0926", "nama": "TIRTA MAHARDIKA", "namabrg": "VELOZ 1.5 Q HYBRID CVT MODELLISTA", "cara": "Kredit", "leasing": "ACC", "salesman": "MUHAMMAD FATIH SILMI", "supervisor": "PUTRA", "asuransi": "GARDA/AAB"}, {"tanggal": "2026-09-04", "faktur": "000022/FKT/PP/0926", "nama": "ISWANTO SAMBO", "namabrg": "RUSH 1.5 S A/T GR SPORT", "cara": "Kredit", "leasing": "TAF", "salesman": "DOLI ANDREAS SIREGAR", "supervisor": "PRODIPA", "asuransi": "GARDA/AAB"}, {"tanggal": "2026-09-04", "faktur": "000023/FKT/PP/0926", "nama": "UMAR DANI", "namabrg": "AVANZA 1.5 G M/T", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "asuransi": "NON ASURANSI"}, {"tanggal": "2026-09-05", "faktur": "000034/FKT/PP/0926", "nama": "WILLIAM OSCAR ANANTA PINEM", "namabrg": "CALYA 1.2 G M/T", "cara": "Kredit", "leasing": "ACC", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "asuransi": "SHBT"}, {"tanggal": "2026-09-07", "faktur": "000039/FKT/PP/0926", "nama": "JONFRI HASUDUNGAN SIHOMBING", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Tunai", "leasing": "Cash", "salesman": "ANDI DESWANDA", "supervisor": "ZAIN", "asuransi": "NON ASURANSI"}, {"tanggal": "2026-09-07", "faktur": "000043/FKT/PP/0926", "nama": "GANDA SAMOSIR S IP", "namabrg": "KIJANG INNOVA ZENIX 2.0 Q HV CVT TSS MODELISTA", "cara": "Tunai", "leasing": "Cash", "salesman": "PERMATA INDAH LEMMY", "supervisor": "LIK SIONG", "asuransi": "NON ASURANSI"}, {"tanggal": "2026-09-08", "faktur": "000047/FKT/PP/0926", "nama": "EVRIANTO P BATU", "namabrg": "RUSH 1.5 S A/T GR SPORT", "cara": "Tunai", "leasing": "Cash", "salesman": "RADE JULIMAN LUMBAN TORUAN", "supervisor": "LIK SIONG", "asuransi": "NON ASURANSI"}, {"tanggal": "2026-09-08", "faktur": "000049/FKT/PP/0926", "nama": "PT MULIA DUTA PERMATA", "namabrg": "HILUX RANGGA PICK UP 2.0 HIGH M/T", "cara": "Kredit", "leasing": "TAF", "salesman": "DOLI ANDREAS SIREGAR", "supervisor": "PRODIPA", "asuransi": "GARDA/AAB"}, {"tanggal": "2026-09-09", "faktur": "000056/FKT/PP/0926", "nama": "PT SIBALEC", "namabrg": "KIJANG INNOVA ZENIX 2.0 V HV CVT MODELISTA", "cara": "Tunai", "leasing": "Cash", "salesman": "RICHARD SAMUEL SITUMORANG", "supervisor": "PRODIPA", "asuransi": "NON ASURANSI"}, {"tanggal": "2026-09-09", "faktur": "000058/FKT/PP/0926", "nama": "LENI MARLINA KATARINA", "namabrg": "AVANZA 1.5 G CVT", "cara": "Kredit", "leasing": "BRIM", "salesman": "RADE JULIMAN LUMBAN TORUAN", "supervisor": "LIK SIONG", "asuransi": "BRINS"}, {"tanggal": "2026-09-09", "faktur": "000059/FKT/PP/0926", "nama": "NUR ARAFAH", "namabrg": "AGYA 1.2 G CVT", "cara": "Kredit", "leasing": "TAF", "salesman": "ALFIAN R STEFANUS HUTAGALUNG", "supervisor": "PRODIPA", "asuransi": "GARDA/AAB"}, {"tanggal": "2026-09-09", "faktur": "000061/FKT/PP/0926", "nama": "HENDRIK", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Kredit", "leasing": "TAF", "salesman": "OSEP MARIO PANJAITAN", "supervisor": "PRODIPA", "asuransi": "GARDA/AAB"}, {"tanggal": "2026-09-09", "faktur": "000062/FKT/PP/0926", "nama": "TUTI", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Kredit", "leasing": "BRIM", "salesman": "HOT IMANSON PURBA", "supervisor": "PRODIPA", "asuransi": "ACA"}, {"tanggal": "2026-09-09", "faktur": "000063/FKT/PP/0926", "nama": "M ALDY TEGUH", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Kredit", "leasing": "ACC", "salesman": "ARI RAMADHAN", "supervisor": "ZAIN", "asuransi": "GARDA/AAB"}, {"tanggal": "2026-09-09", "faktur": "000064/FKT/PP/0926", "nama": "MISNAWATI", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Kredit", "leasing": "ACC", "salesman": "ANDI DHIKA PUTRANTA M", "supervisor": "PRODIPA", "asuransi": "GARDA/AAB"}, {"tanggal": "2026-09-11", "faktur": "000078/FKT/PP/0926", "nama": "ASBIA HASIBUAN", "namabrg": "AVANZA 1.3 E CVT", "cara": "Kredit", "leasing": "TAF", "salesman": "ROHMAN HANAPI NASUTION", "supervisor": "LIK SIONG", "asuransi": "GARDA/AAB"}, {"tanggal": "2026-09-11", "faktur": "000083/FKT/PP/0926", "nama": "MIKHA TARIGAN", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Kredit", "leasing": "ACC", "salesman": "YOSA AFANDI", "supervisor": "LIK SIONG", "asuransi": "GARDA/AAB"}, {"tanggal": "2026-09-11", "faktur": "000086/FKT/PP/0926", "nama": "ARCHES MADA GINTING", "namabrg": "KIJANG INNOVA ZENIX 2.0 G HV CVT", "cara": "Tunai", "leasing": "Cash", "salesman": "FELIX ANDRIANO G S H", "supervisor": "PRODIPA", "asuransi": "NON ASURANSI"}, {"tanggal": "2026-09-11", "faktur": "000088/FKT/PP/0926", "nama": "JEREMIA ALEXANDER AGUNG SEMBIRING", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Kredit", "leasing": "IMFS", "salesman": "GANDA MARTUA SITUMORANG SE", "supervisor": "LIK SIONG", "asuransi": "NON ASURANSI"}, {"tanggal": "2026-09-11", "faktur": "000089/FKT/PP/0926", "nama": "HENDRO SUGIARTO S MILALA IR", "namabrg": "RAIZE 1.0T GR SPORT CVT TWO TONE", "cara": "Kredit", "leasing": "TAF", "salesman": "ALEXANDRO SITUNGKIR", "supervisor": "ZAIN", "asuransi": "GARDA/AAB"}, {"tanggal": "2026-09-12", "faktur": "000090/FKT/PP/0926", "nama": "NOPENSA KARO KARO", "namabrg": "CALYA 1.2 G M/T", "cara": "Kredit", "leasing": "TAF", "salesman": "EDO PARELLA S", "supervisor": "PRODIPA", "asuransi": "GARDA/AAB"}, {"tanggal": "2026-09-14", "faktur": "000099/FKT/PP/0926", "nama": "EDI KURNIAWAN", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Kredit", "leasing": "TAF", "salesman": "FELIX ANDRIANO G S H", "supervisor": "PRODIPA", "asuransi": "GARDA/AAB"}, {"tanggal": "2026-09-15", "faktur": "000104/FKT/PP/0926", "nama": "DEDDY UMARDANI LBS", "namabrg": "KIJANG INNOVA ZENIX 2.0 V HV CVT MODELISTA", "cara": "Kredit", "leasing": "BSI", "salesman": "BERNAT SIHOMBING", "supervisor": "LIK SIONG", "asuransi": "NON ASURANSI"}, {"tanggal": "2026-09-16", "faktur": "000107/FKT/PP/0926", "nama": "DUMARIA IMELDA HUTAGALUNG", "namabrg": "KIJANG INNOVA ZENIX 2.0 G HV CVT", "cara": "Kredit", "leasing": "ACC", "salesman": "FIRMANDO GINTING", "supervisor": "LIK SIONG", "asuransi": "GARDA/AAB"}, {"tanggal": "2026-09-17", "faktur": "000113/FKT/PP/0926", "nama": "CV MITRA SETIA", "namabrg": "KIJANG INNOVA ZENIX 2.0 Q HV CVT TSS MODELISTA", "cara": "Kredit", "leasing": "TAF", "salesman": "NIA HENDRIATY", "supervisor": "LIK SIONG", "asuransi": "MSIG"}, {"tanggal": "2026-09-17", "faktur": "000115/FKT/PP/0926", "nama": "DILA S S KEB", "namabrg": "KIJANG INNOVA 2.4 G A/T", "cara": "Tunai", "leasing": "Cash", "salesman": "DEDI ISWANTO SPD", "supervisor": "LIK SIONG", "asuransi": "NON ASURANSI"}, {"tanggal": "2026-09-18", "faktur": "000123/FKT/PP/0926", "nama": "PT SUTAN INDO ANEKA MOBIL", "namabrg": "KIJANG INNOVA 2.4 G M/T", "cara": "Tunai", "leasing": "Cash", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "asuransi": "NON ASURANSI"}, {"tanggal": "2026-09-18", "faktur": "000139/FKT/PP/0926", "nama": "PT SUTAN INDO ANEKA MOBIL", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "asuransi": "NON ASURANSI"}, {"tanggal": "2026-09-18", "faktur": "000141/FKT/PP/0926", "nama": "ARIMA NADELA NAINGGOLAN", "namabrg": "RUSH 1.5 S A/T GR SPORT", "cara": "Kredit", "leasing": "ACC", "salesman": "YOSA AFANDI", "supervisor": "LIK SIONG", "asuransi": "GARDA/AAB"}, {"tanggal": "2026-09-19", "faktur": "000148/FKT/PP/0926", "nama": "KOKO SANTOSO", "namabrg": "HILUX RANGGA PICK UP 2.0 STANDARD M/T", "cara": "Kredit", "leasing": "ACC", "salesman": "JHONY KRISTIANTO TAMPUBOLON", "supervisor": "ZAIN", "asuransi": "SHBT"}, {"tanggal": "2026-09-21", "faktur": "000165/FKT/PP/0926", "nama": "MAINSYAH PUTRA", "namabrg": "AVANZA 1.5 G M/T", "cara": "Kredit", "leasing": "ACC", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "asuransi": "GARDA/AAB"}, {"tanggal": "2026-09-21", "faktur": "000167/FKT/PP/0926", "nama": "MANGANTAR SIMBOLON", "namabrg": "VELOZ 1.5 Q HYBRID CVT MODELLISTA", "cara": "Kredit", "leasing": "ACC", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "asuransi": "GARDA/AAB"}, {"tanggal": "2026-09-21", "faktur": "000171/FKT/PP/0926", "nama": "DOLLY HAGANTHA", "namabrg": "AVANZA 1.5 G M/T", "cara": "Kredit", "leasing": "TAF", "salesman": "YOSA AFANDI", "supervisor": "LIK SIONG", "asuransi": "GARDA/AAB"}, {"tanggal": "2026-09-21", "faktur": "000173/FKT/PP/0926", "nama": "HENSEN GUNAWAN", "namabrg": "KIJANG INNOVA ZENIX 2.0 V HV CVT MODELISTA", "cara": "Tunai", "leasing": "Cash", "salesman": "DEO PRATAMA WIJAYA", "supervisor": "ZAIN", "asuransi": "NON ASURANSI"}, {"tanggal": "2026-09-21", "faktur": "000174/FKT/PP/0926", "nama": "DISON PRIMA ANTONI SIMBOLON", "namabrg": "RAIZE 1.0T GR SPORT CVT TWO TONE", "cara": "Kredit", "leasing": "TAF", "salesman": "MUSA IRAWAN", "supervisor": "LIK SIONG", "asuransi": "GARDA/AAB"}, {"tanggal": "2026-09-22", "faktur": "000181/FKT/PP/0926", "nama": "HARIYONO", "namabrg": "AGYA STYLIX 1.2 G CVT", "cara": "Kredit", "leasing": "BUANA", "salesman": "DEDI ISWANTO SPD", "supervisor": "LIK SIONG", "asuransi": "SOMPO"}, {"tanggal": "2026-09-23", "faktur": "000189/FKT/PP/0926", "nama": "PT SUTAN INDO ANEKA MOBIL", "namabrg": "KIJANG INNOVA 2.4 G A/T", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "asuransi": "NON ASURANSI"}, {"tanggal": "2026-09-23", "faktur": "000191/FKT/PP/0926", "nama": "CV ROCKY GULTOM", "namabrg": "HILUX DOUBLE CABIN 2.8 G (4X4) DSL M/T", "cara": "Kredit", "leasing": "ACC", "salesman": "ALEXANDRO SITUNGKIR", "supervisor": "ZAIN", "asuransi": "SHBT"}, {"tanggal": "2026-09-23", "faktur": "000193/FKT/PP/0926", "nama": "YAYASAN UNIVERSITAS PEMBINAAN MASYARAKAT INDONESIA SYAHRUDDIN", "namabrg": "ALPHARD 2.5 HYBRID CVT", "cara": "Kredit", "leasing": "ADM", "salesman": "MUHAMMAD FIRQIN QUFRAN", "supervisor": "LIK SIONG", "asuransi": "ZURICH"}, {"tanggal": "2026-09-24", "faktur": "000200/FKT/PP/0926", "nama": "SISWANTO", "namabrg": "AVANZA 1.3 E CVT", "cara": "Kredit", "leasing": "ACC", "salesman": "HARDI WIJAYA", "supervisor": "LIK SIONG", "asuransi": "GARDA/AAB"}, {"tanggal": "2026-09-24", "faktur": "000204/FKT/PP/0926", "nama": "AZRAI RIDHO HANAFIAH SE M SI", "namabrg": "CALYA 1.2 G A/T", "cara": "Kredit", "leasing": "ACC", "salesman": "ALFIAN R STEFANUS HUTAGALUNG", "supervisor": "PRODIPA", "asuransi": "SHBT"}, {"tanggal": "2026-09-24", "faktur": "000206/FKT/PP/0926", "nama": "SAID HAMID SE", "namabrg": "KIJANG INNOVA ZENIX 2.0 Q HV CVT TSS MODELISTA", "cara": "Tunai", "leasing": "Cash", "salesman": "MUSA IRAWAN", "supervisor": "LIK SIONG", "asuransi": "NON ASURANSI"}, {"tanggal": "2026-09-25", "faktur": "000210/FKT/PP/0926", "nama": "MHD SYAHRIR HAMZAH", "namabrg": "RUSH 1.5 S A/T GR SPORT", "cara": "Kredit", "leasing": "ACC", "salesman": "DEDI ISWANTO SPD", "supervisor": "LIK SIONG", "asuransi": "GARDA/AAB"}, {"tanggal": "2026-09-26", "faktur": "000219/FKT/PP/0926", "nama": "MINAH", "namabrg": "KIJANG INNOVA ZENIX 2.0 V HV CVT MODELISTA", "cara": "Kredit", "leasing": "KKB", "salesman": "FRANKY LUMBANRAJA", "supervisor": "PRODIPA", "asuransi": "GARDA/AAB"}, {"tanggal": "2026-09-26", "faktur": "000226/FKT/PP/0926", "nama": "PUTRI NURLIA KHAIRUNNISA", "namabrg": "AGYA STYLIX 1.2 G CVT", "cara": "Kredit", "leasing": "TAF", "salesman": "DENNY FRANATA SEMBIRING", "supervisor": "PUTRA", "asuransi": "GARDA/AAB"}, {"tanggal": "2026-09-28", "faktur": "000242/FKT/PP/0926", "nama": "NAZARIF YOLLA HANDAYANI", "namabrg": "FORTUNER 2.8 VRZ TSS 4X2 A/T", "cara": "Kredit", "leasing": "ACC", "salesman": "FIKRI MUHAMMAD", "supervisor": "ZAIN", "asuransi": "SHBT"}]
-;
+let SALES = [{"tanggal": "2026-09-01", "faktur": "000001/FKT/PP/0926", "nama": "PT SUTAN INDO ANEKA MOBIL", "namabrg": "CALYA 1.2 G A/T", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-02", "faktur": "000013/FKT/PP/0926", "nama": "EMMY MONARA", "namabrg": "RUSH 1.5 S A/T GR SPORT", "cara": "Kredit", "leasing": "TAF", "salesman": "ENDA HARTO SEMBIRING", "supervisor": "ZAIN", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-03", "faktur": "000014/FKT/PP/0926", "nama": "BINARIA KARO KARO", "namabrg": "HI ACE COMMUTER M/T", "cara": "Kredit", "leasing": "TAF", "salesman": "FIRMANDO GINTING", "supervisor": "LIK SIONG", "asuransi": "MSIG", "divisi": "Flamboyan"}, {"tanggal": "2026-09-03", "faktur": "000016/FKT/PP/0926", "nama": "TIRTA MAHARDIKA", "namabrg": "VELOZ 1.5 Q HYBRID CVT MODELLISTA", "cara": "Kredit", "leasing": "ACC", "salesman": "MUHAMMAD FATIH SILMI", "supervisor": "PUTRA", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-04", "faktur": "000022/FKT/PP/0926", "nama": "ISWANTO SAMBO", "namabrg": "RUSH 1.5 S A/T GR SPORT", "cara": "Kredit", "leasing": "TAF", "salesman": "DOLI ANDREAS SIREGAR", "supervisor": "PRODIPA", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-04", "faktur": "000023/FKT/PP/0926", "nama": "UMAR DANI", "namabrg": "AVANZA 1.5 G M/T", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-05", "faktur": "000034/FKT/PP/0926", "nama": "WILLIAM OSCAR ANANTA PINEM", "namabrg": "CALYA 1.2 G M/T", "cara": "Kredit", "leasing": "ACC", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "asuransi": "SHBT", "divisi": "Flamboyan"}, {"tanggal": "2026-09-07", "faktur": "000039/FKT/PP/0926", "nama": "JONFRI HASUDUNGAN SIHOMBING", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Tunai", "leasing": "Cash", "salesman": "ANDI DESWANDA", "supervisor": "ZAIN", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-07", "faktur": "000043/FKT/PP/0926", "nama": "GANDA SAMOSIR S IP", "namabrg": "KIJANG INNOVA ZENIX 2.0 Q HV CVT TSS MODELISTA", "cara": "Tunai", "leasing": "Cash", "salesman": "PERMATA INDAH LEMMY", "supervisor": "LIK SIONG", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-08", "faktur": "000047/FKT/PP/0926", "nama": "EVRIANTO P BATU", "namabrg": "RUSH 1.5 S A/T GR SPORT", "cara": "Tunai", "leasing": "Cash", "salesman": "RADE JULIMAN LUMBAN TORUAN", "supervisor": "LIK SIONG", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-08", "faktur": "000049/FKT/PP/0926", "nama": "PT MULIA DUTA PERMATA", "namabrg": "HILUX RANGGA PICK UP 2.0 HIGH M/T", "cara": "Kredit", "leasing": "TAF", "salesman": "DOLI ANDREAS SIREGAR", "supervisor": "PRODIPA", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-09", "faktur": "000056/FKT/PP/0926", "nama": "PT SIBALEC", "namabrg": "KIJANG INNOVA ZENIX 2.0 V HV CVT MODELISTA", "cara": "Tunai", "leasing": "Cash", "salesman": "RICHARD SAMUEL SITUMORANG", "supervisor": "PRODIPA", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-09", "faktur": "000058/FKT/PP/0926", "nama": "LENI MARLINA KATARINA", "namabrg": "AVANZA 1.5 G CVT", "cara": "Kredit", "leasing": "BRIM", "salesman": "RADE JULIMAN LUMBAN TORUAN", "supervisor": "LIK SIONG", "asuransi": "BRINS", "divisi": "Flamboyan"}, {"tanggal": "2026-09-09", "faktur": "000059/FKT/PP/0926", "nama": "NUR ARAFAH", "namabrg": "AGYA 1.2 G CVT", "cara": "Kredit", "leasing": "TAF", "salesman": "ALFIAN R STEFANUS HUTAGALUNG", "supervisor": "PRODIPA", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-09", "faktur": "000061/FKT/PP/0926", "nama": "HENDRIK", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Kredit", "leasing": "TAF", "salesman": "OSEP MARIO PANJAITAN", "supervisor": "PRODIPA", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-09", "faktur": "000062/FKT/PP/0926", "nama": "TUTI", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Kredit", "leasing": "BRIM", "salesman": "HOT IMANSON PURBA", "supervisor": "PRODIPA", "asuransi": "ACA", "divisi": "Flamboyan"}, {"tanggal": "2026-09-09", "faktur": "000063/FKT/PP/0926", "nama": "M ALDY TEGUH", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Kredit", "leasing": "ACC", "salesman": "ARI RAMADHAN", "supervisor": "ZAIN", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-09", "faktur": "000064/FKT/PP/0926", "nama": "MISNAWATI", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Kredit", "leasing": "ACC", "salesman": "ANDI DHIKA PUTRANTA M", "supervisor": "PRODIPA", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-11", "faktur": "000078/FKT/PP/0926", "nama": "ASBIA HASIBUAN", "namabrg": "AVANZA 1.3 E CVT", "cara": "Kredit", "leasing": "TAF", "salesman": "ROHMAN HANAPI NASUTION", "supervisor": "LIK SIONG", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-11", "faktur": "000083/FKT/PP/0926", "nama": "MIKHA TARIGAN", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Kredit", "leasing": "ACC", "salesman": "YOSA AFANDI", "supervisor": "LIK SIONG", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-11", "faktur": "000086/FKT/PP/0926", "nama": "ARCHES MADA GINTING", "namabrg": "KIJANG INNOVA ZENIX 2.0 G HV CVT", "cara": "Tunai", "leasing": "Cash", "salesman": "FELIX ANDRIANO G S H", "supervisor": "PRODIPA", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-11", "faktur": "000088/FKT/PP/0926", "nama": "JEREMIA ALEXANDER AGUNG SEMBIRING", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Kredit", "leasing": "IMFS", "salesman": "GANDA MARTUA SITUMORANG SE", "supervisor": "LIK SIONG", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-11", "faktur": "000089/FKT/PP/0926", "nama": "HENDRO SUGIARTO S MILALA IR", "namabrg": "RAIZE 1.0T GR SPORT CVT TWO TONE", "cara": "Kredit", "leasing": "TAF", "salesman": "ALEXANDRO SITUNGKIR", "supervisor": "ZAIN", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-12", "faktur": "000090/FKT/PP/0926", "nama": "NOPENSA KARO KARO", "namabrg": "CALYA 1.2 G M/T", "cara": "Kredit", "leasing": "TAF", "salesman": "EDO PARELLA S", "supervisor": "PRODIPA", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-14", "faktur": "000099/FKT/PP/0926", "nama": "EDI KURNIAWAN", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Kredit", "leasing": "TAF", "salesman": "FELIX ANDRIANO G S H", "supervisor": "PRODIPA", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-15", "faktur": "000104/FKT/PP/0926", "nama": "DEDDY UMARDANI LBS", "namabrg": "KIJANG INNOVA ZENIX 2.0 V HV CVT MODELISTA", "cara": "Kredit", "leasing": "BSI", "salesman": "BERNAT SIHOMBING", "supervisor": "LIK SIONG", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-16", "faktur": "000107/FKT/PP/0926", "nama": "DUMARIA IMELDA HUTAGALUNG", "namabrg": "KIJANG INNOVA ZENIX 2.0 G HV CVT", "cara": "Kredit", "leasing": "ACC", "salesman": "FIRMANDO GINTING", "supervisor": "LIK SIONG", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-17", "faktur": "000113/FKT/PP/0926", "nama": "CV MITRA SETIA", "namabrg": "KIJANG INNOVA ZENIX 2.0 Q HV CVT TSS MODELISTA", "cara": "Kredit", "leasing": "TAF", "salesman": "NIA HENDRIATY", "supervisor": "LIK SIONG", "asuransi": "MSIG", "divisi": "Flamboyan"}, {"tanggal": "2026-09-17", "faktur": "000115/FKT/PP/0926", "nama": "DILA S S KEB", "namabrg": "KIJANG INNOVA 2.4 G A/T", "cara": "Tunai", "leasing": "Cash", "salesman": "DEDI ISWANTO SPD", "supervisor": "LIK SIONG", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-18", "faktur": "000123/FKT/PP/0926", "nama": "PT SUTAN INDO ANEKA MOBIL", "namabrg": "KIJANG INNOVA 2.4 G M/T", "cara": "Tunai", "leasing": "Cash", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-18", "faktur": "000139/FKT/PP/0926", "nama": "PT SUTAN INDO ANEKA MOBIL", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-18", "faktur": "000141/FKT/PP/0926", "nama": "ARIMA NADELA NAINGGOLAN", "namabrg": "RUSH 1.5 S A/T GR SPORT", "cara": "Kredit", "leasing": "ACC", "salesman": "YOSA AFANDI", "supervisor": "LIK SIONG", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-19", "faktur": "000148/FKT/PP/0926", "nama": "KOKO SANTOSO", "namabrg": "HILUX RANGGA PICK UP 2.0 STANDARD M/T", "cara": "Kredit", "leasing": "ACC", "salesman": "JHONY KRISTIANTO TAMPUBOLON", "supervisor": "ZAIN", "asuransi": "SHBT", "divisi": "Flamboyan"}, {"tanggal": "2026-09-21", "faktur": "000165/FKT/PP/0926", "nama": "MAINSYAH PUTRA", "namabrg": "AVANZA 1.5 G M/T", "cara": "Kredit", "leasing": "ACC", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-21", "faktur": "000167/FKT/PP/0926", "nama": "MANGANTAR SIMBOLON", "namabrg": "VELOZ 1.5 Q HYBRID CVT MODELLISTA", "cara": "Kredit", "leasing": "ACC", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-21", "faktur": "000171/FKT/PP/0926", "nama": "DOLLY HAGANTHA", "namabrg": "AVANZA 1.5 G M/T", "cara": "Kredit", "leasing": "TAF", "salesman": "YOSA AFANDI", "supervisor": "LIK SIONG", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-21", "faktur": "000173/FKT/PP/0926", "nama": "HENSEN GUNAWAN", "namabrg": "KIJANG INNOVA ZENIX 2.0 V HV CVT MODELISTA", "cara": "Tunai", "leasing": "Cash", "salesman": "DEO PRATAMA WIJAYA", "supervisor": "ZAIN", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-21", "faktur": "000174/FKT/PP/0926", "nama": "DISON PRIMA ANTONI SIMBOLON", "namabrg": "RAIZE 1.0T GR SPORT CVT TWO TONE", "cara": "Kredit", "leasing": "TAF", "salesman": "MUSA IRAWAN", "supervisor": "LIK SIONG", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-22", "faktur": "000181/FKT/PP/0926", "nama": "HARIYONO", "namabrg": "AGYA STYLIX 1.2 G CVT", "cara": "Kredit", "leasing": "BUANA", "salesman": "DEDI ISWANTO SPD", "supervisor": "LIK SIONG", "asuransi": "SOMPO", "divisi": "Flamboyan"}, {"tanggal": "2026-09-23", "faktur": "000189/FKT/PP/0926", "nama": "PT SUTAN INDO ANEKA MOBIL", "namabrg": "KIJANG INNOVA 2.4 G A/T", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-23", "faktur": "000191/FKT/PP/0926", "nama": "CV ROCKY GULTOM", "namabrg": "HILUX DOUBLE CABIN 2.8 G (4X4) DSL M/T", "cara": "Kredit", "leasing": "ACC", "salesman": "ALEXANDRO SITUNGKIR", "supervisor": "ZAIN", "asuransi": "SHBT", "divisi": "Flamboyan"}, {"tanggal": "2026-09-23", "faktur": "000193/FKT/PP/0926", "nama": "YAYASAN UNIVERSITAS PEMBINAAN MASYARAKAT INDONESIA SYAHRUDDIN", "namabrg": "ALPHARD 2.5 HYBRID CVT", "cara": "Kredit", "leasing": "ADM", "salesman": "MUHAMMAD FIRQIN QUFRAN", "supervisor": "LIK SIONG", "asuransi": "ZURICH", "divisi": "Flamboyan"}, {"tanggal": "2026-09-24", "faktur": "000200/FKT/PP/0926", "nama": "SISWANTO", "namabrg": "AVANZA 1.3 E CVT", "cara": "Kredit", "leasing": "ACC", "salesman": "HARDI WIJAYA", "supervisor": "LIK SIONG", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-24", "faktur": "000204/FKT/PP/0926", "nama": "AZRAI RIDHO HANAFIAH SE M SI", "namabrg": "CALYA 1.2 G A/T", "cara": "Kredit", "leasing": "ACC", "salesman": "ALFIAN R STEFANUS HUTAGALUNG", "supervisor": "PRODIPA", "asuransi": "SHBT", "divisi": "Flamboyan"}, {"tanggal": "2026-09-24", "faktur": "000206/FKT/PP/0926", "nama": "SAID HAMID SE", "namabrg": "KIJANG INNOVA ZENIX 2.0 Q HV CVT TSS MODELISTA", "cara": "Tunai", "leasing": "Cash", "salesman": "MUSA IRAWAN", "supervisor": "LIK SIONG", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-25", "faktur": "000210/FKT/PP/0926", "nama": "MHD SYAHRIR HAMZAH", "namabrg": "RUSH 1.5 S A/T GR SPORT", "cara": "Kredit", "leasing": "ACC", "salesman": "DEDI ISWANTO SPD", "supervisor": "LIK SIONG", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-26", "faktur": "000219/FKT/PP/0926", "nama": "MINAH", "namabrg": "KIJANG INNOVA ZENIX 2.0 V HV CVT MODELISTA", "cara": "Kredit", "leasing": "KKB", "salesman": "FRANKY LUMBANRAJA", "supervisor": "PRODIPA", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-26", "faktur": "000226/FKT/PP/0926", "nama": "PUTRI NURLIA KHAIRUNNISA", "namabrg": "AGYA STYLIX 1.2 G CVT", "cara": "Kredit", "leasing": "TAF", "salesman": "DENNY FRANATA SEMBIRING", "supervisor": "PUTRA", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-28", "faktur": "000242/FKT/PP/0926", "nama": "NAZARIF YOLLA HANDAYANI", "namabrg": "FORTUNER 2.8 VRZ TSS 4X2 A/T", "cara": "Kredit", "leasing": "ACC", "salesman": "FIKRI MUHAMMAD", "supervisor": "ZAIN", "asuransi": "SHBT", "divisi": "Flamboyan"}];
 
 
 const CATS = {
@@ -877,11 +928,11 @@ document.querySelectorAll('.tab').forEach(btn => {
     document.getElementById('tabpanel-umur').hidden = target !== 'umur';
     document.getElementById('tabpanel-leasing').hidden = target !== 'leasing';
     document.getElementById('tabpanel-followup').hidden = target !== 'followup';
-    document.getElementById('tabpanel-prioritas').hidden = target !== 'prioritas';
     document.getElementById('tabpanel-penjualanleasing').hidden = target !== 'penjualanleasing';
     document.getElementById('tabpanel-penjualanasuransi').hidden = target !== 'penjualanasuransi';
     document.getElementById('tabpanel-penjualansupervisor').hidden = target !== 'penjualansupervisor';
     document.getElementById('tabpanel-salesterbanyak').hidden = target !== 'salesterbanyak';
+    document.getElementById('tabpanel-detailpenjualan').hidden = target !== 'detailpenjualan';
   });
 });
 
@@ -1007,181 +1058,365 @@ document.querySelectorAll('#followupTable th[data-key]').forEach(th => {
   });
 });
 
-/* ================= Prioritas Penagihan (>26 hari) ================= */
-const CATATAN_PREFIX = 'catatan_piutang_';
-
-function getCatatan(faktur) {
-  try { return localStorage.getItem(CATATAN_PREFIX + faktur) || ''; } catch (e) { return ''; }
+/* ================= Prioritas Penagihan (di dalam Follow-up Leasing) + riwayat catatan/tugas ================= */
+const FU_KEY = 'follow_piutang_v1_' + TARGET_DIVISI;   // dipisah per divisi
+const OLD_CAT = 'catatan_piutang_';
+let fuDB = {};
+try { fuDB = JSON.parse(localStorage.getItem(FU_KEY) || '{}') || {}; } catch (e) { fuDB = {}; }
+try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
+function fuSave() { try { localStorage.setItem(FU_KEY, JSON.stringify(fuDB)); } catch (e) {} }
+const fuOpen = new Set();
+let fuArchOpen = false, fuLive = false;
+const fuNow = () => new Date().toISOString();
+function fuFmt(iso) {
+  if (!iso) return 'Catatan lama';
+  const d = new Date(iso), p = n => String(n).padStart(2, '0');
+  const mon = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"][d.getMonth()];
+  return `${d.getDate()} ${mon}${d.getFullYear() !== today.getFullYear() ? ' ' + d.getFullYear() : ''} ${p(d.getHours())}.${p(d.getMinutes())}`;
 }
-function setCatatan(faktur, val) {
-  try { localStorage.setItem(CATATAN_PREFIX + faktur, val); } catch (e) { /* abaikan kalau storage tak tersedia */ }
+function fuRec(r, create) {
+  let x = fuDB[r.faktur];
+  if (!x) {
+    let old = ''; try { old = localStorage.getItem(OLD_CAT + r.faktur) || ''; } catch (e) {}
+    if (!create && !old) return null;
+    x = fuDB[r.faktur] = { notes: old ? [{ t: null, x: old }] : [], tasks: [], lunasAt: null };
+  }
+  x.nama = r.nama; x.jumlah = r.jumlah; x.leasing = r.leasing; x.jto = r.tglJto;
+  return x;
+}
+// Faktur yang punya riwayat lalu hilang dari Sheet1 (data live berhasil dimuat) = dianggap lunas -> diarsipkan
+function fuSyncLunas() {
+  if (!fuLive || !rows.length) return;
+  const cur = new Set(rows.map(r => r.faktur));
+  let ch = false;
+  Object.entries(fuDB).forEach(([f, x]) => {
+    if (!cur.has(f) && !x.lunasAt) { x.lunasAt = fuNow(); ch = true; }
+    else if (cur.has(f) && x.lunasAt) { x.lunasAt = null; ch = true; }
+  });
+  if (ch) fuSave();
+}
+const fuNotes = x => (x.notes || []).slice().reverse().map(n => `<li><small>${fuFmt(n.t)}</small><div>${esc(n.x)}</div></li>`).join('') || '<li class="z">Belum ada catatan.</li>';
+
+function fuDetail(r) {
+  const x = fuRec(r, false) || { notes: [], tasks: [] }, f = esc(r.faktur);
+  const tasks = x.tasks.map(t => `<li class="${t.done ? 'done' : ''}"><label><input type="checkbox" data-a="tg" data-f="${f}" data-i="${t.id}" ${t.done ? 'checked' : ''}> <span>${esc(t.x)}</span></label><button class="fu-x" title="Hapus tugas" data-a="td" data-f="${f}" data-i="${t.id}">&times;</button><div><small>PIC: ${esc(t.pic || '-')}${t.done && t.doneAt ? ' &middot; selesai ' + fuFmt(t.doneAt) : ''}</small></div></li>`).join('') || '<li class="z">Belum ada tugas.</li>';
+  const pic = esc((r.salesman || '').split(' ')[0]);
+  return `<div class="pr-grid">
+    <div><h4>CATATAN &mdash; ${f}</h4><ul class="fu-list">${fuNotes(x)}</ul>
+      <div class="fu-form"><textarea class="fu-in" data-k="note" rows="2" placeholder="Tulis catatan follow-up..."></textarea><button class="fu-btn" data-a="note" data-f="${f}">Kirim</button></div></div>
+    <div><h4>TUGAS TERKAIT FAKTUR INI</h4><ul class="fu-list">${tasks}</ul>
+      <div class="fu-form"><input class="fu-in" data-k="task" placeholder="Tugas... (mis. telepon debitur)"><input class="fu-in pic" data-k="pic" value="${pic}" title="PIC"><button class="fu-btn" data-a="task" data-f="${f}">+ Tugas</button></div></div>
+  </div>`;
 }
 
-function renderPrioritasTab() {
-  const tbody = document.getElementById('prioritasBody');
-  if (!tbody) return;
-  tbody.innerHTML = "";
+function renderPrioritasTab(force) {
+  const box = document.getElementById('prioritasBox');
+  if (!box) return;
+  // jangan timpa ketikan yang sedang berlangsung saat sinkronisasi otomatis
+  if (!force && [...box.querySelectorAll('.fu-in')].some(i => i === document.activeElement || (i.dataset.k !== 'pic' && i.value))) return;
   const list = rows.filter(r => (r.hari ?? -9999) > 26).sort((a, b) => (b.hari ?? 0) - (a.hari ?? 0));
-  list.forEach((r, idx) => {
-    const tr = document.createElement('tr');
-    tr.className = 'rowcat';
-    tr.style.borderLeftColor = 'var(--cat-over)';
-    tr.innerHTML = `
-      <td class="num">${idx + 1}</td>
-      <td class="nama">${r.nama}</td>
-      <td>${TARGET_DIVISI}</td>
-      <td>${r.leasing}</td>
-      <td>${r.faktur}</td>
-      <td>${fmtDateShort(r.tglJto)}</td>
-      <td class="num money">${fmtMoney(r.jumlah)}</td>
-      <td class="num hari">${r.hari}</td>
-      <td></td>`;
-    const td = tr.lastElementChild;
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.className = 'catatan-input';
-    input.placeholder = 'Tulis catatan tindak lanjut...';
-    input.value = getCatatan(r.faktur);
-    const saved = document.createElement('span');
-    saved.className = 'catatan-saved';
-    saved.textContent = 'Tersimpan';
-    let saveTimer = null;
-    input.addEventListener('input', () => {
-      setCatatan(r.faktur, input.value);
-      saved.classList.add('show');
-      clearTimeout(saveTimer);
-      saveTimer = setTimeout(() => saved.classList.remove('show'), 1200);
+  const total = list.reduce((s, r) => s + (Number(r.jumlah) || 0), 0);
+  const debs = new Set(list.map(r => r.nama)).size;
+  let h = `<div class="pr-head"><h3>Prioritas Penagihan</h3><div class="pr-tools"><span>faktur dengan umur &gt; 26 hari &middot; klik baris untuk catatan &amp; tugas</span><button class="fu-ghost" data-a="exp">Ekspor riwayat</button><button class="fu-ghost" data-a="imp">Impor</button></div></div>`;
+  if (!list.length) h += '<div class="pr-empty">Tidak ada faktur dengan umur &gt; 26 hari saat ini.</div>';
+  else {
+    h += `<div class="pr-banner"><div><span class="pr-dot"></span><b>${list.length} faktur butuh tindak lanjut segera</b></div><span class="pr-sum">total tertunggak <em>Rp ${fmtMoney(total)}</em> &middot; ${debs} debitur</span></div>
+    <div class="pr-wrap"><div class="table-scroll"><table class="detail"><thead><tr><th></th><th class="num">No</th><th>Debitur</th><th>No. Faktur</th><th>Cabang</th><th>Metode</th><th class="num">Jumlah</th><th>Tgl. Jatuh Tempo</th><th class="num">Umur</th><th>Sales PIC</th></tr></thead><tbody>`;
+    list.forEach((r, i) => {
+      const open = fuOpen.has(r.faktur), x = fuRec(r, false);
+      const nt = x ? x.notes.length : 0, tk = x ? x.tasks.filter(t => !t.done).length : 0;
+      const metode = r.cara === 'Tunai' ? '<span class="pr-red">Tunai (langsung)</span>' : `Kredit &middot; ${esc(r.leasing)}`;
+      h += `<tr class="pr-row" data-f="${esc(r.faktur)}"><td><span class="pr-chev">${open ? '&#9662;' : '&#9656;'}</span></td><td class="num">${i + 1}</td><td class="nama">${esc(r.nama)}<br><small style="color:var(--muted)">${esc(r.noCust || '')}</small></td><td>${esc(r.faktur)}</td><td><span class="pr-badge">${TARGET_DIVISI}</span></td><td>${metode}</td><td class="num money">Rp ${fmtMoney(r.jumlah)}</td><td>${fmtDateShort(r.tglJto)}</td><td class="num pr-red">${r.hari} hr</td><td>${esc(r.salesman || '\u2013')}${nt ? `<span class="pr-cnt">${nt} catatan</span>` : ''}${tk ? `<span class="pr-cnt">${tk} tugas</span>` : ''}</td></tr>`;
+      if (open) h += `<tr class="pr-detail"><td colspan="10">${fuDetail(r)}</td></tr>`;
     });
-    td.appendChild(input);
-    td.appendChild(saved);
-    tbody.appendChild(tr);
-  });
-  if (list.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:24px;">Tidak ada piutang dengan umur &gt; 26 hari saat ini.</td></tr>';
+    h += '</tbody></table></div></div>';
   }
+  const arch = Object.entries(fuDB).filter(([, x]) => x.lunasAt).sort((a, b) => b[1].lunasAt.localeCompare(a[1].lunasAt));
+  if (arch.length) {
+    h += `<div class="pr-arch"><div class="pr-arch-h" data-a="arch">${fuArchOpen ? '&#9662;' : '&#9656;'} Riwayat faktur lunas <span>(${arch.length}) &middot; riwayat tetap tersimpan</span></div>`;
+    if (fuArchOpen) arch.forEach(([f, x]) => {
+      h += `<div class="pr-arch-i"><div><b>${esc(x.nama || '')}</b> &middot; ${esc(f)} &middot; Rp ${fmtMoney(x.jumlah || 0)} <small>&middot; lunas terdeteksi ${fuFmt(x.lunasAt)}</small> <button class="fu-x" data-a="del" data-f="${esc(f)}">Hapus riwayat</button></div><ul class="fu-list">${fuNotes(x)}${(x.tasks || []).map(t => `<li class="${t.done ? 'done' : ''}"><span>&#9642; ${esc(t.x)}</span><small>PIC: ${esc(t.pic || '-')}${t.done ? ' &middot; selesai' : ''}</small></li>`).join('')}</ul></div>`;
+    });
+    h += '</div>';
+  }
+  box.innerHTML = h;
 }
 
-/* ================= Penjualan per Leasing & per Insurance Company (bulan berjalan) ================= */
-function groupSales(keyFn) {
-  const map = new Map();
-  SALES_RAW.forEach(r => {
-    const key = keyFn(r);
-    if (!key) return;
-    if (!map.has(key)) map.set(key, []);
-    map.get(key).push(r);
-  });
-  return [...map.entries()].sort((a, b) => b[1].length - a[1].length);
-}
-
-function renderSalesSections(containerId, groups, extraCols) {
-  const el = document.getElementById(containerId);
-  el.innerHTML = "";
-  if (groups.length === 0) {
-    el.innerHTML = '<p style="color:var(--muted);padding:16px 0;">Tidak ada data penjualan bulan berjalan.</p>';
-    return;
-  }
-  groups.forEach(([name, items]) => {
-    const section = document.createElement('div');
-    section.className = 'leasing-section';
-    const extraHead = extraCols.map(c => `<th>${c.label}</th>`).join('');
-    section.innerHTML = `
-      <div class="leasing-head">
-        <span class="name">${name}</span>
-        <span class="meta">${items.length} unit</span>
-      </div>
-      <div class="leasing-table-scroll">
-        <table class="detail">
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>Nama Debitur</th>
-              <th>Tanggal</th>
-              <th>Tipe Unit</th>
-              ${extraHead}
-              <th>Salesman</th>
-              <th>Supervisor</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>`;
-    const tb = section.querySelector('tbody');
-    items
-      .slice()
-      .sort((a, b) => (parseDate(b.tanggal)?.getTime() || 0) - (parseDate(a.tanggal)?.getTime() || 0))
-      .forEach((r, idx) => {
-        const tr = document.createElement('tr');
-        const extraTds = extraCols.map(c => `<td>${r[c.key] || "\u2013"}</td>`).join('');
-        tr.innerHTML = `
-          <td class="num">${idx + 1}</td>
-          <td class="nama">${r.nama}</td>
-          <td>${fmtDateShort(r.tanggal)}</td>
-          <td>${r.namabrg || "\u2013"}</td>
-          ${extraTds}
-          <td>${r.salesman || "\u2013"}</td>
-          <td>${r.supervisor || "\u2013"}</td>`;
-        tb.appendChild(tr);
+(function () {
+  const box = document.getElementById('prioritasBox');
+  if (!box) return;
+  const fileIn = document.createElement('input');
+  fileIn.type = 'file'; fileIn.accept = '.json,application/json';
+  fileIn.onchange = async () => {
+    try {
+      const j = JSON.parse(await fileIn.files[0].text());
+      if (j.divisi !== TARGET_DIVISI) { alert('File ini milik divisi ' + j.divisi + ', bukan ' + TARGET_DIVISI + '.'); fileIn.value = ''; return; }
+      Object.entries(j.db || {}).forEach(([f, x]) => {
+        const c = fuDB[f];
+        if (!c) { fuDB[f] = x; return; }
+        const seen = new Set(c.notes.map(n => n.t + '|' + n.x));
+        (x.notes || []).forEach(n => { if (!seen.has(n.t + '|' + n.x)) c.notes.push(n); });
+        c.notes.sort((a, b) => String(a.t).localeCompare(String(b.t)));
+        const ids = new Set(c.tasks.map(t => t.id));
+        (x.tasks || []).forEach(t => { if (!ids.has(t.id)) c.tasks.push(t); });
       });
-    el.appendChild(section);
+      fuSave(); fuSyncLunas(); renderPrioritasTab(true);
+    } catch (e) { alert('File riwayat tidak valid.'); }
+    fileIn.value = '';
+  };
+  const rowOf = f => rows.find(r => r.faktur === f);
+  box.addEventListener('click', e => {
+    const b = e.target.closest('[data-a]');
+    if (b) {
+      const a = b.dataset.a, f = b.dataset.f;
+      if (a === 'note' || a === 'task') {
+        const scope = b.closest('.fu-form'), r = rowOf(f);
+        if (!r) return;
+        if (a === 'note') {
+          const v = scope.querySelector('[data-k="note"]').value.trim(); if (!v) return;
+          fuRec(r, true).notes.push({ t: fuNow(), x: v });
+        } else {
+          const v = scope.querySelector('[data-k="task"]').value.trim(); if (!v) return;
+          fuRec(r, true).tasks.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5), x: v, pic: scope.querySelector('[data-k="pic"]').value.trim(), done: false, t: fuNow() });
+        }
+        fuSave(); renderPrioritasTab(true);
+      } else if (a === 'td') {
+        const x = fuDB[f]; if (x) { x.tasks = x.tasks.filter(t => t.id !== b.dataset.i); fuSave(); renderPrioritasTab(true); }
+      } else if (a === 'del') {
+        if (confirm('Hapus seluruh riwayat faktur ' + f + '?')) { delete fuDB[f]; fuSave(); renderPrioritasTab(true); }
+      } else if (a === 'arch') { fuArchOpen = !fuArchOpen; renderPrioritasTab(true); }
+      else if (a === 'imp') fileIn.click();
+      else if (a === 'exp') {
+        const blob = new Blob([JSON.stringify({ divisi: TARGET_DIVISI, exportedAt: fuNow(), db: fuDB }, null, 1)], { type: 'application/json' });
+        const el = document.createElement('a');
+        el.href = URL.createObjectURL(blob);
+        el.download = 'riwayat_followup_' + TARGET_DIVISI.replace(/ /g, '_') + '_' + fuNow().slice(0, 10) + '.json';
+        document.body.appendChild(el); el.click(); el.remove();
+      }
+      return;
+    }
+    if (e.target.closest('.pr-detail')) return;
+    const tr = e.target.closest('.pr-row');
+    if (tr) { const f = tr.dataset.f; fuOpen.has(f) ? fuOpen.delete(f) : fuOpen.add(f); renderPrioritasTab(true); }
   });
+  box.addEventListener('change', e => {
+    const c = e.target.closest('input[data-a="tg"]');
+    if (!c) return;
+    const x = fuDB[c.dataset.f], t = x && x.tasks.find(t => t.id === c.dataset.i);
+    if (t) { t.done = c.checked; t.doneAt = c.checked ? fuNow() : null; fuSave(); renderPrioritasTab(true); }
+  });
+})();
+
+/* ================= Penjualan: ringkasan 3 cabang x 3 bulan + tab Detail ================= */
+const SALES_SHEETS = ["Data", "Database"];
+const CAB = [["Gatsu","#2F4FD0"],["Flamboyan","#C2410C"],["Gagak Hitam","#0F766E"]];
+const BLN = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function months() {
+  const a = [];
+  for (let i = 2; i >= 0; i--) {
+    const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+    a.push(d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'));
+  }
+  return a;
+}
+const monName = (m, full) => { const n = BLN[+m.slice(5) - 1]; return full ? n : n.slice(0, 3); };
+function periodLabel() { const M = months(); return monName(M[0]) + '\u2013' + monName(M[2]) + ' ' + M[2].slice(0, 4); }
+const inPeriod = r => months().includes((r.tanggal || '').slice(0, 7));
+
+function monthsN(n) {
+  const a = [];
+  for (let i = n - 1; i >= 0; i--) {
+    const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+    a.push(d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'));
+  }
+  return a;
+}
+const triState = {}, triDefs = {};
+const shortMon = m => monName(m) + ' ' + m.slice(2, 4);
+function rangeLabel(M, sel) {
+  if (!sel.length) return 'belum ada bulan dipilih';
+  if (sel.length === 1) return monName(sel[0], true) + ' ' + sel[0].slice(0, 4);
+  const idx = sel.map(m => M.indexOf(m));
+  if (idx.every((v, i) => i === 0 || v === idx[i - 1] + 1)) {
+    const a = sel[0], z = sel[sel.length - 1];
+    return monName(a) + (a.slice(0, 4) !== z.slice(0, 4) ? ' ' + a.slice(0, 4) : '') + '\u2013' + monName(z) + ' ' + z.slice(0, 4);
+  }
+  return sel.map(shortMon).join(', ');
 }
 
-const BULAN_FULL_ID = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+function renderTri(elId, title, keyFn, colLabel) {
+  triDefs[elId] = [title, keyFn, colLabel];
+  const st = triState[elId] || (triState[elId] = { n: 3, off: new Set() });
+  const M = monthsN(st.n), sel = M.filter(m => !st.off.has(m));
+  const col = (CAB.find(c => c[0] === TARGET_DIVISI) || [0, '#2F4FD0'])[1];
+  let h = `<div class="tri-head"><h2>${title}</h2><span>${rangeLabel(M, sel)}</span><span>&middot; ${TARGET_DIVISI}</span></div>
+    <div class="tri-bar"><select class="select-filter" data-e="${elId}" title="Rentang bulan">${[3, 6].map(n => `<option value="${n}"${n === st.n ? ' selected' : ''}>${n} bulan berjalan</option>`).join('')}</select>
+    <div class="tri-chips"><button type="button" class="tri-chip${st.off.size ? '' : ' on'}" data-m="*">Semua</button>${M.map(m => `<button type="button" class="tri-chip${st.off.has(m) ? '' : ' on'}" data-m="${m}">${shortMon(m)}</button>`).join('')}</div></div><div class="tri">`;
+  sel.forEach(m => {
+    const items = SALES.filter(r => r.divisi === TARGET_DIVISI && r.tanggal.slice(0, 7) === m);
+    const map = new Map();
+    items.forEach(r => { const k = keyFn(r) || '-'; map.set(k, (map.get(k) || 0) + 1); });
+    const rows = [...map.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+    h += `<div class="bcard" style="--c:${col}">
+      <div class="bc-h"><b>${TARGET_DIVISI}</b><small>${items.length} unit &middot; ${monName(m, true)} ${m.slice(0, 4)}</small></div>
+      <div class="bc-body"><table>
+        <thead><tr><th>${colLabel}</th><th class="num">Unit</th></tr></thead>
+        <tbody>${rows.map(([k, n]) => `<tr><td>${esc(k === 'Cash' ? 'Cash (Tunai)' : k)}</td><td class="num">${n}</td></tr>`).join('') || '<tr><td colspan="2" class="z">Belum ada data</td></tr>'}</tbody>
+        <tfoot><tr><td>Total</td><td class="num">${items.length}</td></tr></tfoot>
+      </table></div></div>`;
+  });
+  if (!sel.length) h += '<p class="tri-none">Pilih minimal satu bulan.</p>';
+  $(elId).innerHTML = h + '</div>';
+}
+['triLeasing', 'triAsuransi', 'triSupervisor', 'triSales'].forEach(id => {
+  const box = $(id);
+  box.addEventListener('change', e => {
+    const s = e.target.closest('select[data-e]');
+    if (!s) return;
+    triState[id] = { n: +s.value, off: new Set() };
+    renderTri(id, ...triDefs[id]);
+  });
+  box.addEventListener('click', e => {
+    const b = e.target.closest('.tri-chip');
+    if (!b) return;
+    const st = triState[id], m = b.dataset.m;
+    if (m === '*') st.off = new Set(); else if (st.off.has(m)) st.off.delete(m); else st.off.add(m);
+    renderTri(id, ...triDefs[id]);
+  });
+});
 
-function currentMonthLabel() {
-  const d = parseDate(SALES_RAW[0] && SALES_RAW[0].tanggal) || new Date();
-  return `${BULAN_FULL_ID[d.getMonth()]} ${d.getFullYear()}`;
+const dS = { k: 'tanggal', d: -1 };
+const dCol = new Set();
+let dNames = [];
+const DCOLS = [['nama','Nama Debitur'],['tanggal','Tanggal'],['namabrg','Tipe Unit'],['leasing','Leasing'],['asuransi','Insurance'],['salesman','Salesman'],['supervisor','Supervisor']];
+
+function fillDetailFilters() {
+  const monSel = $('dMonth'), mv = monSel.value;
+  monSel.innerHTML = `<option value="all">3 bulan (${periodLabel()})</option>` + months().map(m => `<option value="${m}">${monName(m, true)} ${m.slice(0, 4)}</option>`).join('');
+  if ([...monSel.options].some(o => o.value === mv)) monSel.value = mv;
 }
 
-function renderSummaryCard(elId, cardTitle, groups) {
-  const el = document.getElementById(elId);
-  const total = groups.reduce((s, [, items]) => s + items.length, 0);
-  const rowsHtml = groups.map(([name, items]) => {
-    const label = name === 'Cash' ? 'Cash (Tunai)' : name;
-    return `<tr><td>${label}</td><td class="num">${items.length}</td></tr>`;
-  }).join('');
-  el.innerHTML = `
-    <p class="sc-title">${cardTitle}</p>
-    <p class="sc-subtitle">${total} unit &middot; ${currentMonthLabel()}</p>
-    <table>
-      <thead><tr><th>Leasing / Metode</th><th class="num">Unit</th></tr></thead>
-      <tbody>${rowsHtml}</tbody>
-      <tfoot><tr><td>Total</td><td class="num">${total}</td></tr></tfoot>
-    </table>`;
+function renderDetail() {
+  const mo = $('dMonth').value, g = $('dGroup').value, q = $('dSearch').value.trim().toLowerCase();
+  const list = SALES.filter(r => inPeriod(r) && r.divisi === TARGET_DIVISI && (mo === 'all' || r.tanggal.slice(0, 7) === mo) &&
+    (!q || (r.nama + ' ' + r.namabrg + ' ' + r.salesman + ' ' + r.faktur).toLowerCase().includes(q)));
+  const cmp = (a, b) => {
+    let c = String(a[dS.k] || '').localeCompare(String(b[dS.k] || '')) * dS.d;
+    return c || b.tanggal.localeCompare(a.tanggal);
+  };
+  const map = new Map();
+  list.forEach(r => { const k = r[g] || '-'; if (!map.has(k)) map.set(k, []); map.get(k).push(r); });
+  const groups = [...map.entries()].sort((a, b) => b[1].length - a[1].length);
+  dNames = groups.map(g => g[0]);
+  $('dInfo').textContent = `${list.length} unit \u00B7 ${TARGET_DIVISI} \u00B7 ${mo === 'all' ? periodLabel() : monName(mo, true) + ' ' + mo.slice(0, 4)}`;
+  const arrow = k => dS.k === k ? `<span class="arrow">${dS.d > 0 ? '\u25B2' : '\u25BC'}</span>` : '';
+  const head = '<th>No</th>' + DCOLS.map(([k, l]) => `<th class="sortable" data-k="${k}">${l}${arrow(k)}</th>`).join('');
+  $('detailSections').innerHTML = groups.length ? groups.map(([name, items]) => `
+    <div class="leasing-section">
+      <div class="leasing-head dtoggle" data-g="${esc(name)}" title="Klik untuk minimize / buka"><span class="chev">${dCol.has(name) ? '\u25B8' : '\u25BE'}</span><span class="name">${esc(name)}</span><span class="meta">${items.length} unit</span></div>
+      <div class="leasing-table-scroll"${dCol.has(name) ? ' hidden' : ''}><table class="detail"><thead><tr>${head}</tr></thead><tbody>
+      ${items.slice().sort(cmp).map((r, i) => `<tr><td class="num">${i + 1}</td><td class="nama">${esc(r.nama)}</td><td>${fmtDateShort(r.tanggal)}</td><td>${esc(r.namabrg || '\u2013')}</td><td>${esc(r.leasing)}</td><td>${esc(r.asuransi)}</td><td>${esc(r.salesman || '\u2013')}</td><td>${esc(r.supervisor || '\u2013')}</td></tr>`).join('')}
+      </tbody></table></div></div>`).join('')
+    : '<p style="color:var(--muted);padding:16px 0;">Tidak ada data penjualan untuk filter ini.</p>';
 }
+$('detailSections').addEventListener('click', e => {
+  const tg = e.target.closest('.dtoggle');
+  if (tg) { const g = tg.dataset.g; dCol.has(g) ? dCol.delete(g) : dCol.add(g); renderDetail(); return; }
+  const th = e.target.closest('th[data-k]');
+  if (!th) return;
+  const k = th.dataset.k;
+  if (dS.k === k) dS.d = -dS.d; else { dS.k = k; dS.d = k === 'tanggal' ? -1 : 1; }
+  renderDetail();
+});
+['dMonth', 'dGroup'].forEach(id => $(id).addEventListener('change', renderDetail));
+$('dSearch').addEventListener('input', renderDetail);
+$('dCollapseAll').addEventListener('click', () => { dNames.forEach(n => dCol.add(n)); renderDetail(); });
+$('dExpandAll').addEventListener('click', () => { dCol.clear(); renderDetail(); });
 
-function renderPenjualanLeasingTab() {
-  const groups = groupSales(r => r.leasing || "-");
-  renderSummaryCard('summaryCardLeasing', TARGET_DIVISI, groups);
-  renderSalesSections('penjualanLeasingSections', groups, [{ key: 'cara', label: 'Cara Pembelian' }]);
+function renderSalesAll() {
+  renderTri('triLeasing', 'Penjualan per Leasing', r => r.leasing, 'Leasing / Metode');
+  renderTri('triAsuransi', 'Penjualan per Insurance Company', r => r.asuransi, 'Insurance Company');
+  renderTri('triSupervisor', 'Penjualan per Supervisor', r => r.supervisor, 'Supervisor');
+  renderTri('triSales', 'Sales Terbanyak', r => r.salesman, 'Salesman');
+  fillDetailFilters();
+  renderDetail();
 }
+function applySales(list) { if (list && list.length) { SALES = list; renderSalesAll(); } }
 
-function renderPenjualanAsuransiTab() {
-  const groups = groupSales(r => r.asuransi);
-  renderSummaryCard('summaryCardAsuransi', TARGET_DIVISI, groups);
-  renderSalesSections('penjualanAsuransiSections', groups, [{ key: 'leasing', label: 'Leasing' }]);
+/* ---- Ambil data penjualan dari sheet (tab yang punya header "Fakturno") ---- */
+function normDate(v) {
+  if (v == null || v === '') return null;
+  if (v instanceof Date) return v.toISOString().slice(0, 10);
+  if (typeof v === 'number') {
+    const d = XLSX.SSF.parse_date_code(v);
+    return d ? `${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}` : null;
+  }
+  const s = String(v); let m;
+  if (s.startsWith('Date(')) { const [y, mo, d] = s.slice(5, -1).split(',').map(Number); return `${y}-${String(mo + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
+  if ((m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(s))) return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+  return null;
 }
-
-function renderPenjualanSupervisorTab() {
-  const groups = groupSales(r => r.supervisor || "-");
-  renderSummaryCard('summaryCardSupervisor', TARGET_DIVISI, groups);
-  renderSalesSections('penjualanSupervisorSections', groups, [{ key: 'leasing', label: 'Leasing' }]);
+// Kolom: B=Tanggal C=Fakturno D=Nama F=Namabrg H=Cara J=Divisi K=Status Fnc(Leasing) L=Salesman(sales) M=Supervisor S=Asuransi
+function mapSales(start, end, get) {
+  const nm = v => { v = v == null ? '' : String(v); return (v.includes('=') ? v.slice(v.indexOf('=') + 1) : v).trim(); };
+  const out = [], seen = new Set();
+  for (let r = start; r < end; r++) {
+    const nama = get(r, 3), divisi = get(r, 9), tgl = normDate(get(r, 1));
+    if (!nama || !tgl || divisi !== TARGET_DIVISI) continue;
+    const fk = get(r, 2); if (fk) { if (seen.has(fk)) continue; seen.add(fk); }
+    const asu = get(r, 18);
+    out.push({
+      tanggal: tgl, faktur: get(r, 2), nama: String(nama).trim(), namabrg: get(r, 5), cara: get(r, 7), divisi,
+      leasing: get(r, 10) || '-', salesman: nm(get(r, 11)) || '-', supervisor: String(get(r, 12) || '-').trim(),
+      asuransi: (!asu || asu === '-') ? 'NON ASURANSI' : String(asu).trim(),
+    });
+  }
+  return out;
 }
-
-function renderSalesTerbanyakTab() {
-  const groups = groupSales(r => r.salesman || "-");
-  renderSummaryCard('summaryCardSales', TARGET_DIVISI, groups);
-  renderSalesSections('penjualanSalesSections', groups, [{ key: 'leasing', label: 'Leasing' }]);
+function findHeader(get, max) {
+  for (let r = 0; r < max; r++) { const v = get(r, 2); if (typeof v === 'string' && v.trim().toLowerCase() === 'fakturno') return r; }
+  return -1;
+}
+function extractSalesFromWorkbook(wb) {
+  for (const n of wb.SheetNames) {
+    const ws = wb.Sheets[n]; if (!ws || !ws['!ref']) continue;
+    const rg = XLSX.utils.decode_range(ws['!ref']);
+    const get = (r, c) => { const x = ws[XLSX.utils.encode_cell({ r, c })]; return x ? x.v : undefined; };
+    const h = findHeader(get, Math.min(rg.e.r, 30));
+    if (h >= 0) return mapSales(h + 1, rg.e.r + 1, get);
+  }
+  return null;
+}
+function fetchSales(i) {
+  i = i || 0;
+  if (i >= SALES_SHEETS.length) return;
+  const cb = '__gs' + Date.now() + '_' + i, s = document.createElement('script');
+  let done = false;
+  const end = () => { delete window[cb]; s.remove(); };
+  const next = () => fetchSales(i + 1);
+  window[cb] = resp => {
+    done = true; end();
+    try {
+      const t = resp.table.rows, get = (r, c) => gvizCell(t, r, c), h = findHeader(get, Math.min(t.length, 30));
+      const l = h >= 0 ? mapSales(h + 1, t.length, get) : [];
+      if (l.length) applySales(l); else next();
+    } catch (e) { console.error(e); next(); }
+  };
+  s.onerror = () => { end(); next(); };
+  s.src = `https://docs.google.com/spreadsheets/d/${FILE_ID}/gviz/tq?tqx=out:json;responseHandler:${cb}&sheet=${encodeURIComponent(SALES_SHEETS[i])}&headers=0&_ts=${Date.now()}`;
+  setTimeout(() => { if (!done) { end(); next(); } }, 25000);
+  document.body.appendChild(s);
 }
 
 render();
 renderLeasingTab();
 renderFollowupTab();
 renderPrioritasTab();
-renderPenjualanLeasingTab();
-renderPenjualanAsuransiTab();
-renderPenjualanSupervisorTab();
-renderSalesTerbanyakTab();
+renderSalesAll();
 document.getElementById('sourceCount').textContent = rows.length;
 
 /* ================= Live sync dari Google Sheet (tiap 30 detik) ================= */
@@ -1276,6 +1511,8 @@ function applyNewData(list, reportDateLabel, syncedAt) {
   render();
   renderLeasingTab();
   renderFollowupTab();
+  fuLive = true;
+  fuSyncLunas();
   renderPrioritasTab();
   document.getElementById('sourceCount').textContent = rows.length;
   if (reportDateLabel) {
@@ -1304,6 +1541,7 @@ async function handleWatchEvent(ev) {
     const wb = XLSX.read(base64, { type: 'base64', cellDates: true });
     const { rows: list, reportDateLabel } = extractGatsuFromWorkbook(wb);
     applyNewData(list, reportDateLabel, new Date());
+    try { const sl = extractSalesFromWorkbook(wb); if (sl && sl.length) applySales(sl); } catch (e2) { console.error(e2); }
   } catch (err) {
     console.error(err);
     setSync('stale', 'Gagal memproses data terbaru, menampilkan data terakhir.');
@@ -1495,8 +1733,10 @@ function startGvizFallback() {
     setSync('stale', 'Menghubungkan ke Google Sheets&hellip;');
     attempt(0, !!isManual);
   }
-  window.__gvizFetchNow = () => fetchOnce(true);
+  window.__gvizFetchNow = () => { fetchOnce(true); fetchSales(); };
   fetchOnce(false);
+  fetchSales();
+  setInterval(() => fetchSales(), 300000);
   gvizPollTimer = setInterval(() => fetchOnce(false), 30000);
 }
 
