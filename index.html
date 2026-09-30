@@ -2,753 +2,1741 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Piutang GR Flamboyan — PT Perintis Perkasa</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Piutang Flamboyan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&family=IBM+Plex+Serif:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
-  :root{
-    --bg:#f7f7f5; --panel:#ffffff; --panel-2:#f0f0ee; --border:#e2e2de;
-    --ink:#1c1c1a; --muted:#6b6b66; --muted-2:#8a8a84;
-    --green:#2f9e5c; --amber:#c98a1f; --orange:#e0904a; --blue:#3a5bd9; --red:#c8394a;
-  }
-  *{box-sizing:border-box;}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Segoe UI',Inter,-apple-system,sans-serif;}
-  .wrap{max-width:1180px;margin:0 auto;padding:48px 32px 80px;}
-  .topline{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;margin-bottom:8px;}
-  .brand{color:var(--muted);font-size:15px;margin:0 0 8px;}
-  h1{font-family:Georgia,serif;font-weight:600;font-size:36px;margin:0 0 6px;letter-spacing:-0.01em;}
-  .sub{color:var(--muted);font-size:13.5px;margin:2px 0;}
-  .controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-  .btn{
-    background:#2a4bd6;color:#fff;border:none;border-radius:8px;padding:9px 16px;
-    font-weight:600;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;
-  }
-  .btn:hover{background:#3457e0;}
-  .status{font-size:12.5px;color:var(--muted);}
-  .status b{color:var(--ink);}
-  .status.err{color:var(--red);}
-  label.toggle{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);cursor:pointer;}
-  hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
+  :root {
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
 
-  .banner{background:#fdecee;border:1px solid #f3b9c0;color:var(--red);border-radius:10px;padding:14px 18px;font-size:13px;margin-bottom:20px;display:none;}
+    --bg: #F5F6F8;
+    --surface: #FFFFFF;
+    --surface-2: #FAFBFC;
+    --ink: #1B2430;
+    --muted: #667085;
+    --faint: #98A2B3;
+    --border: #E4E7EC;
 
-  .divisi-tabs{display:flex;gap:2px;margin-top:6px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
-  .divisi-tab{
-    font-family:inherit;font-size:13.5px;font-weight:600;padding:10px 18px;cursor:pointer;
-    border:1px solid var(--border);border-bottom:none;border-radius:8px 8px 0 0;
-    background:var(--bg);color:var(--muted);position:relative;top:1px;
-  }
-  .divisi-tab .badge{display:block;font-size:11px;font-weight:600;color:var(--muted-2);margin-top:2px;}
-  .divisi-tab.active{background:var(--panel);color:var(--ink);border-bottom:1px solid var(--panel);}
-  .divisi-tab.active .badge{color:var(--blue);}
-  .divisi-tab-all{font-weight:700;}
-  .divisi-tab-all:not(.active){border-color:var(--blue);color:var(--blue);}
-  #divisiPanel{margin-top:20px;}
+    --cat-belum: #E8B400;
+    --cat-belum-wash: #FDF6DE;
+    --cat-7: #1B8FB0;
+    --cat-7-wash: #E3F4F8;
+    --cat-14: #C24A3E;
+    --cat-14-wash: #FBE9E7;
+    --cat-26: #E8B400;
+    --cat-26-wash: #FDF6DE;
+    --cat-over: #7A1815;
+    --cat-over-wash: #F7E4E3;
+    --cat-notdue: #667085;
+    --cat-notdue-wash: #EEF0F3;
 
-  .total-card{
-    background:var(--panel);border:1px solid var(--border);border-radius:16px;
-    padding:26px 30px;margin-bottom:24px;box-shadow:0 1px 3px rgba(0,0,0,0.05);
-    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
+    --radius: 10px;
+    --sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+    --serif: 'IBM Plex Serif', Georgia, 'Times New Roman', serif;
+    --header-grad: linear-gradient(120deg, #FCF4F1 0%, #F6F2F8 50%, #F1F4FB 100%);
   }
-  .total-card .amount{font-family:Georgia,serif;font-weight:600;font-size:38px;}
-  .total-card .label{color:var(--muted);font-size:13.5px;margin-bottom:6px;}
-  .search-bar{margin-bottom:18px;}
-  #search{
-    width:100%;background:var(--panel);border:1px solid var(--border);
-    color:var(--ink);border-radius:10px;padding:10px 14px;font-size:14px;
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --bg: #14171C;
+      --surface: #1C2027;
+      --surface-2: #20242C;
+      --ink: #E7E9EC;
+      --muted: #9AA3B2;
+      --faint: #6B7280;
+      --border: #2B303A;
+      --cat-belum-wash: #2E2911;
+      --cat-7-wash: #10262C;
+      --cat-14-wash: #2E1815;
+      --cat-26-wash: #2E2911;
+      --cat-over-wash: #2A1211;
+      --cat-notdue-wash: #23262D;
+      --header-grad: linear-gradient(120deg, #1C1E27 0%, #1E2029 55%, #1A2230 100%);
+    }
   }
-  #search:focus{outline:none;border-color:var(--blue);}
-  .list{display:flex;flex-direction:column;gap:10px;}
-  .debtor{background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.05);}
-  .debtor-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;cursor:pointer;gap:16px;}
-  .debtor-head:hover{background:var(--panel-2);}
-  .debtor-name{font-weight:600;font-size:15px;}
-  .debtor-name .cab{display:inline-block;margin-left:8px;font-size:10.5px;font-weight:600;color:var(--muted-2);background:#ececeb;padding:2px 8px;border-radius:20px;}
-  .debtor-meta{color:var(--muted);font-size:12.5px;margin-top:3px;}
-  .debtor-right{display:flex;align-items:center;gap:14px;}
-  .debtor-total{font-family:Georgia,serif;font-size:19px;text-align:right;}
-  .chevron{color:var(--muted-2);transition:transform 0.2s;}
-  .debtor.open .chevron{transform:rotate(90deg);}
-  .debtor-body{display:none;padding:0 20px 20px;border-top:1px solid var(--border);}
-  .debtor.open .debtor-body{display:block;}
-  .months-row{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0;}
-  .month-pill{background:var(--panel-2);border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-size:12.5px;}
-  .month-pill b{display:block;font-family:Georgia,serif;font-size:15px;margin-top:2px;}
-  table{width:100%;border-collapse:collapse;margin-top:8px;}
-  th{text-align:left;font-size:11.5px;color:var(--muted-2);font-weight:600;padding:8px 6px;border-bottom:1px solid var(--border);white-space:nowrap;}
-  th.num,td.num{text-align:right;}
-  td{padding:9px 6px;border-bottom:1px solid var(--border);font-size:13px;}
-  tr:last-child td{border-bottom:none;}
-  .table-scroll{overflow-x:auto;}
-  th.sortable{cursor:pointer;user-select:none;}
-  th.sortable:hover{color:var(--ink);}
-  .bar-title{font-size:12px;color:var(--muted);margin:18px 0 8px;text-transform:uppercase;letter-spacing:0.04em;}
-  .loading{color:var(--muted);font-size:13px;padding:40px 0;text-align:center;}
-  .spin{display:inline-block;width:14px;height:14px;border:2px solid var(--muted-2);border-top-color:var(--blue);border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:-2px;margin-right:6px;}
-  @keyframes spin{to{transform:rotate(360deg);}}
-  .aging-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
-  @media (max-width:760px){ .aging-grid{grid-template-columns:repeat(2,1fr) !important;} }
-  .tab-btn{
-    background:var(--panel);border:1px solid var(--border);color:var(--muted);
-    border-radius:9px;padding:9px 18px;font-size:13.5px;font-weight:600;cursor:pointer;
+  :root[data-theme="dark"] {
+    --bg: #14171C;
+    --surface: #1C2027;
+    --surface-2: #20242C;
+    --ink: #E7E9EC;
+    --muted: #9AA3B2;
+    --faint: #6B7280;
+    --border: #2B303A;
+    --cat-belum-wash: #2E2911;
+    --cat-7-wash: #10262C;
+    --cat-14-wash: #2E1815;
+    --cat-26-wash: #2E2911;
+    --cat-over-wash: #2A1211;
+    --cat-notdue-wash: #23262D;
+    --header-grad: linear-gradient(120deg, #1C1E27 0%, #1E2029 55%, #1A2230 100%);
   }
-  .tab-btn:hover{color:var(--ink);}
-  .tab-btn.active{background:var(--blue);color:#fff;border-color:var(--blue);}
-  .cabang-group{background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.05);}
-  .cabang-head{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;cursor:pointer;gap:16px;}
-  .cabang-head:hover{background:var(--panel-2);}
-  .cabang-title{font-weight:700;font-size:16px;}
-  .cabang-meta{color:var(--muted);font-size:12.5px;margin-top:3px;}
-  .cabang-total{font-family:Georgia,serif;font-size:21px;text-align:right;}
-  .cabang-body{display:none;padding:0 20px 18px;border-top:1px solid var(--border);}
-  .cabang-group.open .cabang-body{display:block;}
-  .cabang-group.open .chevron{transform:rotate(90deg);}
-  .cabang-body .list{margin-top:12px;}
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 28px 20px 64px; }
+
+  /* ---- Header banner ---- */
+  .header-banner {
+    background: var(--header-grad);
+    border-radius: var(--radius);
+    padding: 22px 24px 18px;
+    margin-bottom: 8px;
+  }
+  .header-grid {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px 32px;
+  }
+  .header-left .eyebrow { margin: 0 0 6px; color: var(--muted); font-size: 13.5px; }
+  .header-left .page-title {
+    margin: 0; font-family: var(--serif); font-weight: 700;
+    font-size: clamp(26px, 4vw, 34px); color: var(--ink); letter-spacing: -0.01em;
+  }
+  .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+  .sync-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+  .sync-badge {
+    width: 22px; height: 22px; border-radius: 6px; flex: none;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: #3D7DFF; color: #FFFFFF; transition: background .2s ease;
+  }
+  .sync-badge svg { width: 13px; height: 13px; }
+  .sync-row.stale .sync-badge { background: var(--cat-14); }
+  .sync-row.error .sync-badge { background: var(--cat-over); }
+  .sync-row.live .sync-badge svg { animation: none; }
+  .sync-text { color: var(--muted); font-size: 13.5px; white-space: normal; }
+  .sync-text strong { color: var(--ink); font-weight: 600; }
+  .refresh-btn {
+    appearance: none; border: 1px solid var(--border); background: var(--surface);
+    color: var(--ink); font-family: var(--sans); font-size: 13px; font-weight: 500;
+    padding: 6px 14px; border-radius: 8px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 7px;
+    box-shadow: 0 1px 2px rgba(16,24,40,0.04);
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .refresh-btn:hover { border-color: var(--faint); background: var(--surface-2); }
+  .refresh-btn:disabled { opacity: 0.6; cursor: default; }
+  .refresh-btn .refresh-icon { width: 15px; height: 15px; color: #3D7DFF; flex: none; transition: transform .5s ease; }
+  .refresh-btn.spinning .refresh-icon { animation: spin 0.8s linear infinite; }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .source-line { margin: 0; color: var(--muted); font-size: 13.5px; }
+  .header-divider { border: none; border-top: 1px solid var(--border); margin: 18px 0 24px; }
+
+  .tabs { display: flex; gap: 4px; margin: 0 0 24px; border-bottom: 1px solid var(--border); }
+  .tab {
+    appearance: none; border: none; background: transparent; cursor: pointer;
+    padding: 9px 4px; margin-right: 20px; font-family: var(--sans); font-size: 14px;
+    color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px;
+  }
+  .tab.active { color: var(--ink); font-weight: 600; border-bottom-color: var(--ink); }
+  .tab:hover { color: var(--ink); }
+  .subtitle { color: var(--muted); font-size: 13.5px; margin: 0 0 16px; }
+
+  /* ---- Follow-up Leasing tab ---- */
+  .followup-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  .followup-title { margin: 0; font-size: 19px; font-weight: 700; color: var(--ink); }
+  .sort-hint { color: var(--faint); font-size: 12.5px; }
+  .followup-toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+  .followup-toolbar .search { flex: 1; min-width: 220px; max-width: 360px; }
+  .select-filter {
+    padding: 9px 30px 9px 12px; border: 1px solid var(--border); border-radius: 8px;
+    background: var(--surface); color: var(--ink); font-family: var(--sans); font-size: 14px;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0l5 6 5-6z' fill='%23667085'/></svg>");
+    background-repeat: no-repeat; background-position: right 12px center;
+  }
+  .segmented { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .seg-btn {
+    appearance: none; border: none; background: var(--surface); color: var(--ink);
+    font-family: var(--sans); font-size: 13.5px; padding: 9px 14px; cursor: pointer;
+    border-right: 1px solid var(--border);
+  }
+  .seg-btn:last-child { border-right: none; }
+  .seg-btn.active { background: #14213D; color: #FFFFFF; font-weight: 600; }
+  .seg-btn:not(.active):hover { background: var(--surface-2); }
+  table.detail thead th[data-key] { cursor: pointer; user-select: none; white-space: nowrap; }
+  table.detail thead th[data-key]:hover { color: var(--ink); }
+  table.detail thead th[data-key] .arrow { margin-left: 4px; opacity: 0.5; font-size: 10px; }
+  table.detail thead th[data-key].sorted .arrow { opacity: 1; }
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11.5px;
+    font-weight: 600; margin-right: 6px; vertical-align: middle;
+  }
+  .badge-sudah { background: #DFF3E6; color: #1E7A46; }
+  .badge-belum { background: #F1F0EC; color: #7A7568; }
+
+  /* ---- Prioritas Penagihan & Penjualan sections ---- */
+  .catatan-input {
+    width: 100%; min-width: 200px; padding: 6px 9px; border: 1px solid var(--border);
+    border-radius: 6px; background: var(--surface); color: var(--ink);
+    font-family: var(--sans); font-size: 13px;
+  }
+  .catatan-input:focus { outline: 2px solid var(--ink); outline-offset: 1px; }
+  .catatan-saved { color: #2E9E5B; font-size: 11px; margin-left: 4px; opacity: 0; transition: opacity .3s ease; }
+  .catatan-saved.show { opacity: 1; }
+
+  .summary-card {
+    border: 1px solid var(--border); border-top: 3px solid var(--ink);
+    border-radius: var(--radius); background: var(--surface);
+    padding: 18px 22px; margin-bottom: 26px; max-width: 420px;
+    box-sizing: border-box; overflow: hidden;
+  }
+  .summary-card .sc-title { margin: 0; font-family: var(--serif); font-weight: 700; font-size: 19px; color: var(--ink); }
+  .summary-card .sc-subtitle { margin: 4px 0 14px; color: var(--muted); font-size: 13px; font-family: var(--mono); }
+  .summary-card table { width: 100%; max-width: 100%; table-layout: fixed; border-collapse: collapse; }
+  .summary-card th.num, .summary-card td.num { width: 64px; }
+  .summary-card thead th {
+    text-align: left; font-size: 11.5px; color: var(--muted); font-weight: 500;
+    padding: 6px 0; border-bottom: 1px solid var(--border);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .summary-card thead th.num { text-align: right; }
+  .summary-card tbody td { padding: 7px 0; font-size: 14px; color: var(--ink); border-bottom: 1px solid var(--border); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .summary-card tbody td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .summary-card tfoot td { padding: 9px 0 2px; font-weight: 700; font-size: 14px; color: var(--ink); }
+  .summary-card tfoot td.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+  .matrix-wrap {
+    overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius);
+    background: var(--surface); margin-bottom: 28px;
+  }
+  table.matrix { border-collapse: collapse; width: 100%; min-width: 760px; }
+  table.matrix th {
+    background: var(--surface-2); text-align: right; font-weight: 500;
+    color: var(--muted); font-size: 12px; padding: 10px 12px;
+    border-bottom: 1px solid var(--border); white-space: nowrap;
+  }
+  table.matrix th:first-child, table.matrix td.leasing-name { text-align: left; }
+  table.matrix td {
+    padding: 10px 12px; border-bottom: 1px solid var(--border);
+    font-family: var(--mono); font-size: 13px; text-align: right;
+    font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
+  table.matrix td.leasing-name { font-family: var(--sans); font-weight: 500; }
+  table.matrix tr:last-child td { border-bottom: none; }
+  table.matrix tr.grand td { background: var(--surface-2); font-weight: 600; border-top: 2px solid var(--border); }
+  table.matrix .zero { color: var(--faint); }
+
+  .leasing-section { margin-bottom: 24px; }
+  .leasing-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 12px; padding: 12px 16px; border-radius: var(--radius) var(--radius) 0 0;
+    background: #203864; color: #FFFFFF;
+  }
+  .leasing-head .name { font-weight: 600; font-size: 15px; }
+  .leasing-head .meta { font-family: var(--mono); font-size: 13px; opacity: 0.85; white-space: nowrap; }
+  .leasing-table-scroll {
+    overflow-x: auto; border: 1px solid var(--border); border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius); background: var(--surface);
+  }
+  table.detail { border-collapse: collapse; width: 100%; min-width: 980px; }
+  table.detail thead th {
+    background: var(--surface-2); text-align: left; font-weight: 500;
+    color: var(--muted); font-size: 12px; padding: 9px 12px;
+    border-bottom: 1px solid var(--border); white-space: nowrap;
+  }
+  table.detail thead th.num { text-align: right; }
+  table.detail tbody td {
+    padding: 10px 12px; border-bottom: 1px solid var(--border);
+    font-size: 13px; vertical-align: top;
+  }
+  table.detail tbody tr:last-child td { border-bottom: none; }
+  table.detail td.money, table.detail td.hari { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+  table.detail td.nama { font-weight: 500; }
+
+  @media (max-width: 640px) {
+    .header-grid { flex-direction: column; }
+    .header-right { align-items: flex-start; width: 100%; }
+    .sync-row { justify-content: flex-start; }
+  }
+
+
+  .hero {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 28px 40px;
+    align-items: end;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-figure .label { color: var(--muted); font-size: 13px; margin: 0 0 6px; }
+  .hero-figure .value {
+    font-family: var(--mono); font-weight: 600;
+    font-size: clamp(34px, 6vw, 54px);
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .hero-figure .value small { font-size: 0.4em; font-weight: 500; color: var(--muted); margin-right: 4px; }
+  .hero-stats { display: flex; gap: 32px; flex-wrap: wrap; }
+  .hero-stat .n { font-family: var(--mono); font-weight: 600; font-size: 22px; font-variant-numeric: tabular-nums; }
+  .hero-stat .l { color: var(--muted); font-size: 13px; margin-top: 2px; }
+
+  .composition {
+    margin-top: 18px;
+    display: flex; height: 10px; border-radius: 999px; overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .composition span { height: 100%; }
+
+  /* ---- Filter pills ---- */
+  .pills {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin: 24px 0 16px;
+  }
+  .pill {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 14px 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    cursor: pointer;
+    font-size: 13.5px;
+    color: var(--ink);
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .pill:hover { border-color: var(--faint); }
+  .pill .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .pill .cnt { font-family: var(--mono); color: var(--muted); }
+  .pill.active { border-color: var(--ink); background: var(--surface-2); }
+  .pill.active .cnt { color: var(--ink); }
+
+  .toolbar {
+    display: flex; gap: 12px; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; margin-bottom: 14px;
+  }
+  .search {
+    flex: 1; min-width: 220px; max-width: 340px;
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 14px;
+  }
+  .search:focus { outline: 2px solid var(--ink); outline-offset: 1px; }
+  .result-count { color: var(--muted); font-size: 13px; }
+
+  /* ---- Table ---- */
+  .table-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+  table { border-collapse: collapse; width: 100%; min-width: 920px; }
+  thead th {
+    position: sticky; top: env(safe-area-inset-top, 0px);
+    background: var(--surface-2);
+    text-align: left;
+    font-weight: 500;
+    color: var(--muted);
+    font-size: 12.5px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  thead th.num, td.num { text-align: right; }
+  tbody td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    font-size: 13.5px;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  td.money, td.hari { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td.nama { font-weight: 500; }
+  td.sub { color: var(--muted); font-size: 12.5px; margin-top: 2px; display: block; }
+  .rowcat { border-left: 3px solid transparent; }
+
+  .grouphead td {
+    background: var(--surface-2);
+    font-weight: 600;
+    font-size: 12.5px;
+    padding: 9px 14px;
+    position: sticky; top: calc(env(safe-area-inset-top, 0px) + 37px);
+    border-bottom: 1px solid var(--border);
+  }
+  .grouphead .swatch {
+    display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 8px;
+  }
+  .grouphead .ghcount { color: var(--muted); font-weight: 400; margin-left: 6px; }
+  .grouphead .ghtotal { float: right; font-family: var(--mono); font-weight: 500; color: var(--muted); }
+
+  .empty { padding: 40px 20px; text-align: center; color: var(--muted); font-size: 14px; }
+
+  footer { margin-top: 22px; color: var(--faint); font-size: 12px; }
+
+  @media (max-width: 640px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-stats { gap: 22px; }
+  }
+
+  .tri-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:6px 0 14px}
+  .tri-head h2{font-family:var(--serif);font-size:20px;margin:0}
+  .tri-head span{color:var(--muted);font-size:13px}
+  .tri{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
+  .bcard{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--c);border-radius:14px;overflow:hidden;flex:0 1 300px;min-width:0;max-width:100%}
+  .bc-h{padding:14px 16px 10px}
+  .bc-h b{display:block;font-family:var(--serif);font-size:17px;margin-bottom:2px}
+  .bc-h small{font-family:var(--mono);color:var(--muted);font-size:12.5px}
+  .bc-body{max-height:560px;overflow-y:auto;overflow-x:hidden}
+  .bcard table{width:100%;min-width:0;table-layout:auto;border-collapse:collapse;font-size:14px}
+  .bcard td,.bcard th{white-space:normal;overflow-wrap:anywhere}
+  .bcard td.num,.bcard th.num{white-space:nowrap;width:1%}
+  .bcard th{position:sticky;top:0;background:var(--surface-2);color:var(--muted);font-size:12px;font-weight:500;text-align:left;padding:8px 16px;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+  .bcard td:first-child{padding-right:28px}
+  .bcard td{padding:8px 16px;border-bottom:1px solid var(--border)}
+  .bcard .num{text-align:right;font-family:var(--mono)}
+  .bcard tfoot td{font-weight:700;border-bottom:0;position:sticky;bottom:0;background:var(--surface)}
+  .bcard td.z{color:var(--faint)}
+  th.sortable{cursor:pointer;user-select:none;white-space:nowrap}
+  th.sortable:hover{color:var(--ink)}
+  th.sortable .arrow{margin-left:4px;font-size:10px}
+
+  .dtoggle{cursor:pointer;user-select:none}
+  .dtoggle .chev{display:inline-block;width:18px;color:var(--muted)}
+  .pr-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:4px 0 12px}
+  .pr-head h3{font-family:var(--serif);font-size:22px;margin:0}
+  .pr-head span{color:var(--muted);font-size:13px;font-family:var(--mono)}
+  .pr-tools{display:flex;gap:8px;align-items:center}
+  .pr-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--cat-14-wash);border:1px solid var(--cat-14);border-bottom:0;border-radius:12px 12px 0 0;padding:16px 22px;color:var(--cat-over)}
+  .pr-banner b{font-family:var(--serif);font-size:19px}
+  .pr-banner .pr-sum{color:var(--ink);font-size:14px}
+  .pr-banner em{font-style:normal;font-family:var(--mono);font-weight:700;color:var(--cat-over)}
+  .pr-dot{display:inline-block;width:12px;height:12px;border-radius:50%;background:#DC2626;margin-right:10px;box-shadow:0 0 0 5px rgba(220,38,38,.18)}
+  .pr-wrap{border:1px solid var(--cat-14);border-radius:0 0 12px 12px;overflow:hidden;background:var(--surface);margin-bottom:26px}
+  .pr-empty{padding:18px 22px;color:var(--muted);border:1px solid var(--border);border-radius:12px;background:var(--surface);margin-bottom:26px}
+  .pr-row{cursor:pointer}
+  .pr-row:hover td{background:var(--surface-2)}
+  .pr-chev{color:var(--muted);display:inline-block;width:16px}
+  .pr-red{color:var(--cat-over);font-weight:600}
+  .pr-badge{background:#DDE6FB;color:#2F4FD0;border-radius:999px;padding:3px 12px;font-size:13px;font-weight:600}
+  .pr-cnt{display:inline-block;margin-left:6px;background:var(--cat-notdue-wash);color:var(--muted);border-radius:999px;padding:1px 8px;font-size:11px}
+  .pr-detail > td{background:var(--surface-2);padding:18px 22px !important}
+  .pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+  @media (max-width:760px){.pr-grid{grid-template-columns:1fr}}
+  .pr-grid h4{margin:0 0 10px;font-size:12px;letter-spacing:.06em;color:var(--muted);font-weight:600}
+  .fu-list{list-style:none;padding:0;margin:0 0 12px;max-height:260px;overflow:auto}
+  .fu-list li{padding:8px 0;border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;gap:2px 10px;align-items:baseline}
+  .fu-list li small{color:var(--muted);font-size:12px}
+  .fu-list li > div{flex-basis:100%}
+  .fu-list li.done span{text-decoration:line-through;color:var(--muted)}
+  .fu-list .z{color:var(--muted)}
+  .fu-form{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap}
+  .fu-in{border:1px solid var(--border);background:var(--surface);color:var(--ink);border-radius:8px;padding:9px 12px;font:inherit;flex:1;min-width:140px}
+  .fu-in.pic{flex:0 0 120px;min-width:90px}
+  .fu-btn{background:#6D28D9;color:#fff;border:0;border-radius:8px;padding:9px 16px;font:inherit;font-weight:600;cursor:pointer}
+  .fu-ghost{background:var(--surface);color:var(--ink);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font:inherit;font-size:12.5px;cursor:pointer}
+  .fu-x{background:none;border:0;color:var(--muted);cursor:pointer;font:inherit;margin-left:auto}
+  .pr-arch{border:1px solid var(--border);border-radius:12px;background:var(--surface);margin-bottom:26px}
+  .pr-arch-h{padding:12px 18px;cursor:pointer;font-weight:600}
+  .pr-arch-h span{color:var(--muted);font-weight:400}
+  .pr-arch-i{padding:12px 18px;border-top:1px solid var(--border)}
+  .pr-arch-i small{color:var(--muted)}
+
+  .tri-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 14px}
+  .tri-chips{display:flex;gap:6px;flex-wrap:wrap}
+  .tri-chip{border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:999px;padding:6px 13px;font:inherit;font-size:13px;cursor:pointer}
+  .tri-chip.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+  .tri-none{color:var(--muted);padding:10px 0}
+  .perdate{font-size:12.5px;color:var(--faint);margin:4px 0 0}
+
+  .pw-gate{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--header-grad),var(--bg)}
+  .pw-gate.hidden{display:none}
+  .pw-box{width:100%;max-width:380px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px 28px;box-shadow:0 10px 40px rgba(16,24,40,.10);text-align:center}
+  .pw-co{font-size:13px;color:var(--muted);margin-bottom:6px}
+  .pw-title{font-family:var(--serif);font-size:26px;font-weight:500;color:var(--ink);margin-bottom:8px}
+  .pw-sub{font-size:13.5px;color:var(--muted);margin-bottom:20px}
+  .pw-box input{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);color:var(--ink);font:inherit;margin-bottom:12px}
+  .pw-box input:focus{outline:2px solid #6D28D9;outline-offset:1px}
+  .pw-box button{width:100%;padding:12px;border:0;border-radius:10px;background:#6D28D9;color:#fff;font:inherit;font-weight:600;cursor:pointer}
+  .pw-error{margin-top:12px;font-size:13px;color:var(--cat-over)}
+  .pw-error.hidden{display:none}
+  body.pw-locked{overflow:hidden}
+  .fu-ghost:disabled{opacity:.45;cursor:not-allowed}
 </style>
 </head>
-<body>
-<div id="loginGate" style="position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:32px;width:320px;max-width:100%;box-shadow:0 4px 16px rgba(0,0,0,.08);">
-    <p style="font-weight:700;font-size:18px;margin:0 0 4px;font-family:Georgia,serif;">Piutang GR Flamboyan</p>
-    <p style="color:var(--muted);font-size:13px;margin:0 0 18px;">PT Perintis Perkasa, Medan</p>
-    <input type="password" id="gatePassword" placeholder="Masukkan password" autofocus
-      style="width:100%;box-sizing:border-box;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:14px;margin-bottom:10px;background:var(--bg);color:var(--ink);">
-    <button id="gateSubmit" class="btn" style="width:100%;justify-content:center;">Masuk</button>
-    <p id="gateError" style="color:var(--red);font-size:12.5px;margin-top:10px;display:none;">Password salah, coba lagi.</p>
+<body class="pw-locked">
+<div id="passwordGate" class="pw-gate">
+  <div class="pw-box">
+    <div class="pw-co">PT Perintis Perkasa, Medan</div>
+    <div class="pw-title">Piutang Flamboyan</div>
+    <div class="pw-sub">Masukkan password divisi Flamboyan untuk membuka dashboard</div>
+    <form id="pwForm">
+      <input type="password" id="pwInput" placeholder="Password" autocomplete="current-password" required>
+      <button type="submit">Masuk</button>
+    </form>
+    <div id="pwError" class="pw-error hidden">Password salah, coba lagi.</div>
   </div>
 </div>
-<div class="wrap" style="display:none;">
+<script>
+(function () {
+  // Password wajib setiap kali halaman dibuka / di-reload (tidak ada sesi yang disimpan)
+  var PASSWORD = 'perintisflamboyan2026', KEY = 'pp_auth_flamboyan';
+  var gate = document.getElementById('passwordGate'), form = document.getElementById('pwForm');
+  var input = document.getElementById('pwInput'), err = document.getElementById('pwError');
+  try { sessionStorage.removeItem(KEY); } catch (e) {}   // bersihkan sesi dari versi lama
+  function unlock() { gate.classList.add('hidden'); document.body.classList.remove('pw-locked'); }
+  function lock() {
+    gate.classList.remove('hidden'); document.body.classList.add('pw-locked');
+    input.value = ''; err.classList.add('hidden'); input.focus();
+  }
+  input.focus();
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (input.value === PASSWORD) unlock();
+    else { err.classList.remove('hidden'); input.value = ''; input.focus(); }
+  });
+  // Tombol Back/Forward yang memulihkan halaman dari cache browser juga harus meminta password lagi
+  window.addEventListener('pageshow', function (e) { if (e.persisted) lock(); });
+})();
+</script>
 
+<div class="wrap">
 
-  <div class="topline">
-    <div>
-      <p class="brand">PT Perintis Perkasa, Medan</p>
-      <h1>Piutang GR Flamboyan</h1>
-      <p class="sub" id="opname-title" style="margin-bottom:2px;"></p>
-      <p class="sub" id="source-sub">Sumber: Laporan Piutang</p>
-    </div>
-    <div class="controls">
-      <label class="toggle"><input type="checkbox" id="auto-toggle" checked> Auto-refresh 60 dtk</label>
-      <button class="btn" id="refresh-btn">&#8635; Refresh sekarang</button>
+  <div class="header-banner">
+    <div class="header-grid">
+      <div class="header-left">
+        <p class="eyebrow">PT Perintis Perkasa, Medan</p>
+        <h1 class="page-title">Piutang Flamboyan</h1>
+        <p class="perdate" id="perDateLabel"></p>
+      </div>
+      <div class="header-right">
+        <div class="sync-row" id="syncRow">
+          <span class="sync-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 0 1 15.3-6.4L21 8"/><path d="M21 3v5h-5"/>
+              <path d="M21 12a9 9 0 0 1-15.3 6.4L3 16"/><path d="M3 21v-5h5"/>
+            </svg>
+          </span>
+          <span class="sync-text" id="syncText">Memuat status sinkronisasi&hellip;</span>
+          <button type="button" class="refresh-btn" id="refreshBtn" title="Segarkan sekarang">
+            <svg class="refresh-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 0 1 15.3-6.4L21 8"/><path d="M21 3v5h-5"/>
+              <path d="M21 12a9 9 0 0 1-15.3 6.4L3 16"/><path d="M3 21v-5h5"/>
+            </svg>
+            Refresh
+          </button>
+        </div>
+        <p class="source-line">Sumber: Laporan Piutang Per Nama (<span id="sourceCount">0</span> faktur)</p>
+      </div>
     </div>
   </div>
-  <div class="status" id="status">Memuat data...</div>
+  <hr class="header-divider">
 
-  <div class="banner" id="error-banner"></div>
-
-  <hr>
-
-  <div class="divisi-tabs" id="divisiTabs" style="display:none;"></div>
-
-  <div id="divisiPanel" style="display:none;">
-    <div class="total-card" id="totalCard">
-      <div>
-        <p class="label">Total piutang berjalan</p>
-        <p class="amount" id="totalAmount">—</p>
-      </div>
-      <div style="text-align:right;">
-        <p class="label">Jumlah faktur &middot; debitur</p>
-        <p class="amount" id="totalCount" style="font-size:22px;">—</p>
-      </div>
-    </div>
-    <div class="aging-grid" id="agingGrid"></div>
-    <div class="tabs" id="innerTabs" style="display:flex;gap:8px;margin-bottom:18px;">
-      <button class="tab-btn active" data-tab="debitur">Per Debitur</button>
-      <button class="tab-btn" data-tab="kategori">Per Kategori</button>
-      <button class="tab-btn" data-tab="penagihan">Penagihan Piutang</button>
-      <button class="tab-btn" data-tab="prioritas">Prioritas Tagihan</button>
-    </div>
-    <div id="content"></div>
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-tab="umur">Umur Piutang</button>
+    <button class="tab" data-tab="leasing">Per Leasing</button>
+    <button class="tab" data-tab="followup">Follow-up Leasing</button>
+    <button class="tab" data-tab="penjualanleasing">Penjualan per Leasing</button>
+    <button class="tab" data-tab="penjualanasuransi">Penjualan per Insurance Company</button>
+    <button class="tab" data-tab="penjualansupervisor">Penjualan per Supervisor</button>
+    <button class="tab" data-tab="salesterbanyak">Sales Terbanyak</button>
+    <button class="tab" data-tab="detailpenjualan">Detail Penjualan</button>
   </div>
 
-  <div id="emptyState"><div class="loading"><span class="spin"></span>Mengambil data dari Google Sheets...</div></div>
+  <div class="tabpanel" id="tabpanel-umur">
+  <div class="hero">
+    <div class="hero-figure">
+      <p class="label">Total piutang berjalan</p>
+      <div class="value"><small>Rp</small><span id="totalAmount">0</span></div>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="n" id="totalCount">0</div><div class="l">debitur</div></div>
+      <div class="hero-stat"><div class="n" id="overCount">0</div><div class="l">&gt; 26 hari</div></div>
+      <div class="hero-stat"><div class="n" id="within7Count">0</div><div class="l">1&ndash;7 hari</div></div>
+    </div>
+  </div>
+  <div class="composition" id="composition"></div>
 
+  <div class="pills" id="pills"></div>
+
+  <div class="toolbar">
+    <input class="search" id="search" type="text" placeholder="Cari nama, faktur, atau salesman...">
+    <span class="result-count" id="resultCount"></span>
+  </div>
+
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>Nama Debitur</th>
+          <th>Faktur No.</th>
+          <th>Tipe Unit</th>
+          <th>Jth. Tempo</th>
+          <th class="num">Jumlah</th>
+          <th>Leasing</th>
+          <th>Salesman</th>
+          <th>Supervisor</th>
+          <th class="num">Hari</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="empty" id="emptyState" style="display:none;">Tidak ada data yang cocok dengan pencarian atau filter ini.</div>
+  </div>
+  </div>
+
+  <div class="tabpanel" id="tabpanel-leasing" hidden>
+    <div class="matrix-wrap">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th>Leasing</th>
+            <th>Jml Debitur</th>
+            <th>Belum Buat Tagihan</th>
+            <th>1&ndash;7 Hari</th>
+            <th>8&ndash;14 Hari</th>
+            <th>15&ndash;26 Hari</th>
+            <th>&gt; 26 Hari</th>
+            <th>Total Piutang</th>
+          </tr>
+        </thead>
+        <tbody id="matrixBody"></tbody>
+      </table>
+    </div>
+    <div id="leasingSections"></div>
+  </div>
+
+  <div class="tabpanel" id="tabpanel-followup" hidden>
+    <div id="prioritasBox"></div>
+    <div class="followup-head">
+      <h2 class="followup-title">Rincian Faktur</h2>
+      <span class="sort-hint">klik header kolom untuk urutkan</span>
+    </div>
+    <div class="followup-toolbar">
+      <input class="search" id="followupSearch" type="text" placeholder="Cari nama customer, faktur, atau salesman...">
+      <select class="select-filter" id="followupLeasingFilter">
+        <option value="">Semua leasing</option>
+      </select>
+      <div class="segmented" id="followupStatusSeg">
+        <button class="seg-btn active" data-status="all">Semua</button>
+        <button class="seg-btn" data-status="belum">Belum tagih</button>
+        <button class="seg-btn" data-status="sudah">Sudah tagih</button>
+      </div>
+    </div>
+    <div class="table-scroll">
+      <table class="detail" id="followupTable">
+        <thead>
+          <tr>
+            <th data-key="no">No</th>
+            <th data-key="nama">Nama Customer</th>
+            <th data-key="tglJto">Tgl Jto</th>
+            <th data-key="leasing">Leasing</th>
+            <th data-key="cabang">Cabang</th>
+            <th class="num" data-key="jumlah">Jumlah</th>
+            <th data-key="tglTagih">Tgl Buat Tagihan</th>
+            <th class="num" data-key="hari">Hari</th>
+            <th data-key="salesman">Salesman</th>
+            <th data-key="supervisor">Supervisor</th>
+            <th data-key="faktur">Faktur No.</th>
+            <th data-key="tglBarcode">Tgl Barcode</th>
+          </tr>
+        </thead>
+        <tbody id="followupBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="tabpanel" id="tabpanel-penjualanleasing" hidden><div id="triLeasing"></div></div>
+
+  <div class="tabpanel" id="tabpanel-penjualanasuransi" hidden><div id="triAsuransi"></div></div>
+
+  <div class="tabpanel" id="tabpanel-penjualansupervisor" hidden><div id="triSupervisor"></div></div>
+
+  <div class="tabpanel" id="tabpanel-salesterbanyak" hidden><div id="triSales"></div></div>
+
+  <div class="tabpanel" id="tabpanel-detailpenjualan" hidden>
+    <div class="followup-head">
+      <h2 class="followup-title">Detail Penjualan</h2>
+      <span class="sort-hint">klik header kolom untuk urutkan naik/turun</span>
+    </div>
+    <div class="followup-toolbar">
+      <input class="search" id="dSearch" type="text" placeholder="Cari nama debitur, tipe unit, faktur, atau salesman...">
+      <select class="select-filter" id="dMonth"></select>
+      <select class="select-filter" id="dGroup">
+        <option value="leasing">Kelompokkan: Leasing</option>
+        <option value="asuransi">Kelompokkan: Insurance Company</option>
+        <option value="supervisor">Kelompokkan: Supervisor</option>
+        <option value="salesman">Kelompokkan: Salesman</option>
+      </select>
+      <div class="segmented"><button class="seg-btn" id="dCollapseAll">Minimize semua</button><button class="seg-btn" id="dExpandAll">Buka semua</button></div>
+    </div>
+    <p class="subtitle" id="dInfo"></p>
+    <div id="detailSections"></div>
+  </div>
+
+  <footer>Kategori dihitung otomatis dari Tgl. Jatuh Tempo setiap kali halaman ini dibuka &mdash; angka &ldquo;Hari&rdquo; selalu mengikuti tanggal hari ini.<br>Versi build: 2026-09-30-v18 (password wajib setiap buka/reload)</footer>
 </div>
 
 <script>
-// URL "Publish to web" (File > Share > Publish to web) untuk sheet "Piutang GR & BP", Sheet1 (gid=0).
-// Kalau data yang tampil ternyata basi, buka sheet-nya lalu: File > Share > Publish to web > Republish.
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTM7G5Mv4eC4DN3u_xkvUBCu3LYgZxMIEq0lY9QOKykZudX02ANnM0-2GwxtQ28gJjEEzThOWWj__Az/pub?gid=0&single=true&output=csv";
 
-var MONTH_NAMES = ['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-var MONTH_FULL_ID = ['','januari','februari','maret','april','mei','juni','juli','agustus','september','oktober','november','desember'];
-var NAME_MAP = {
-  'PT . ASURANSI MSIG INDONESIA': 'PT. ASURANSI MSIG INDONESIA',
-  'PERINTIS PERKASA,PT': 'PERINTIS PERKASA, PT'
+const REPORT_DATE_LABEL_INITIAL = "Per : 28-Sep-2026";
+let REPORT_DATE_LABEL = REPORT_DATE_LABEL_INITIAL;
+function showPerDate(v) {
+  const m = String(v || '').match(/Per\s*:\s*(\d{1,2}-[A-Za-z]+-\d{4})/i);
+  document.getElementById('perDateLabel').textContent = m ? 'Per : ' + m[1] : String(v || '');
+}
+showPerDate(REPORT_DATE_LABEL);
+const TARGET_DIVISI = "Flamboyan";
+const RAW = [{"noCust": "C0031385PUT", "nama": "PUTRI NURLIA KHAIRUNNISA", "faktur": "000226/FKT/PP/0926", "top": "-", "tglJto": "2026-09-26", "jumlah": 159550000.0, "type": "AGYA STYLIX 1.2 G CVT", "cara": "Kredit", "leasing": "TAF", "salesman": "DENNY FRANATA SEMBIRING", "supervisor": "PUTRA", "tglTagih": "Belum Buat Tagihan", "tglBarcode": "-", "followup": null}, {"noCust": "C0031775CVR", "nama": "CV ROCKY GULTOM", "faktur": "000191/FKT/PP/0926", "top": "-", "tglJto": "2026-09-23", "jumlah": 410900000.0, "type": "HILUX DOUBLE CABIN 2.8 G (4X4) DSL M/T", "cara": "Kredit", "leasing": "ACC", "salesman": "ALEXANDRO SITUNGKIR", "supervisor": "ZAIN", "tglTagih": "2026-09-24", "tglBarcode": "2026-09-23", "followup": null}, {"noCust": "C0031867MIT", "nama": "CV MITRA SETIA", "faktur": "000113/FKT/PP/0926", "top": "-", "tglJto": "2026-09-17", "jumlah": 292000000.0, "type": "KIJANG INNOVA ZENIX 2.0 Q HV CVT TSS MODELISTA", "cara": "Kredit", "leasing": "TAF", "salesman": "NIA HENDRIATY", "supervisor": "LIK SIONG", "tglTagih": "2026-09-18", "tglBarcode": "2026-09-18", "followup": null}, {"noCust": "C0032092JER", "nama": "JEREMIA ALEXANDER AGUNG SEMBIRING", "faktur": "000088/FKT/PP/0926", "top": "-", "tglJto": "2026-09-11", "jumlah": 157500000.0, "type": "RUSH 1.5 S M/T GR SPORT", "cara": "Kredit", "leasing": "IMFS", "salesman": "GANDA MARTUA SITUMORANG SE", "supervisor": "LIK SIONG", "tglTagih": "2026-09-12", "tglBarcode": "-", "followup": null}, {"noCust": "C0032206AZR", "nama": "AZRAI RIDHO HANAFIAH SE M SI", "faktur": "000204/FKT/PP/0926", "top": "-", "tglJto": "2026-09-24", "jumlah": 166500000.0, "type": "CALYA 1.2 G A/T", "cara": "Kredit", "leasing": "ACC", "salesman": "ALFIAN R STEFANUS HUTAGALUNG", "supervisor": "PRODIPA", "tglTagih": "2026-09-25", "tglBarcode": "2026-09-25", "followup": null}, {"noCust": "C0032254MAI", "nama": "MAINSYAH PUTRA", "faktur": "000165/FKT/PP/0926", "top": "-", "tglJto": "2026-09-21", "jumlah": 194400000.0, "type": "AVANZA 1.5 G M/T", "cara": "Kredit", "leasing": "ACC", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "tglTagih": "2026-09-22", "tglBarcode": "2026-09-21", "followup": null}, {"noCust": "C0032268DOL", "nama": "DOLLY HAGANTHA", "faktur": "000171/FKT/PP/0926", "top": "-", "tglJto": "2026-09-21", "jumlah": 210400000.0, "type": "AVANZA 1.5 G M/T", "cara": "Kredit", "leasing": "TAF", "salesman": "YOSA AFANDI", "supervisor": "LIK SIONG", "tglTagih": "2026-09-22", "tglBarcode": "2026-09-21", "followup": null}, {"noCust": "C0032419MHD", "nama": "MHD SYAHRIR HAMZAH", "faktur": "000210/FKT/PP/0926", "top": "-", "tglJto": "2026-09-25", "jumlah": 206200000.0, "type": "RUSH 1.5 S A/T GR SPORT", "cara": "Kredit", "leasing": "ACC", "salesman": "DEDI ISWANTO SPD", "supervisor": "LIK SIONG", "tglTagih": "2026-09-26", "tglBarcode": "-", "followup": null}, {"noCust": "C0032469ARI", "nama": "ARIMA NADELA NAINGGOLAN", "faktur": "000141/FKT/PP/0926", "top": "-", "tglJto": "2026-09-18", "jumlah": 207199997.0, "type": "RUSH 1.5 S A/T GR SPORT", "cara": "Kredit", "leasing": "ACC", "salesman": "YOSA AFANDI", "supervisor": "LIK SIONG", "tglTagih": "2026-09-19", "tglBarcode": "-", "followup": null}, {"noCust": "C0032470MAN", "nama": "MANGANTAR SIMBOLON", "faktur": "000167/FKT/PP/0926", "top": "-", "tglJto": "2026-09-21", "jumlah": 125000000.0, "type": "VELOZ 1.5 Q HYBRID CVT MODELLISTA", "cara": "Kredit", "leasing": "ACC", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "tglTagih": "2026-09-22", "tglBarcode": "2026-09-21", "followup": null}, {"noCust": "C0032486MIN", "nama": "MINAH", "faktur": "000219/FKT/PP/0926", "top": "-", "tglJto": "2026-09-26", "jumlah": 404301205.0, "type": "KIJANG INNOVA ZENIX 2.0 V HV CVT MODELISTA", "cara": "Kredit", "leasing": "KKB", "salesman": "FRANKY LUMBANRAJA", "supervisor": "PRODIPA", "tglTagih": "Belum Buat Tagihan", "tglBarcode": "-", "followup": null}, {"noCust": "C0032511DIS", "nama": "DISON PRIMA ANTONI SIMBOLON", "faktur": "000174/FKT/PP/0926", "top": "-", "tglJto": "2026-09-21", "jumlah": 135940000.0, "type": "RAIZE 1.0T GR SPORT CVT TWO TONE", "cara": "Kredit", "leasing": "TAF", "salesman": "MUSA IRAWAN", "supervisor": "LIK SIONG", "tglTagih": "2026-09-22", "tglBarcode": "2026-09-21", "followup": null}, {"noCust": "C0032552YAY", "nama": "YAYASAN UNIVERSITAS PEMBINAAN MASYARAKAT INDONESIA SYAHRUDDIN", "faktur": "000193/FKT/PP/0926", "top": "-", "tglJto": "2026-09-23", "jumlah": 1262600000.0, "type": "ALPHARD 2.5 HYBRID CVT", "cara": "Kredit", "leasing": "ADM", "salesman": "MUHAMMAD FIRQIN QUFRAN", "supervisor": "LIK SIONG", "tglTagih": "2026-09-25", "tglBarcode": "2026-09-23", "followup": null}, {"noCust": "C0032559SIS", "nama": "SISWANTO", "faktur": "000200/FKT/PP/0926", "top": "-", "tglJto": "2026-09-24", "jumlah": 214550000.0, "type": "AVANZA 1.3 E CVT", "cara": "Kredit", "leasing": "ACC", "salesman": "HARDI WIJAYA", "supervisor": "LIK SIONG", "tglTagih": "2026-09-25", "tglBarcode": "2026-09-25", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000055/FKT/PP/0826", "top": "-", "tglJto": "2026-08-11", "jumlah": 446600000.0, "type": "KIJANG INNOVA ZENIX 2.0 V HV CVT MODELISTA", "cara": "Tunai", "leasing": "Cash", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "tglTagih": "2026-08-11", "tglBarcode": "2026-08-11", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000075/FKT/PP/0826", "top": "-", "tglJto": "2026-08-13", "jumlah": 478000000.0, "type": "HILUX DOUBLE CABIN 2.8 V (4X4) A/T", "cara": "Tunai", "leasing": "Cash", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "tglTagih": "2026-08-13", "tglBarcode": "2026-08-14", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000001/FKT/PP/0926", "top": "-", "tglJto": "2026-09-01", "jumlah": 164700000.0, "type": "CALYA 1.2 G A/T", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "tglTagih": "2026-09-01", "tglBarcode": "2026-09-01", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000123/FKT/PP/0926", "top": "-", "tglJto": "2026-09-18", "jumlah": 337200000.0, "type": "KIJANG INNOVA 2.4 G M/T", "cara": "Tunai", "leasing": "Cash", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "tglTagih": "2026-09-18", "tglBarcode": "-", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000139/FKT/PP/0926", "top": "-", "tglJto": "2026-09-18", "jumlah": 251400000.0, "type": "RUSH 1.5 S M/T GR SPORT", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "tglTagih": "2026-09-18", "tglBarcode": "2026-09-19", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000189/FKT/PP/0926", "top": "-", "tglJto": "2026-09-23", "jumlah": 354600000.0, "type": "KIJANG INNOVA 2.4 G A/T", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "tglTagih": "2026-09-23", "tglBarcode": "2026-09-23", "followup": null}]
+;
+let SALES = [{"tanggal": "2026-09-01", "faktur": "000001/FKT/PP/0926", "nama": "PT SUTAN INDO ANEKA MOBIL", "namabrg": "CALYA 1.2 G A/T", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-02", "faktur": "000013/FKT/PP/0926", "nama": "EMMY MONARA", "namabrg": "RUSH 1.5 S A/T GR SPORT", "cara": "Kredit", "leasing": "TAF", "salesman": "ENDA HARTO SEMBIRING", "supervisor": "ZAIN", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-03", "faktur": "000014/FKT/PP/0926", "nama": "BINARIA KARO KARO", "namabrg": "HI ACE COMMUTER M/T", "cara": "Kredit", "leasing": "TAF", "salesman": "FIRMANDO GINTING", "supervisor": "LIK SIONG", "asuransi": "MSIG", "divisi": "Flamboyan"}, {"tanggal": "2026-09-03", "faktur": "000016/FKT/PP/0926", "nama": "TIRTA MAHARDIKA", "namabrg": "VELOZ 1.5 Q HYBRID CVT MODELLISTA", "cara": "Kredit", "leasing": "ACC", "salesman": "MUHAMMAD FATIH SILMI", "supervisor": "PUTRA", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-04", "faktur": "000022/FKT/PP/0926", "nama": "ISWANTO SAMBO", "namabrg": "RUSH 1.5 S A/T GR SPORT", "cara": "Kredit", "leasing": "TAF", "salesman": "DOLI ANDREAS SIREGAR", "supervisor": "PRODIPA", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-04", "faktur": "000023/FKT/PP/0926", "nama": "UMAR DANI", "namabrg": "AVANZA 1.5 G M/T", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-05", "faktur": "000034/FKT/PP/0926", "nama": "WILLIAM OSCAR ANANTA PINEM", "namabrg": "CALYA 1.2 G M/T", "cara": "Kredit", "leasing": "ACC", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "asuransi": "SHBT", "divisi": "Flamboyan"}, {"tanggal": "2026-09-07", "faktur": "000039/FKT/PP/0926", "nama": "JONFRI HASUDUNGAN SIHOMBING", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Tunai", "leasing": "Cash", "salesman": "ANDI DESWANDA", "supervisor": "ZAIN", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-07", "faktur": "000043/FKT/PP/0926", "nama": "GANDA SAMOSIR S IP", "namabrg": "KIJANG INNOVA ZENIX 2.0 Q HV CVT TSS MODELISTA", "cara": "Tunai", "leasing": "Cash", "salesman": "PERMATA INDAH LEMMY", "supervisor": "LIK SIONG", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-08", "faktur": "000047/FKT/PP/0926", "nama": "EVRIANTO P BATU", "namabrg": "RUSH 1.5 S A/T GR SPORT", "cara": "Tunai", "leasing": "Cash", "salesman": "RADE JULIMAN LUMBAN TORUAN", "supervisor": "LIK SIONG", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-08", "faktur": "000049/FKT/PP/0926", "nama": "PT MULIA DUTA PERMATA", "namabrg": "HILUX RANGGA PICK UP 2.0 HIGH M/T", "cara": "Kredit", "leasing": "TAF", "salesman": "DOLI ANDREAS SIREGAR", "supervisor": "PRODIPA", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-09", "faktur": "000056/FKT/PP/0926", "nama": "PT SIBALEC", "namabrg": "KIJANG INNOVA ZENIX 2.0 V HV CVT MODELISTA", "cara": "Tunai", "leasing": "Cash", "salesman": "RICHARD SAMUEL SITUMORANG", "supervisor": "PRODIPA", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-09", "faktur": "000058/FKT/PP/0926", "nama": "LENI MARLINA KATARINA", "namabrg": "AVANZA 1.5 G CVT", "cara": "Kredit", "leasing": "BRIM", "salesman": "RADE JULIMAN LUMBAN TORUAN", "supervisor": "LIK SIONG", "asuransi": "BRINS", "divisi": "Flamboyan"}, {"tanggal": "2026-09-09", "faktur": "000059/FKT/PP/0926", "nama": "NUR ARAFAH", "namabrg": "AGYA 1.2 G CVT", "cara": "Kredit", "leasing": "TAF", "salesman": "ALFIAN R STEFANUS HUTAGALUNG", "supervisor": "PRODIPA", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-09", "faktur": "000061/FKT/PP/0926", "nama": "HENDRIK", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Kredit", "leasing": "TAF", "salesman": "OSEP MARIO PANJAITAN", "supervisor": "PRODIPA", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-09", "faktur": "000062/FKT/PP/0926", "nama": "TUTI", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Kredit", "leasing": "BRIM", "salesman": "HOT IMANSON PURBA", "supervisor": "PRODIPA", "asuransi": "ACA", "divisi": "Flamboyan"}, {"tanggal": "2026-09-09", "faktur": "000063/FKT/PP/0926", "nama": "M ALDY TEGUH", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Kredit", "leasing": "ACC", "salesman": "ARI RAMADHAN", "supervisor": "ZAIN", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-09", "faktur": "000064/FKT/PP/0926", "nama": "MISNAWATI", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Kredit", "leasing": "ACC", "salesman": "ANDI DHIKA PUTRANTA M", "supervisor": "PRODIPA", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-11", "faktur": "000078/FKT/PP/0926", "nama": "ASBIA HASIBUAN", "namabrg": "AVANZA 1.3 E CVT", "cara": "Kredit", "leasing": "TAF", "salesman": "ROHMAN HANAPI NASUTION", "supervisor": "LIK SIONG", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-11", "faktur": "000083/FKT/PP/0926", "nama": "MIKHA TARIGAN", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Kredit", "leasing": "ACC", "salesman": "YOSA AFANDI", "supervisor": "LIK SIONG", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-11", "faktur": "000086/FKT/PP/0926", "nama": "ARCHES MADA GINTING", "namabrg": "KIJANG INNOVA ZENIX 2.0 G HV CVT", "cara": "Tunai", "leasing": "Cash", "salesman": "FELIX ANDRIANO G S H", "supervisor": "PRODIPA", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-11", "faktur": "000088/FKT/PP/0926", "nama": "JEREMIA ALEXANDER AGUNG SEMBIRING", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Kredit", "leasing": "IMFS", "salesman": "GANDA MARTUA SITUMORANG SE", "supervisor": "LIK SIONG", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-11", "faktur": "000089/FKT/PP/0926", "nama": "HENDRO SUGIARTO S MILALA IR", "namabrg": "RAIZE 1.0T GR SPORT CVT TWO TONE", "cara": "Kredit", "leasing": "TAF", "salesman": "ALEXANDRO SITUNGKIR", "supervisor": "ZAIN", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-12", "faktur": "000090/FKT/PP/0926", "nama": "NOPENSA KARO KARO", "namabrg": "CALYA 1.2 G M/T", "cara": "Kredit", "leasing": "TAF", "salesman": "EDO PARELLA S", "supervisor": "PRODIPA", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-14", "faktur": "000099/FKT/PP/0926", "nama": "EDI KURNIAWAN", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Kredit", "leasing": "TAF", "salesman": "FELIX ANDRIANO G S H", "supervisor": "PRODIPA", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-15", "faktur": "000104/FKT/PP/0926", "nama": "DEDDY UMARDANI LBS", "namabrg": "KIJANG INNOVA ZENIX 2.0 V HV CVT MODELISTA", "cara": "Kredit", "leasing": "BSI", "salesman": "BERNAT SIHOMBING", "supervisor": "LIK SIONG", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-16", "faktur": "000107/FKT/PP/0926", "nama": "DUMARIA IMELDA HUTAGALUNG", "namabrg": "KIJANG INNOVA ZENIX 2.0 G HV CVT", "cara": "Kredit", "leasing": "ACC", "salesman": "FIRMANDO GINTING", "supervisor": "LIK SIONG", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-17", "faktur": "000113/FKT/PP/0926", "nama": "CV MITRA SETIA", "namabrg": "KIJANG INNOVA ZENIX 2.0 Q HV CVT TSS MODELISTA", "cara": "Kredit", "leasing": "TAF", "salesman": "NIA HENDRIATY", "supervisor": "LIK SIONG", "asuransi": "MSIG", "divisi": "Flamboyan"}, {"tanggal": "2026-09-17", "faktur": "000115/FKT/PP/0926", "nama": "DILA S S KEB", "namabrg": "KIJANG INNOVA 2.4 G A/T", "cara": "Tunai", "leasing": "Cash", "salesman": "DEDI ISWANTO SPD", "supervisor": "LIK SIONG", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-18", "faktur": "000123/FKT/PP/0926", "nama": "PT SUTAN INDO ANEKA MOBIL", "namabrg": "KIJANG INNOVA 2.4 G M/T", "cara": "Tunai", "leasing": "Cash", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-18", "faktur": "000139/FKT/PP/0926", "nama": "PT SUTAN INDO ANEKA MOBIL", "namabrg": "RUSH 1.5 S M/T GR SPORT", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-18", "faktur": "000141/FKT/PP/0926", "nama": "ARIMA NADELA NAINGGOLAN", "namabrg": "RUSH 1.5 S A/T GR SPORT", "cara": "Kredit", "leasing": "ACC", "salesman": "YOSA AFANDI", "supervisor": "LIK SIONG", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-19", "faktur": "000148/FKT/PP/0926", "nama": "KOKO SANTOSO", "namabrg": "HILUX RANGGA PICK UP 2.0 STANDARD M/T", "cara": "Kredit", "leasing": "ACC", "salesman": "JHONY KRISTIANTO TAMPUBOLON", "supervisor": "ZAIN", "asuransi": "SHBT", "divisi": "Flamboyan"}, {"tanggal": "2026-09-21", "faktur": "000165/FKT/PP/0926", "nama": "MAINSYAH PUTRA", "namabrg": "AVANZA 1.5 G M/T", "cara": "Kredit", "leasing": "ACC", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-21", "faktur": "000167/FKT/PP/0926", "nama": "MANGANTAR SIMBOLON", "namabrg": "VELOZ 1.5 Q HYBRID CVT MODELLISTA", "cara": "Kredit", "leasing": "ACC", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-21", "faktur": "000171/FKT/PP/0926", "nama": "DOLLY HAGANTHA", "namabrg": "AVANZA 1.5 G M/T", "cara": "Kredit", "leasing": "TAF", "salesman": "YOSA AFANDI", "supervisor": "LIK SIONG", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-21", "faktur": "000173/FKT/PP/0926", "nama": "HENSEN GUNAWAN", "namabrg": "KIJANG INNOVA ZENIX 2.0 V HV CVT MODELISTA", "cara": "Tunai", "leasing": "Cash", "salesman": "DEO PRATAMA WIJAYA", "supervisor": "ZAIN", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-21", "faktur": "000174/FKT/PP/0926", "nama": "DISON PRIMA ANTONI SIMBOLON", "namabrg": "RAIZE 1.0T GR SPORT CVT TWO TONE", "cara": "Kredit", "leasing": "TAF", "salesman": "MUSA IRAWAN", "supervisor": "LIK SIONG", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-22", "faktur": "000181/FKT/PP/0926", "nama": "HARIYONO", "namabrg": "AGYA STYLIX 1.2 G CVT", "cara": "Kredit", "leasing": "BUANA", "salesman": "DEDI ISWANTO SPD", "supervisor": "LIK SIONG", "asuransi": "SOMPO", "divisi": "Flamboyan"}, {"tanggal": "2026-09-23", "faktur": "000189/FKT/PP/0926", "nama": "PT SUTAN INDO ANEKA MOBIL", "namabrg": "KIJANG INNOVA 2.4 G A/T", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-23", "faktur": "000191/FKT/PP/0926", "nama": "CV ROCKY GULTOM", "namabrg": "HILUX DOUBLE CABIN 2.8 G (4X4) DSL M/T", "cara": "Kredit", "leasing": "ACC", "salesman": "ALEXANDRO SITUNGKIR", "supervisor": "ZAIN", "asuransi": "SHBT", "divisi": "Flamboyan"}, {"tanggal": "2026-09-23", "faktur": "000193/FKT/PP/0926", "nama": "YAYASAN UNIVERSITAS PEMBINAAN MASYARAKAT INDONESIA SYAHRUDDIN", "namabrg": "ALPHARD 2.5 HYBRID CVT", "cara": "Kredit", "leasing": "ADM", "salesman": "MUHAMMAD FIRQIN QUFRAN", "supervisor": "LIK SIONG", "asuransi": "ZURICH", "divisi": "Flamboyan"}, {"tanggal": "2026-09-24", "faktur": "000200/FKT/PP/0926", "nama": "SISWANTO", "namabrg": "AVANZA 1.3 E CVT", "cara": "Kredit", "leasing": "ACC", "salesman": "HARDI WIJAYA", "supervisor": "LIK SIONG", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-24", "faktur": "000204/FKT/PP/0926", "nama": "AZRAI RIDHO HANAFIAH SE M SI", "namabrg": "CALYA 1.2 G A/T", "cara": "Kredit", "leasing": "ACC", "salesman": "ALFIAN R STEFANUS HUTAGALUNG", "supervisor": "PRODIPA", "asuransi": "SHBT", "divisi": "Flamboyan"}, {"tanggal": "2026-09-24", "faktur": "000206/FKT/PP/0926", "nama": "SAID HAMID SE", "namabrg": "KIJANG INNOVA ZENIX 2.0 Q HV CVT TSS MODELISTA", "cara": "Tunai", "leasing": "Cash", "salesman": "MUSA IRAWAN", "supervisor": "LIK SIONG", "asuransi": "NON ASURANSI", "divisi": "Flamboyan"}, {"tanggal": "2026-09-25", "faktur": "000210/FKT/PP/0926", "nama": "MHD SYAHRIR HAMZAH", "namabrg": "RUSH 1.5 S A/T GR SPORT", "cara": "Kredit", "leasing": "ACC", "salesman": "DEDI ISWANTO SPD", "supervisor": "LIK SIONG", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-26", "faktur": "000219/FKT/PP/0926", "nama": "MINAH", "namabrg": "KIJANG INNOVA ZENIX 2.0 V HV CVT MODELISTA", "cara": "Kredit", "leasing": "KKB", "salesman": "FRANKY LUMBANRAJA", "supervisor": "PRODIPA", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-26", "faktur": "000226/FKT/PP/0926", "nama": "PUTRI NURLIA KHAIRUNNISA", "namabrg": "AGYA STYLIX 1.2 G CVT", "cara": "Kredit", "leasing": "TAF", "salesman": "DENNY FRANATA SEMBIRING", "supervisor": "PUTRA", "asuransi": "GARDA/AAB", "divisi": "Flamboyan"}, {"tanggal": "2026-09-28", "faktur": "000242/FKT/PP/0926", "nama": "NAZARIF YOLLA HANDAYANI", "namabrg": "FORTUNER 2.8 VRZ TSS 4X2 A/T", "cara": "Kredit", "leasing": "ACC", "salesman": "FIKRI MUHAMMAD", "supervisor": "ZAIN", "asuransi": "SHBT", "divisi": "Flamboyan"}];
+
+
+const CATS = {
+  belum:   { label: "Belum Buat Tagihan", color: "var(--cat-belum)",  wash: "var(--cat-belum-wash)" },
+  notdue:  { label: "Belum Jatuh Tempo",  color: "var(--cat-notdue)", wash: "var(--cat-notdue-wash)" },
+  d7:      { label: "Piutang 1\u20137 Hari",   color: "var(--cat-7)",      wash: "var(--cat-7-wash)" },
+  d14:     { label: "Piutang 8\u201314 Hari",  color: "var(--cat-14)",     wash: "var(--cat-14-wash)" },
+  d26:     { label: "Piutang 15\u201326 Hari", color: "var(--cat-26)",     wash: "var(--cat-26-wash)" },
+  over:    { label: "Piutang &gt; 26 Hari",  color: "var(--cat-over)",   wash: "var(--cat-over-wash)" },
 };
+const CAT_ORDER = ["belum","notdue","d7","d14","d26","over"];
 
-var autoTimer = null;
-var lastData = null;
-var currentDivisi = null;
-var currentTab = 'debitur';
-var searchQuery = '';
-var openDebtorKeys = {}, openCabangKeys = {};
-var FIXED_DIVISI = 'GR Flamboyan'; // kosong = semua divisi; isi nama divisi = dashboard khusus divisi itu
-var sortKey = 'tgljto', sortDir = 1; // default: Tgl Jto terlama dulu, lalu Hari terbesar
-
-function rupiah(n){ return 'Rp ' + Math.round(n).toLocaleString('id-ID'); }
-function numId(n){ return Math.round(n).toLocaleString('id-ID'); }
-function escapeHtml(s){
-  return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; });
-}
-
-// Robust CSV parser (handles quoted fields with commas)
-function parseCSV(text) {
-  const rows = [];
-  let row = [];
-  let field = '';
-  let inQuotes = false;
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    if (inQuotes) {
-      if (c === '"') {
-        if (text[i+1] === '"') { field += '"'; i++; }
-        else { inQuotes = false; }
-      } else { field += c; }
-    } else {
-      if (c === '"') { inQuotes = true; }
-      else if (c === ',') { row.push(field); field = ''; }
-      else if (c === '\r') { /* skip */ }
-      else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
-      else { field += c; }
-    }
-  }
-  if (field.length > 0 || row.length > 0) { row.push(field); rows.push(row); }
-  return rows;
-}
-
-function parseAmount(s) {
-  if (!s) return 0;
-  s = s.trim().replace(/\./g, '').replace(/,/g, '.');
-  const n = parseFloat(s);
-  return isNaN(n) ? 0 : n;
-}
-function parseDateDDMMYYYY(s) {
+function parseDate(s) {
   if (!s) return null;
-  const m = s.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s);
   if (!m) return null;
-  return { day: parseInt(m[1]), month: parseInt(m[2]), year: parseInt(m[3]) };
-}
-function extractPerDate(title) {
-  if (!title) return '';
-  const re = new RegExp('(\\d{1,2})\\s+(' + MONTH_FULL_ID.slice(1).join('|') + ')\\s+(\\d{4})', 'i');
-  const m = title.match(re);
-  if (!m) return title;
-  const day = m[1].padStart(2, '0');
-  const monthIdx = MONTH_FULL_ID.indexOf(m[2].toLowerCase());
-  const monthAbbr = monthIdx > 0 ? MONTH_NAMES[monthIdx] : m[2];
-  return 'Per: ' + day + '-' + monthAbbr + '-' + m[3];
+  return new Date(+m[1], +m[2]-1, +m[3]);
 }
 
-// ===== ATURAN KATEGORI & DIVISI (edit di sini) =====
-// Kategori diputuskan dari No.Customer + Faktur No. menurut aturan MASING-MASING DIVISI.
-// Aturan divisi dicek dulu, baru aturan umum '*'. Aturan pertama yang cocok menang; satu aturan boleh memakai
-// cust saja, faktur saja, atau keduanya (harus cocok semua). Tidak ada yang cocok -> kolom kategori sheet (kolom O),
-// kosong/#N/A -> "LAINNYA".
-var KATEGORI_RULES = {
-  '*': [
-    { cust: /^B\d+(PP|PER)$/i, kategori: 'PERINTIS GROUP' }
-  ],
-  'Body Repair': [
-    // contoh: { cust: /^B0000095TS$/i, faktur: /\/INV\//i, kategori: 'NAMA KATEGORI' },
-  ],
-  'GR Adam Malik': [
-  ],
-  'GR Flamboyan': [
-  ]
-};
-function tentukanKategori(f){
-  var lists = [KATEGORI_RULES[normalizeDivisi(f.divisi)] || [], KATEGORI_RULES['*'] || []];
-  for (var l = 0; l < lists.length; l++){
-    for (var i = 0; i < lists[l].length; i++){
-      var r = lists[l][i];
-      if ((!r.cust || r.cust.test(f.cust || '')) && (!r.faktur || r.faktur.test(f.faktur || ''))) return r.kategori;
-    }
-  }
-  var k = (f.rawKat || '').trim().toUpperCase();
-  return (!k || k.charAt(0) === '#') ? 'LAINNYA' : k;
-}
-function normalizeDivisi(raw){
-  var s = (raw || '').toUpperCase();
-  if (/ADAM/.test(s)) return 'GR Adam Malik';
-  if (/FLAMBOYAN/.test(s)) return 'GR Flamboyan';
-  if (/BODY|REPAIR|\bBP\b/.test(s)) return 'Body Repair';
-  return (raw || '').trim() || 'Lainnya';
-}
-var DIVISI_ORDER = ['Body Repair', 'GR Adam Malik', 'GR Flamboyan'];
+const today = new Date();
+today.setHours(0,0,0,0);
 
-function dateNum(s){ var d = parseDateDDMMYYYY(s); return d ? d.year * 10000 + d.month * 100 + d.day : 99999999; }
-var SORT_DEF = {
-  nama: ['s', i => i.nama], nopol: ['s', i => i.nopol], faktur: ['s', i => i.faktur], top: ['s', i => i.top],
-  tgljto: ['n', i => dateNum(i.tgljto)], jumlah: ['n', i => i.jumlah], giro: ['s', i => i.giro],
-  sacode: ['s', i => i.sacode], sa: ['s', i => i.sa], hari: ['n', i => parseInt(i.hari, 10) || 0]
-};
-function sortArrow(k){ return sortKey === k ? (sortDir > 0 ? ' \u25b2' : ' \u25bc') : ''; }
-function thS(k, label, cls){ return '<th class="sortable' + (cls ? ' ' + cls : '') + '" data-sort="' + k + '">' + label + (k === 'no' ? '' : sortArrow(k)) + '</th>'; }
-function sortInvoices(list){
-  var def = SORT_DEF[sortKey] || SORT_DEF.tgljto;
-  return list.slice().sort(function(a, b){
-    var x = def[1](a), y = def[1](b);
-    var c = def[0] === 's' ? String(x).localeCompare(String(y), 'id', { numeric: true }) : x - y;
-    if (!c) c = dateNum(a.tgljto) - dateNum(b.tgljto);
-    if (!c) c = (parseInt(b.hari, 10) || 0) - (parseInt(a.hari, 10) || 0);
-    if (!c) c = a.faktur < b.faktur ? -1 : (a.faktur > b.faktur ? 1 : 0);
-    return c * sortDir;
+function computeHari(tglJto) {
+  const d = parseDate(tglJto);
+  if (!d) return null;
+  return Math.round((today - d) / 86400000);
+}
+
+const NO_TAGIH_MARKERS = ["belum buat tagihan", "-", ""];
+function categorize(row) {
+  const raw = (row.tglTagih || "").toString().trim().toLowerCase();
+  const hasTagih = raw !== "" && !NO_TAGIH_MARKERS.includes(raw);
+  const hari = computeHari(row.tglJto);
+  if (!hasTagih) return "belum";
+  if (hari === null) return "notdue";
+  if (hari < 1) return "notdue";
+  if (hari <= 7) return "d7";
+  if (hari <= 14) return "d14";
+  if (hari <= 26) return "d26";
+  return "over";
+}
+
+let rows = RAW.map(r => ({...r, hari: computeHari(r.tglJto), cat: categorize(r)}));
+
+function sortGroup(list) {
+  return list.sort((a, b) => {
+    const l = (a.leasing || "").localeCompare(b.leasing || "");
+    if (l !== 0) return l;
+    return (b.hari ?? -999) - (a.hari ?? -999);
   });
 }
 
-function buildDebtors(invs){
-  var by = {};
-  invs.forEach(function(inv){
-    var d = by[inv.nama] || (by[inv.nama] = { name: inv.nama, total: 0, count: 0, invoices: [], monthsMap: {}, katSet: {} });
-    d.total += inv.jumlah; d.count += 1; d.invoices.push(inv); d.katSet[inv.kategori] = 1;
-    var dt = parseDateDDMMYYYY(inv.tgljto);
-    var key = dt ? dt.year + '-' + String(dt.month).padStart(2, '0') : 'unknown';
-    d.monthsMap[key] = (d.monthsMap[key] || 0) + inv.jumlah;
+function fmtMoney(n) { return Math.round(n).toLocaleString('id-ID'); }
+function fmtDateShort(s) {
+  const d = parseDate(s);
+  if (!d) return s || "\u2013";
+  const dd = String(d.getDate()).padStart(2, '0');
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  return `${dd}/${mm}/${d.getFullYear()}`;
+}
+
+
+let activeFilter = "all";
+let searchTerm = "";
+
+function buildPills() {
+  const el = document.getElementById('pills');
+  const counts = {};
+  const totals = {};
+  CAT_ORDER.forEach(c => { counts[c]=0; totals[c]=0; });
+  rows.forEach(r => { counts[r.cat]++; totals[r.cat]+=Number(r.jumlah)||0; });
+
+  const allTotal = rows.reduce((s,r)=>s+(Number(r.jumlah)||0),0);
+  let html = `<div class="pill ${activeFilter==='all'?'active':''}" data-cat="all">
+      <span class="dot" style="background:var(--ink)"></span>
+      Semua <span class="cnt">${rows.length}</span>
+    </div>`;
+  CAT_ORDER.forEach(c => {
+    if (counts[c] === 0 && c === 'notdue') return; // hide empty "belum jatuh tempo" bucket most of the time
+    html += `<div class="pill ${activeFilter===c?'active':''}" data-cat="${c}">
+        <span class="dot" style="background:${CATS[c].color}"></span>
+        ${CATS[c].label} <span class="cnt">${counts[c]}</span>
+      </div>`;
   });
-  return Object.keys(by).map(function(k){
-    var d = by[k];
-    var months = Object.keys(d.monthsMap).sort().map(function(key){
-      var label = 'Lainnya';
-      if (key !== 'unknown'){ var p = key.split('-'); label = MONTH_NAMES[parseInt(p[1])] + ' ' + p[0]; }
-      return { period: key, label: label, total: d.monthsMap[key] };
-    });
-    return { name: d.name, total: d.total, count: d.count, kategori: Object.keys(d.katSet).join(' \u00b7 '), invoices: d.invoices, months: months };
-  }).sort(function(a, b){ return b.total - a.total; });
-}
-function groupDebtors(invs){
-  var total = 0; invs.forEach(function(i){ total += i.jumlah; });
-  return { total: total, count: invs.length, debtors: buildDebtors(invs), invs: invs };
-}
-
-var COL_DEFAULT = { no:0, cust:1, nama:2, nopol:3, faktur:4, top:5, tgljto:6, jumlah:7, giro:8, sacode:9, sa:10, hari:11, divisi:12, kategori:14 };
-var COL_ALIASES = {
-  no: ['no'], cust: ['nocust','nocustomer','kodecust','kodecustomer'], nama: ['namadebitur','debitur','namacustomer'],
-  nopol: ['nopolisi','nopol','polisi'], faktur: ['fakturno','nofaktur','faktur'], top: ['top'],
-  tgljto: ['tgljto','tgljatuhtempo','jatuhtempo'], jumlah: ['jumlah','nilai','saldo'], giro: ['giro'],
-  sacode: ['sa'], sa: ['namasa'], hari: ['hari','umur','umurpiutang'],
-  divisi: ['divisi','division','div'], kategori: ['kategori','category','cabang','jenis']
-};
-var COL = Object.assign({}, COL_DEFAULT), COL_INFO = '';
-function normHdr(s){ return String(s == null ? '' : s).replace(/^\uFEFF/, '').toLowerCase().replace(/[^a-z0-9]/g, ''); }
-function colLetter(n){ var s = ''; n = n + 1; while (n > 0){ var m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; }
-function mapColumns(hdr){
-  var col = Object.assign({}, COL_DEFAULT), info = [];
-  Object.keys(COL_ALIASES).forEach(function(k){
-    var found = -1;
-    for (var j = 0; j < hdr.length; j++){ if (COL_ALIASES[k].indexOf(normHdr(hdr[j])) >= 0){ found = j; break; } }
-    if (found >= 0) col[k] = found;
-    if (k === 'divisi' || k === 'kategori' || k === 'hari') info.push(k.charAt(0).toUpperCase() + k.slice(1) + '=' + colLetter(col[k]) + (found >= 0 ? '' : ' (default)'));
-  });
-  COL_INFO = 'Kolom: ' + info.join(', ');
-  return col;
-}
-
-function processRows(rows) {
-  let headerIdx = -1;
-  for (let i = 0; i < rows.length; i++) {
-    if (rows[i].some(function(c){ return normHdr(c) === 'namadebitur'; }) || (rows[i][0] && rows[i][0].trim() === 'No')) { headerIdx = i; break; }
-  }
-  if (headerIdx === -1) throw new Error("Format kolom tidak dikenali (header 'No' tidak ditemukan)");
-  COL = mapColumns(rows[headerIdx]);
-
-  let reportTitle = '';
-  for (let i = 0; i < headerIdx; i++) {
-    for (let j = 0; j < rows[i].length; j++) {
-      const cell = (rows[i][j] || '').replace(/^\uFEFF/, '').trim();
-      if (!cell) continue;
-      if (cell.toLowerCase() === 'berita acara') continue;
-      reportTitle = cell; break;
-    }
-    if (reportTitle) break;
-  }
-
-  const dataRows = [];
-  for (let i = headerIdx + 1; i < rows.length; i++) {
-    const r = rows[i];
-    var nv = r[COL.no]; if (!nv || !/^\d+$/.test(nv.trim())) continue;
-    dataRows.push(r);
-  }
-
-  var invs = dataRows.map(function(r){
-    var g = function(k){ var v = r[COL[k]]; return (v == null ? '' : String(v)).trim(); };
-    var nama = g('nama'); nama = NAME_MAP[nama] || nama;
-    var f = { cust: g('cust'), faktur: g('faktur'), divisi: g('divisi'), rawKat: g('kategori') };
-    return { nama: nama, cust: f.cust, faktur: f.faktur, tgljto: g('tgljto'), nopol: g('nopol'),
-             sa: g('sa'), hari: g('hari'), jumlah: parseAmount(g('jumlah')), top: g('top'), giro: g('giro'), sacode: g('sacode'),
-             divisi: normalizeDivisi(f.divisi), kategori: tentukanKategori(f) };
-  });
-  var grandTotal = 0; invs.forEach(function(i){ grandTotal += i.jumlah; });
-  var byDivisi = {};
-  DIVISI_ORDER.forEach(function(n){ byDivisi[n] = []; });
-  invs.forEach(function(i){ (byDivisi[i.divisi] = byDivisi[i.divisi] || []).push(i); });
-  var divisions = { 'Semua Cabang': groupDebtors(invs) };
-  Object.keys(byDivisi).forEach(function(n){ divisions[n] = groupDebtors(byDivisi[n]); });
-
-  return { grand_total: grandTotal, grand_count: dataRows.length, report_title: reportTitle, divisions: divisions };
-}
-
-function computeAgingBuckets(debtors) {
-  const buckets = {
-    b1: { label: '1-7 hari', min: 1, max: 7, color: 'var(--green)', total: 0, count: 0 },
-    b2: { label: '8-14 hari', min: 8, max: 14, color: 'var(--amber)', total: 0, count: 0 },
-    b3: { label: '15-26 hari', min: 15, max: 26, color: 'var(--orange)', total: 0, count: 0 },
-    b4: { label: '> 26 hari', min: 27, max: Infinity, color: 'var(--red)', total: 0, count: 0, warn: true },
-  };
-  debtors.forEach(d => {
-    d.invoices.forEach(inv => {
-      const h = parseInt(inv.hari, 10);
-      if (isNaN(h)) return;
-      for (const key in buckets) {
-        const b = buckets[key];
-        if (h >= b.min && h <= b.max) { b.total += inv.jumlah; b.count += 1; break; }
-      }
+  el.innerHTML = html;
+  el.querySelectorAll('.pill').forEach(p => {
+    p.addEventListener('click', () => {
+      activeFilter = p.dataset.cat;
+      render();
     });
   });
-  return buckets;
-}
 
-function renderAgingCards(debtors) {
-  const buckets = computeAgingBuckets(debtors);
-  var html = '';
-  Object.keys(buckets).forEach(key => { var b = buckets[key]; var act = (currentTab === 'penagihan' && penBucket === key);
-    html += '<div data-bucket="' + key + '" title="Klik untuk lihat detail" style="cursor:pointer;' + (act ? 'box-shadow:0 0 0 2px var(--blue);' : '') + 'background:' + (b.warn ? '#fdecee' : 'var(--panel)') + ';border:1px solid ' + (b.warn ? '#f3b9c0' : 'var(--border)') + ';border-radius:14px;padding:18px 20px;">' +
-      '<div style="font-size:12.5px;color:var(--muted);margin-bottom:8px;"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:' + b.color + ';margin-right:6px;"></span>' + b.label + '</div>' +
-      '<div style="font-family:Georgia,serif;font-size:22px;font-weight:600;color:' + (b.warn ? 'var(--red)' : 'var(--ink)') + ';">' + rupiah(b.total) + '</div>' +
-      '<div style="font-size:12px;color:' + (b.warn ? 'var(--red)' : 'var(--muted-2)') + ';margin-top:4px;">' + numId(b.count) + ' faktur' + (b.warn ? ' &middot; prioritas tagih' : '') + '</div>' +
-    '</div>';
+  // hero stats
+  document.getElementById('totalAmount').textContent = fmtMoney(allTotal);
+  document.getElementById('totalCount').textContent = rows.length;
+  document.getElementById('overCount').textContent = counts.over;
+  document.getElementById('within7Count').textContent = counts.d7;
+
+  // composition bar
+  const comp = document.getElementById('composition');
+  comp.innerHTML = "";
+  CAT_ORDER.forEach(c => {
+    if (!totals[c]) return;
+    const pct = (totals[c]/allTotal*100).toFixed(2);
+    const span = document.createElement('span');
+    span.style.width = pct + "%";
+    span.style.background = CATS[c].color;
+    span.title = CATS[c].label + ": " + pct + "%";
+    comp.appendChild(span);
   });
-  document.getElementById('agingGrid').innerHTML = html;
-  document.querySelectorAll('#agingGrid [data-bucket]').forEach(el => el.addEventListener('click', () => selectBucket(el.getAttribute('data-bucket'))));
 }
 
-function createDebtorHtml(d, keyPrefix) {
-  var key = keyPrefix + '||' + d.name;
-  var qq = searchQuery.trim().toLowerCase();
-  var byFak = !!qq && d.name.toLowerCase().indexOf(qq) < 0 && fakMatch(d, qq);
-  var isOpen = (key in openDebtorKeys) ? !!openDebtorKeys[key] : byFak;
-  var shown = byFak ? d.invoices.filter(i => i.faktur.toLowerCase().indexOf(qq) >= 0) : d.invoices;
-  var monthsHtml = '<div class="bar-title">Total Piutang</div><div class="months-row"><div class="month-pill" style="font-size:14px;">Total keseluruhan<b style="font-size:20px;">' + rupiah(d.total) + '</b></div></div>';
-  monthsHtml += '<div class="bar-title">Rincian per Bulan (Tgl Jatuh Tempo)</div><div class="months-row">';
-  d.months.forEach(m => { monthsHtml += `<div class="month-pill">${escapeHtml(m.label)}<b>${rupiah(m.total)}</b></div>`; });
-  monthsHtml += '</div>';
+function matchesSearch(r) {
+  if (!searchTerm) return true;
+  const hay = (r.nama + " " + r.faktur + " " + r.salesman + " " + r.noCust).toLowerCase();
+  return hay.includes(searchTerm);
+}
 
-  var arrow = function(k){ return sortKey === k ? (sortDir > 0 ? ' \u25b2' : ' \u25bc') : ''; };
-  var invHtml = '<div class="bar-title">Daftar Faktur (' + shown.length + ')</div><div class="table-scroll"><table><thead><tr>' + thS('no','No','num') + thS('faktur','No Faktur') + thS('tgljto','Tgl Jto') + thS('nopol','No Polisi') + thS('sa','SA') + thS('hari','Hari','num') + thS('jumlah','Jumlah','num') + '</tr></thead><tbody>';
-  sortInvoices(shown).forEach((inv, i) => {
-    invHtml += `<tr><td class="num">${i + 1}</td><td>${escapeHtml(inv.faktur)}</td><td>${escapeHtml(inv.tgljto)}</td><td>${escapeHtml(inv.nopol || '-')}</td><td>${escapeHtml(inv.sa)}</td><td class="num">${escapeHtml(String(inv.hari || '-'))}</td><td class="num">${rupiah(inv.jumlah)}</td></tr>`;
+function render() {
+  buildPills();
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = "";
+
+  let visible = rows.filter(matchesSearch);
+  if (activeFilter !== "all") visible = visible.filter(r => r.cat === activeFilter);
+
+  document.getElementById('resultCount').textContent = visible.length + " dari " + rows.length + " baris";
+  document.getElementById('emptyState').style.display = visible.length ? "none" : "block";
+
+  if (activeFilter === "all") {
+    CAT_ORDER.forEach(c => {
+      const group = sortGroup(visible.filter(r => r.cat === c));
+      if (!group.length) return;
+      const groupTotal = group.reduce((s,r)=>s+(Number(r.jumlah)||0),0);
+      const gh = document.createElement('tr');
+      gh.className = 'grouphead';
+      gh.innerHTML = `<td colspan="9">
+          <span class="swatch" style="background:${CATS[c].color}"></span>${CATS[c].label}
+          <span class="ghcount">${group.length} debitur</span>
+          <span class="ghtotal">Rp ${fmtMoney(groupTotal)}</span>
+        </td>`;
+      tbody.appendChild(gh);
+      group.forEach(r => tbody.appendChild(renderRow(r)));
+    });
+  } else {
+    sortGroup(visible).forEach(r => tbody.appendChild(renderRow(r)));
+  }
+}
+
+function renderRow(r) {
+  const tr = document.createElement('tr');
+  tr.className = 'rowcat';
+  tr.style.borderLeftColor = CATS[r.cat].color;
+  tr.innerHTML = `
+    <td class="nama">${r.nama}</td>
+    <td>${r.faktur}</td>
+    <td>${r.type||""}</td>
+    <td>${fmtDateShort(r.tglJto)}</td>
+    <td class="num money">${fmtMoney(r.jumlah)}</td>
+    <td>${r.leasing}</td>
+    <td>${r.salesman||"\u2013"}</td>
+    <td>${r.supervisor||"\u2013"}</td>
+    <td class="num hari">${r.hari===null?"\u2013":r.hari}</td>`;
+  return tr;
+}
+
+document.getElementById('search').addEventListener('input', (e) => {
+  searchTerm = e.target.value.trim().toLowerCase();
+  render();
+});
+
+/* ---------- Tab: Per Leasing ---------- */
+const BUCKET_KEYS = ["belum", "d7", "d14", "d26", "over"];
+
+function groupByLeasing(list) {
+  const map = new Map();
+  list.forEach(r => {
+    const key = r.leasing || "Lainnya";
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push(r);
   });
-  invHtml += '</tbody></table></div>';
-
-  return `<div class="debtor${isOpen ? ' open' : ''}" data-key="${escapeHtml(key)}">
-    <div class="debtor-head" data-toggle="${escapeHtml(key)}">
-      <div><div class="debtor-name">${escapeHtml(d.name)}<span class="cab">${escapeHtml(d.kategori || '-')}</span></div>
-      <div class="debtor-meta">${numId(d.count)} faktur</div></div>
-      <div class="debtor-right"><div class="debtor-total">${rupiah(d.total)}</div><div class="chevron">&#9656;</div></div>
-    </div>
-    <div class="debtor-body">${isOpen ? (monthsHtml + invHtml) : ''}</div>
-  </div>`;
+  return [...map.entries()]
+    .map(([leasing, items]) => ({
+      leasing,
+      items: sortGroup(items.slice()),
+      total: items.reduce((s,r)=>s+(Number(r.jumlah)||0), 0),
+      bucketTotals: BUCKET_KEYS.reduce((acc,k) => {
+        acc[k] = items.filter(r=>r.cat===k).reduce((s,r)=>s+(Number(r.jumlah)||0), 0);
+        return acc;
+      }, {}),
+    }))
+    .sort((a,b) => b.total - a.total);
 }
 
-function renderDebiturTab(debtors) {
-  var q = searchQuery.trim().toLowerCase();
-  var filtered = q ? debtors.filter(d => d.name.toLowerCase().includes(q) || fakMatch(d, q)) : debtors;
-  var html = `<div class="search-bar"><input id="search" type="text" placeholder="Cari nama debitur atau no faktur..." value="${escapeHtml(searchQuery)}"></div><div class="list">`;
-  if (!filtered.length) html += '<div class="loading">Tidak ada debitur yang cocok.</div>';
-  filtered.forEach(d => { html += createDebtorHtml(d, 'root'); });
-  html += '</div>';
-  document.getElementById('content').innerHTML = html;
-  wireContentHandlers();
-}
+function renderLeasingTab() {
+  const groups = groupByLeasing(rows);
 
-function renderKategoriTab(dd) {
-  var byK = {};
-  dd.invs.forEach(function(i){ (byK[i.kategori] = byK[i.kategori] || []).push(i); });
-  var groups = Object.keys(byK).map(function(k){
-    var tot = 0; byK[k].forEach(function(i){ tot += i.jumlah; });
-    return { name: k, total: tot, count: byK[k].length, debtors: buildDebtors(byK[k]) };
-  }).sort((a, b) => b.total - a.total);
-  var q = searchQuery.trim().toLowerCase();
-  var html = `<div class="search-bar"><input id="search" type="text" placeholder="Cari kategori, debitur, atau no faktur..." value="${escapeHtml(searchQuery)}"></div><div class="list">`;
+  const tbody = document.getElementById('matrixBody');
+  tbody.innerHTML = "";
+  let grand = { count:0, belum:0, d7:0, d14:0, d26:0, over:0, total:0 };
+  const cell = (v) => v ? `Rp ${fmtMoney(v)}` : `<span class="zero">&ndash;</span>`;
   groups.forEach(g => {
-    var gKey = 'kategori||' + g.name;
-    var isOpen = (gKey in openCabangKeys) ? !!openCabangKeys[gKey] : !!q;
-    var matches = !q || g.name.toLowerCase().includes(q) || g.debtors.some(d => d.name.toLowerCase().includes(q) || fakMatch(d, q));
-    if (!matches) return;
-    html += `<div class="cabang-group${isOpen ? ' open' : ''}" data-key="${escapeHtml(gKey)}">
-      <div class="cabang-head" data-toggle-cabang="${escapeHtml(gKey)}">
-        <div><div class="cabang-title">${escapeHtml(g.name)}</div>
-        <div class="cabang-meta">${numId(g.debtors.length)} debitur &middot; ${numId(g.count)} faktur</div></div>
-        <div class="debtor-right"><div class="cabang-total">${rupiah(g.total)}</div><div class="chevron">&#9656;</div></div>
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="leasing-name">${g.leasing}</td>
+      <td>${g.items.length}</td>
+      <td>${cell(g.bucketTotals.belum)}</td>
+      <td>${cell(g.bucketTotals.d7)}</td>
+      <td>${cell(g.bucketTotals.d14)}</td>
+      <td>${cell(g.bucketTotals.d26)}</td>
+      <td>${cell(g.bucketTotals.over)}</td>
+      <td><strong>Rp ${fmtMoney(g.total)}</strong></td>`;
+    tbody.appendChild(tr);
+    grand.count += g.items.length;
+    grand.belum += g.bucketTotals.belum; grand.d7 += g.bucketTotals.d7;
+    grand.d14 += g.bucketTotals.d14; grand.d26 += g.bucketTotals.d26; grand.over += g.bucketTotals.over;
+    grand.total += g.total;
+  });
+  const gr = document.createElement('tr');
+  gr.className = 'grand';
+  gr.innerHTML = `
+    <td class="leasing-name">Total Flamboyan</td>
+    <td>${grand.count}</td>
+    <td>Rp ${fmtMoney(grand.belum)}</td>
+    <td>Rp ${fmtMoney(grand.d7)}</td>
+    <td>Rp ${fmtMoney(grand.d14)}</td>
+    <td>Rp ${fmtMoney(grand.d26)}</td>
+    <td>Rp ${fmtMoney(grand.over)}</td>
+    <td>Rp ${fmtMoney(grand.total)}</td>`;
+  tbody.appendChild(gr);
+
+  const el = document.getElementById('leasingSections');
+  el.innerHTML = "";
+  groups.forEach(g => {
+    const section = document.createElement('div');
+    section.className = 'leasing-section';
+    section.innerHTML = `
+      <div class="leasing-head">
+        <span class="name">${g.leasing}</span>
+        <span class="meta">${g.items.length} debitur &middot; Rp ${fmtMoney(g.total)}</span>
       </div>
-      <div class="cabang-body">`;
-    if (isOpen) {
-      html += '<div class="list">';
-      g.debtors.forEach(d => {
-        var dOk = !q || d.name.toLowerCase().includes(q) || g.name.toLowerCase().includes(q) || fakMatch(d, q);
-        if (dOk) html += createDebtorHtml(d, gKey);
-      });
-      html += '</div>';
-    }
-    html += '</div></div>';
-  });
-  html += '</div>';
-  document.getElementById('content').innerHTML = html;
-  wireContentHandlers();
-}
-
-var penBucket = 'all', penCab = 'all', penKat = 'all', penDeb = 'all';
-function fakMatch(d, q){ return d.invoices.some(function(i){ return i.faktur.toLowerCase().indexOf(q) >= 0; }); }
-function renderPenagihanTab(dd){
-  var q = searchQuery.trim().toLowerCase();
-  var kats = Object.keys(dd.invs.reduce(function(m, i){ m[i.kategori] = 1; return m; }, {})).sort();
-  var debs = Object.keys(dd.invs.reduce(function(m, i){ m[i.nama] = 1; return m; }, {})).sort();
-  var cabSet = dd.invs.reduce(function(m, i){ m[i.divisi] = 1; return m; }, {});
-  var cabs = DIVISI_ORDER.filter(function(n){ return cabSet[n]; }).concat(Object.keys(cabSet).filter(function(n){ return DIVISI_ORDER.indexOf(n) < 0; }).sort());
-  if (cabs.indexOf(penCab) < 0) penCab = 'all';
-  if (kats.indexOf(penKat) < 0) penKat = 'all';
-  if (debs.indexOf(penDeb) < 0) penDeb = 'all';
-  var R = { all: [-1e9, 1e9], b1: [1, 7], b2: [8, 14], b3: [15, 26], b4: [27, 1e9] }[penBucket];
-  var list = dd.invs.filter(function(i){
-    var h = parseInt(i.hari, 10); if (isNaN(h)) h = 0;
-    if (penBucket !== 'all' && (h < R[0] || h > R[1])) return false;
-    if (penCab !== 'all' && i.divisi !== penCab) return false;
-    if (penKat !== 'all' && i.kategori !== penKat) return false;
-    if (penDeb !== 'all' && i.nama !== penDeb) return false;
-    return !q || [i.nama, i.faktur, i.nopol, i.sa, i.sacode, i.cust, i.kategori].join(' ').toLowerCase().indexOf(q) >= 0;
-  });
-  var total = 0; list.forEach(function(i){ total += i.jumlah; });
-  var opts = [['all','Semua umur'],['b1','1-7 hari'],['b2','8-14 hari'],['b3','15-26 hari'],['b4','> 26 hari']].map(function(o){
-    return '<option value="' + o[0] + '"' + (o[0] === penBucket ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('');
-  var arrow = function(k){ return sortKey === k ? (sortDir > 0 ? ' \u25b2' : ' \u25bc') : ''; };
-  var selCss = 'padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--panel);color:var(--ink);font-size:13.5px;';
-  var optHtml = function(arr, cur, allLabel){
-    return '<option value="all"' + (cur === 'all' ? ' selected' : '') + '>' + allLabel + '</option>' +
-      arr.map(function(v){ return '<option value="' + escapeHtml(v) + '"' + (v === cur ? ' selected' : '') + '>' + escapeHtml(v) + '</option>'; }).join('');
-  };
-  var rows = '';
-  sortInvoices(list).forEach(function(i, n){
-    var h = parseInt(i.hari, 10);
-    rows += '<tr><td class="num">' + (n + 1) + '</td><td>' + escapeHtml(i.nama) + '</td><td>' + escapeHtml(i.nopol || '-') + '</td><td>' + escapeHtml(i.faktur) +
-      '</td><td>' + escapeHtml(i.top || '-') + '</td><td>' + escapeHtml(i.tgljto) + '</td><td class="num">' + rupiah(i.jumlah) + '</td><td>' + escapeHtml(i.giro || '-') +
-      '</td><td>' + escapeHtml(i.sacode || '-') + '</td><td>' + escapeHtml(i.sa) + '</td><td class="num"' + (h > 26 ? ' style="color:var(--red);font-weight:600;"' : '') + '>' + escapeHtml(String(i.hari || '-')) + '</td></tr>';
-  });
-  if (!list.length) rows = '<tr><td colspan="11" class="loading">Tidak ada faktur yang cocok.</td></tr>';
-  document.getElementById('content').innerHTML =
-    '<div class="search-bar" style="display:flex;gap:10px;flex-wrap:wrap;"><input id="search" type="text" placeholder="Cari debitur, no faktur, no polisi, atau SA..." value="' + escapeHtml(searchQuery) + '" style="flex:1;min-width:220px;">' +
-    '<select id="penBucket" style="' + selCss + '">' + opts + '</select>' + (FIXED_DIVISI ? '' : '<select id="penCab" style="' + selCss + '">' + optHtml(cabs, penCab, 'Semua cabang') + '</select>') + '<select id="penKat" style="' + selCss + '">' + optHtml(kats, penKat, 'Semua kategori') + '</select><select id="penDeb" style="' + selCss + 'max-width:260px;">' + optHtml(debs, penDeb, 'Semua debitur') + '</select></div>' +
-    '<div class="bar-title">' + numId(list.length) + ' faktur &middot; ' + rupiah(total) + '</div>' +
-    '<div class="debtor" style="padding:6px 16px 12px;"><div class="table-scroll"><table><thead><tr>' + thS('no','No','num') + thS('nama','Nama Debitur') + thS('nopol','No Polisi') + thS('faktur','Faktur No.') + thS('top','TOP') + thS('tgljto','Tgl Jto') + thS('jumlah','Jumlah','num') + thS('giro','Giro') + thS('sacode','S A') + thS('sa','Nama SA') + thS('hari','Hari','num') + '</tr></thead><tbody>' + rows + '</tbody></table></div></div>';
-  wireContentHandlers();
-}
-
-var priBucket = 'b4', priCab = 'all', priKat = 'all', priDeb = 'all';
-function renderPrioritasTab(dd){
-  var uniq = function(k){ return Object.keys(dd.invs.reduce(function(m, i){ m[i[k]] = 1; return m; }, {})).sort(); };
-  var kats = uniq('kategori'), debs = uniq('nama'), cabSet = dd.invs.reduce(function(m, i){ m[i.divisi] = 1; return m; }, {});
-  var cabs = DIVISI_ORDER.filter(function(n){ return cabSet[n]; }).concat(Object.keys(cabSet).filter(function(n){ return DIVISI_ORDER.indexOf(n) < 0; }).sort());
-  if (cabs.indexOf(priCab) < 0) priCab = 'all';
-  if (kats.indexOf(priKat) < 0) priKat = 'all';
-  if (debs.indexOf(priDeb) < 0) priDeb = 'all';
-  var R = { all: [-1e9, 1e9], b1: [1, 7], b2: [8, 14], b3: [15, 26], b4: [27, 1e9] }[priBucket];
-  var list = dd.invs.filter(function(i){
-    var h = parseInt(i.hari, 10); if (isNaN(h)) h = 0;
-    if (priBucket !== 'all' && (h < R[0] || h > R[1])) return false;
-    if (priCab !== 'all' && i.divisi !== priCab) return false;
-    if (priKat !== 'all' && i.kategori !== priKat) return false;
-    return priDeb === 'all' || i.nama === priDeb;
-  });
-  var total = 0; list.forEach(function(i){ total += i.jumlah; });
-  var css = 'padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--panel);color:var(--ink);font-size:13.5px;';
-  var opt = function(arr, cur, allLabel){
-    return '<option value="all"' + (cur === 'all' ? ' selected' : '') + '>' + allLabel + '</option>' +
-      arr.map(function(v){ return '<option value="' + escapeHtml(v) + '"' + (v === cur ? ' selected' : '') + '>' + escapeHtml(v) + '</option>'; }).join('');
-  };
-  var hariOpts = [['all','Semua umur'],['b1','1-7 hari'],['b2','8-14 hari'],['b3','15-26 hari'],['b4','> 26 hari']].map(function(o){
-    return '<option value="' + o[0] + '"' + (o[0] === priBucket ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('');
-  var rows = '';
-  sortInvoices(list).forEach(function(i, n){
-    rows += '<tr><td class="num">' + (n + 1) + '</td><td>' + escapeHtml(i.faktur) + '</td><td>' + escapeHtml(i.nama) + '</td><td>' + escapeHtml(i.tgljto) +
-      '</td><td>' + escapeHtml(i.nopol || '-') + '</td><td>' + escapeHtml(i.sa) + '</td><td class="num">' + escapeHtml(String(i.hari || '-')) + '</td><td class="num">' + rupiah(i.jumlah) + '</td></tr>';
-  });
-  if (!list.length) rows = '<tr><td colspan="8" class="loading">Tidak ada faktur yang cocok.</td></tr>';
-  document.getElementById('content').innerHTML =
-    '<div class="search-bar" style="display:flex;gap:10px;flex-wrap:wrap;"><select id="priBucket" style="' + css + '">' + hariOpts + '</select>' +
-    (FIXED_DIVISI ? '' : '<select id="priCab" style="' + css + '">' + opt(cabs, priCab, 'Semua cabang') + '</select>') +
-    '<select id="priKat" style="' + css + '">' + opt(kats, priKat, 'Semua kategori') + '</select>' +
-    '<select id="priDeb" style="' + css + 'max-width:280px;">' + opt(debs, priDeb, 'Semua debitur') + '</select></div>' +
-    '<div class="bar-title">Prioritas tagihan &middot; ' + numId(list.length) + ' faktur &middot; ' + rupiah(total) + '</div>' +
-    '<div class="debtor" style="padding:6px 16px 12px;"><div class="table-scroll"><table><thead><tr>' + thS('no','No','num') + thS('faktur','No Faktur') + thS('nama','Debitur') +
-    thS('tgljto','Tgl Jto') + thS('nopol','No Polisi') + thS('sa','SA') + thS('hari','Hari','num') + thS('jumlah','Jumlah','num') + '</tr></thead><tbody>' + rows + '</tbody></table></div></div>';
-  wireContentHandlers();
-}
-
-function selectBucket(key){
-  penBucket = (currentTab === 'penagihan' && penBucket === key) ? 'all' : key;
-  currentTab = 'penagihan'; searchQuery = '';
-  document.querySelectorAll('#innerTabs .tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === 'penagihan'));
-  renderContent();
-  var c = document.getElementById('innerTabs'); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-function wireContentHandlers() {
-  var s = document.getElementById('search');
-  if (s) {
-    s.addEventListener('input', e => { searchQuery = e.target.value; renderContent(); });
-    
-  }
-  document.querySelectorAll('[data-toggle]').forEach(head => {
-    head.addEventListener('click', () => {
-      var key = head.getAttribute('data-toggle');
-      openDebtorKeys[key] = !head.parentNode.classList.contains('open');
-      renderContent();
+      <div class="leasing-table-scroll">
+        <table class="detail">
+          <thead>
+            <tr>
+              <th>Nama Debitur</th>
+              <th>Faktur No.</th>
+              <th>Tipe Unit</th>
+              <th>Jth. Tempo</th>
+              <th class="num">Jumlah</th>
+              <th>Cara Bayar</th>
+              <th>Salesman</th>
+              <th>Supervisor</th>
+              <th class="num">Hari</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>`;
+    const tb = section.querySelector('tbody');
+    g.items.forEach(r => {
+      const tr = document.createElement('tr');
+      tr.className = 'rowcat';
+      tr.style.borderLeftColor = CATS[r.cat] ? CATS[r.cat].color : 'transparent';
+      tr.innerHTML = `
+        <td class="nama">${r.nama}</td>
+        <td>${r.faktur}</td>
+        <td>${r.type||""}</td>
+        <td>${fmtDateShort(r.tglJto)}</td>
+        <td class="money">${fmtMoney(r.jumlah)}</td>
+        <td>${r.cara||"\u2013"}</td>
+        <td>${r.salesman||"\u2013"}</td>
+        <td>${r.supervisor||"\u2013"}</td>
+        <td class="hari">${r.hari===null?"\u2013":r.hari}</td>`;
+      tb.appendChild(tr);
     });
-  });
-  var pf = { priBucket: v => { priBucket = v; }, priCab: v => { priCab = v; }, priKat: v => { priKat = v; }, priDeb: v => { priDeb = v; }, penBucket: v => { penBucket = v; }, penCab: v => { penCab = v; }, penKat: v => { penKat = v; }, penDeb: v => { penDeb = v; } };
-  Object.keys(pf).forEach(id => { var el = document.getElementById(id); if (el) el.addEventListener('change', e => { pf[id](e.target.value); renderContent(); }); });
-  document.querySelectorAll('[data-sort]').forEach(th => {
-    th.addEventListener('click', () => {
-      var k = th.getAttribute('data-sort');
-      if (k === 'no' || sortKey === k) sortDir = -sortDir; else { sortKey = k; sortDir = (k === 'hari' || k === 'jumlah') ? -1 : 1; }
-      renderContent();
-    });
-  });
-  document.querySelectorAll('[data-toggle-cabang]').forEach(head => {
-    head.addEventListener('click', () => {
-      var key = head.getAttribute('data-toggle-cabang');
-      openCabangKeys[key] = !head.parentNode.classList.contains('open');
-      renderContent();
-    });
+    el.appendChild(section);
   });
 }
 
-function currentDivisiData(){
-  if (!lastData || !currentDivisi) return null;
-  return lastData.divisions[currentDivisi] || null;
-}
-function renderContent(){
-  var dd = currentDivisiData();
-  if (!dd) return;
-  var a = document.activeElement;
-  var typing = !!(a && a.id === 'search');
-  var ss = typing ? a.selectionStart : 0, se = typing ? a.selectionEnd : 0;
-  if (currentTab === 'debitur') renderDebiturTab(dd.debtors);
-  else if (currentTab === 'penagihan') renderPenagihanTab(dd);
-  else if (currentTab === 'prioritas') renderPrioritasTab(dd);
-  else renderKategoriTab(dd);
-  renderAgingCards(dd.debtors);
-  if (typing) { var s = document.getElementById('search'); if (s) { s.focus(); s.setSelectionRange(ss, se); } }
-}
-function renderDivisiPanel(){
-  var dd = currentDivisiData();
-  if (!dd) return;
-  document.getElementById('totalAmount').textContent = rupiah(dd.total);
-  document.getElementById('totalCount').textContent = numId(dd.count) + ' faktur / ' + numId(dd.debtors.length) + ' debitur';
-  renderAgingCards(dd.debtors);
-  renderContent();
-}
-function renderDivisiTabs(){
-  var tabsEl = document.getElementById('divisiTabs');
-  var ALL_KEY = 'Semua Cabang';
-  var names = Object.keys(lastData.divisions);
-  if (!currentDivisi || !lastData.divisions[currentDivisi]) currentDivisi = names[0];
-  if (FIXED_DIVISI && lastData.divisions[FIXED_DIVISI]) { currentDivisi = FIXED_DIVISI; tabsEl.style.display = 'none'; return; }
-  var html = '';
-  names.forEach(name => {
-    var d = lastData.divisions[name];
-    var extraClass = (name === ALL_KEY) ? ' divisi-tab-all' : '';
-    html += `<button class="divisi-tab${extraClass}${name === currentDivisi ? ' active' : ''}" data-divisi="${escapeHtml(name)}">${escapeHtml(name)}<span class="badge">${rupiah(d.total)}</span></button>`;
-  });
-  tabsEl.innerHTML = html;
-  tabsEl.style.display = 'flex';
-  tabsEl.querySelectorAll('.divisi-tab').forEach(btn => {
-    btn.addEventListener('click', () => {
-      currentDivisi = btn.getAttribute('data-divisi');
-      searchQuery = ''; openDebtorKeys = {}; openCabangKeys = {}; penCab = 'all'; penKat = 'all'; penDeb = 'all'; priCab = 'all'; priKat = 'all'; priDeb = 'all';
-      tabsEl.querySelectorAll('.divisi-tab').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderDivisiPanel();
-    });
-  });
-}
-
-function render(data) {
-  lastData = data;
-  document.getElementById('source-sub').textContent = FIXED_DIVISI ? 'Sumber: Laporan Piutang (' + numId(data.divisions[FIXED_DIVISI].count) + ' faktur)' : 'Sumber: Laporan Piutang (' + numId(data.grand_count) + ' faktur, ' + numId(Object.keys(data.divisions).length) + ' divisi)';
-  var perDate = extractPerDate(data.report_title);
-  var opnameTitle = document.getElementById('opname-title');
-  opnameTitle.textContent = perDate || data.report_title || '';
-  opnameTitle.style.display = (perDate || data.report_title) ? '' : 'none';
-
-  document.getElementById('emptyState').style.display = 'none';
-  document.getElementById('divisiPanel').style.display = 'block';
-
-  renderDivisiTabs();
-  renderDivisiPanel();
-}
-
-document.querySelectorAll('#innerTabs .tab-btn').forEach(btn => {
+/* ---------- Tab switching ---------- */
+document.querySelectorAll('.tab').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('#innerTabs .tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    currentTab = btn.dataset.tab;
-    searchQuery = '';
-    renderContent();
+    const target = btn.dataset.tab;
+    document.getElementById('tabpanel-umur').hidden = target !== 'umur';
+    document.getElementById('tabpanel-leasing').hidden = target !== 'leasing';
+    document.getElementById('tabpanel-followup').hidden = target !== 'followup';
+    document.getElementById('tabpanel-penjualanleasing').hidden = target !== 'penjualanleasing';
+    document.getElementById('tabpanel-penjualanasuransi').hidden = target !== 'penjualanasuransi';
+    document.getElementById('tabpanel-penjualansupervisor').hidden = target !== 'penjualansupervisor';
+    document.getElementById('tabpanel-salesterbanyak').hidden = target !== 'salesterbanyak';
+    document.getElementById('tabpanel-detailpenjualan').hidden = target !== 'detailpenjualan';
   });
 });
 
-async function loadData() {
-  const statusEl = document.getElementById('status');
-  const errBanner = document.getElementById('error-banner');
-  statusEl.innerHTML = '<span class="spin"></span>Mengambil data terbaru...';
-  errBanner.style.display = 'none';
+function hasTagihValue(r) {
+  const raw = (r.tglTagih || "").toString().trim().toLowerCase();
+  return raw !== "" && !NO_TAGIH_MARKERS.includes(raw);
+}
 
+let followupSearchTerm = "";
+let followupLeasingValue = "";
+let followupStatus = "all";
+let followupSortKey = "leasing";
+let followupSortDir = "asc";
+
+function populateLeasingFilter() {
+  const sel = document.getElementById('followupLeasingFilter');
+  const current = sel.value;
+  const leasings = [...new Set(rows.map(r => r.leasing || "-"))].sort((a, b) => a.localeCompare(b));
+  sel.innerHTML = '<option value="">Semua leasing</option>' +
+    leasings.map(l => `<option value="${l}">${l}</option>`).join('');
+  if (leasings.includes(current)) sel.value = current;
+}
+
+function sortVal(r, key) {
+  switch (key) {
+    case 'no': return 0;
+    case 'jumlah': return Number(r.jumlah) || 0;
+    case 'hari': return r.hari ?? -9999;
+    case 'tglJto': case 'tglTagih': case 'tglBarcode': {
+      const d = parseDate(r[key]);
+      return d ? d.getTime() : -Infinity;
+    }
+    default: return (r[key] || "").toString().toLowerCase();
+  }
+}
+
+function renderFollowupTab() {
+  populateLeasingFilter();
+  const tbody = document.getElementById('followupBody');
+  tbody.innerHTML = "";
+
+  let list = rows.filter(r => {
+    if (followupLeasingValue && (r.leasing || "-") !== followupLeasingValue) return false;
+    const sudah = hasTagihValue(r);
+    if (followupStatus === 'sudah' && !sudah) return false;
+    if (followupStatus === 'belum' && sudah) return false;
+    if (followupSearchTerm) {
+      const hay = (r.nama + " " + r.faktur + " " + r.salesman + " " + r.noCust).toLowerCase();
+      if (!hay.includes(followupSearchTerm)) return false;
+    }
+    return true;
+  });
+
+  list.sort((a, b) => {
+    const va = sortVal(a, followupSortKey), vb = sortVal(b, followupSortKey);
+    let cmp = typeof va === 'string' ? va.localeCompare(vb) : va - vb;
+    if (followupSortKey === 'leasing' && cmp === 0) cmp = (b.hari ?? -999) - (a.hari ?? -999);
+    return followupSortDir === 'asc' ? cmp : -cmp;
+  });
+
+  list.forEach((r, idx) => {
+    const tr = document.createElement('tr');
+    tr.className = 'rowcat';
+    tr.style.borderLeftColor = CATS[r.cat] ? CATS[r.cat].color : 'transparent';
+    const sudah = hasTagihValue(r);
+    const badge = sudah
+      ? `<span class="badge badge-sudah">Sudah</span>${fmtDateShort(r.tglTagih)}`
+      : `<span class="badge badge-belum">Belum</span>`;
+    tr.innerHTML = `
+      <td class="num">${idx + 1}</td>
+      <td class="nama">${r.nama}</td>
+      <td>${fmtDateShort(r.tglJto)}</td>
+      <td>${r.leasing}</td>
+      <td>${TARGET_DIVISI}</td>
+      <td class="num money">${fmtMoney(r.jumlah)}</td>
+      <td>${badge}</td>
+      <td class="num hari">${r.hari===null?"\u2013":r.hari}</td>
+      <td>${r.salesman||"\u2013"}</td>
+      <td>${r.supervisor||"\u2013"}</td>
+      <td>${r.faktur}</td>
+      <td>${fmtDateShort(r.tglBarcode)}</td>`;
+    tbody.appendChild(tr);
+  });
+
+  document.querySelectorAll('#followupTable th[data-key]').forEach(th => {
+    th.classList.toggle('sorted', th.dataset.key === followupSortKey);
+    th.querySelector('.arrow')?.remove();
+    if (th.dataset.key === followupSortKey) {
+      const span = document.createElement('span');
+      span.className = 'arrow';
+      span.textContent = followupSortDir === 'asc' ? '\u25B2' : '\u25BC';
+      th.appendChild(span);
+    }
+  });
+}
+
+document.getElementById('followupSearch').addEventListener('input', (e) => {
+  followupSearchTerm = e.target.value.trim().toLowerCase();
+  renderFollowupTab();
+});
+document.getElementById('followupLeasingFilter').addEventListener('change', (e) => {
+  followupLeasingValue = e.target.value;
+  renderFollowupTab();
+});
+document.querySelectorAll('#followupStatusSeg .seg-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#followupStatusSeg .seg-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    followupStatus = btn.dataset.status;
+    renderFollowupTab();
+  });
+});
+document.querySelectorAll('#followupTable th[data-key]').forEach(th => {
+  th.addEventListener('click', () => {
+    const key = th.dataset.key;
+    if (followupSortKey === key) {
+      followupSortDir = followupSortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      followupSortKey = key;
+      followupSortDir = 'asc';
+    }
+    renderFollowupTab();
+  });
+});
+
+/* ================= Prioritas Penagihan (di dalam Follow-up Leasing) + riwayat catatan/tugas ================= */
+const FU_KEY = 'follow_piutang_v1_' + TARGET_DIVISI;   // dipisah per divisi
+const OLD_CAT = 'catatan_piutang_';
+let fuDB = {};
+try { fuDB = JSON.parse(localStorage.getItem(FU_KEY) || '{}') || {}; } catch (e) { fuDB = {}; }
+try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
+function fuSave() { try { localStorage.setItem(FU_KEY, JSON.stringify(fuDB)); } catch (e) {} }
+const fuOpen = new Set();
+let fuArchOpen = false, fuLive = false;
+const fuNow = () => new Date().toISOString();
+function fuFmt(iso) {
+  if (!iso) return 'Catatan lama';
+  const d = new Date(iso), p = n => String(n).padStart(2, '0');
+  const mon = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"][d.getMonth()];
+  return `${d.getDate()} ${mon}${d.getFullYear() !== today.getFullYear() ? ' ' + d.getFullYear() : ''} ${p(d.getHours())}.${p(d.getMinutes())}`;
+}
+function fuRec(r, create) {
+  let x = fuDB[r.faktur];
+  if (!x) {
+    let old = ''; try { old = localStorage.getItem(OLD_CAT + r.faktur) || ''; } catch (e) {}
+    if (!create && !old) return null;
+    x = fuDB[r.faktur] = { notes: old ? [{ t: null, x: old }] : [], tasks: [], lunasAt: null };
+  }
+  x.nama = r.nama; x.jumlah = r.jumlah; x.leasing = r.leasing; x.jto = r.tglJto;
+  return x;
+}
+// Faktur yang punya riwayat lalu hilang dari Sheet1 (data live berhasil dimuat) = dianggap lunas -> diarsipkan
+function fuSyncLunas() {
+  if (!fuLive) return;
+  const cur = new Set(rows.map(r => r.faktur));
+  let ch = false;
+  Object.entries(fuDB).forEach(([f, x]) => {
+    if (!cur.has(f) && !x.lunasAt) { x.lunasAt = fuNow(); ch = true; }
+    else if (cur.has(f) && x.lunasAt) { x.lunasAt = null; ch = true; }
+  });
+  if (ch) fuSave();
+}
+const fuNotes = x => (x.notes || []).slice().reverse().map(n => `<li><small>${fuFmt(n.t)}</small><div>${esc(n.x)}</div></li>`).join('') || '<li class="z">Belum ada catatan.</li>';
+
+function fuDetail(r) {
+  const x = fuRec(r, false) || { notes: [], tasks: [] }, f = esc(r.faktur);
+  const tasks = x.tasks.map(t => `<li class="${t.done ? 'done' : ''}"><label><input type="checkbox" data-a="tg" data-f="${f}" data-i="${t.id}" ${t.done ? 'checked' : ''}> <span>${esc(t.x)}</span></label><button class="fu-x" title="Hapus tugas" data-a="td" data-f="${f}" data-i="${t.id}">&times;</button><div><small>PIC: ${esc(t.pic || '-')}${t.done && t.doneAt ? ' &middot; selesai ' + fuFmt(t.doneAt) : ''}</small></div></li>`).join('') || '<li class="z">Belum ada tugas.</li>';
+  const pic = esc((r.salesman || '').split(' ')[0]);
+  return `<div class="pr-grid">
+    <div><h4>CATATAN &mdash; ${f}</h4><ul class="fu-list">${fuNotes(x)}</ul>
+      <div class="fu-form"><textarea class="fu-in" data-k="note" rows="2" placeholder="Tulis catatan follow-up..."></textarea><button class="fu-btn" data-a="note" data-f="${f}">Kirim</button></div></div>
+    <div><h4>TUGAS TERKAIT FAKTUR INI</h4><ul class="fu-list">${tasks}</ul>
+      <div class="fu-form"><input class="fu-in" data-k="task" placeholder="Tugas... (mis. telepon debitur)"><input class="fu-in pic" data-k="pic" value="${pic}" title="PIC"><button class="fu-btn" data-a="task" data-f="${f}">+ Tugas</button></div></div>
+  </div>`;
+}
+
+function fuFmtFull(iso) {
+  if (!iso) return '-';
+  const d = new Date(iso), p = n => String(n).padStart(2, '0');
+  return `${p(d.getDate())}/${p(d.getMonth() + 1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+const fuIsoDMY = s => { const m = String(s || '').match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? `${m[3]}/${m[2]}/${m[1]}` : (s || '-'); };
+const fuHasNotes = () => Object.values(fuDB).some(x => (x.notes || []).length);
+
+// Rekap seluruh riwayat catatan (dan tugas) per faktur — aktif maupun yang sudah lunas
+function fuRecap() {
+  const cur = {}; rows.forEach(r => { cur[r.faktur] = r; });
+  const recs = Object.entries(fuDB).filter(([, x]) => (x.notes || []).length || (x.tasks || []).length)
+    .sort((a, b) => String(a[1].nama || '').localeCompare(String(b[1].nama || '')) || a[0].localeCompare(b[0]));
+  const status = x => x.lunasAt ? 'Lunas (' + fuFmtFull(x.lunasAt).slice(0, 10) + ')' : 'Belum lunas';
+  const notes = [], tasks = [];
+  recs.forEach(([f, x]) => {
+    const umur = !x.lunasAt && cur[f] ? cur[f].hari + ' hr' : '-';
+    (x.notes || []).slice().sort((a, b) => String(a.t).localeCompare(String(b.t))).forEach(n => {
+      notes.push([notes.length + 1, n.t ? fuFmtFull(n.t) : 'Catatan lama', x.nama || '-', f, fmtMoney(x.jumlah || 0), fuIsoDMY(x.jto), umur, status(x), n.x]);
+    });
+    (x.tasks || []).forEach(t => {
+      tasks.push([tasks.length + 1, x.nama || '-', f, t.x, t.pic || '-', t.done ? 'Selesai' : 'Belum selesai', fuFmtFull(t.t), t.done ? fuFmtFull(t.doneAt) : '-']);
+    });
+  });
+  return {
+    noteHead: ['No', 'Waktu Catatan', 'Debitur', 'No. Faktur', 'Jumlah (Rp)', 'Jatuh Tempo', 'Umur', 'Status', 'Catatan'],
+    taskHead: ['No', 'Debitur', 'No. Faktur', 'Tugas', 'PIC', 'Status', 'Dibuat', 'Selesai'],
+    notes, tasks,
+  };
+}
+function fuFileName(ext) { return `Riwayat_Catatan_Penagihan_${TARGET_DIVISI.replace(/ /g, '_')}_${fuNow().slice(0, 10)}.${ext}`; }
+function fuExportExcel() {
+  if (typeof XLSX === 'undefined') { alert('Library Excel belum termuat — pastikan koneksi internet aktif, lalu coba lagi.'); return; }
+  const rc = fuRecap();
+  if (!rc.notes.length) return;
+  const wb = XLSX.utils.book_new();
+  const top = [['Riwayat Catatan Penagihan — ' + TARGET_DIVISI], [REPORT_DATE_LABEL + ' · dicetak ' + fuFmtFull(fuNow())], []];
+  const ws = XLSX.utils.aoa_to_sheet(top.concat([rc.noteHead], rc.notes));
+  ws['!cols'] = [6, 17, 28, 22, 16, 13, 9, 18, 70].map(w => ({ wch: w }));
+  XLSX.utils.book_append_sheet(wb, ws, 'Riwayat Catatan');
+  if (rc.tasks.length) {
+    const wt = XLSX.utils.aoa_to_sheet(top.concat([rc.taskHead], rc.tasks));
+    wt['!cols'] = [6, 28, 22, 45, 14, 15, 17, 17].map(w => ({ wch: w }));
+    XLSX.utils.book_append_sheet(wb, wt, 'Tugas');
+  }
+  XLSX.writeFile(wb, fuFileName('xlsx'));
+}
+function fuExportPdf() {
+  if (!window.jspdf) { alert('Library PDF belum termuat — pastikan koneksi internet aktif, lalu coba lagi.'); return; }
+  const rc = fuRecap();
+  if (!rc.notes.length) return;
+  const doc = new window.jspdf.jsPDF({ orientation: 'landscape' });
+  doc.setFontSize(14); doc.text('Riwayat Catatan Penagihan — ' + TARGET_DIVISI, 14, 15);
+  doc.setFontSize(9); doc.text(REPORT_DATE_LABEL + ' · dicetak ' + fuFmtFull(fuNow()), 14, 21);
+  doc.autoTable({
+    head: [rc.noteHead], body: rc.notes, startY: 26, styles: { fontSize: 7.5, cellPadding: 1.6, overflow: 'linebreak' },
+    headStyles: { fillColor: [45, 55, 72] }, rowPageBreak: 'avoid',
+    columnStyles: { 0: { cellWidth: 8 }, 1: { cellWidth: 26 }, 4: { halign: 'right', cellWidth: 25 }, 5: { cellWidth: 20 }, 6: { cellWidth: 14 }, 7: { cellWidth: 24 }, 8: { cellWidth: 'auto' } },
+  });
+  if (rc.tasks.length) {
+    let y = doc.lastAutoTable.finalY + 10;
+    if (y > 180) { doc.addPage(); y = 15; }
+    doc.setFontSize(11); doc.text('Tugas terkait faktur', 14, y);
+    doc.autoTable({ head: [rc.taskHead], body: rc.tasks, startY: y + 3, styles: { fontSize: 7.5, cellPadding: 1.6 }, headStyles: { fillColor: [45, 55, 72] }, rowPageBreak: 'avoid' });
+  }
+  doc.save(fuFileName('pdf'));
+}
+
+function renderPrioritasTab(force) {
+  const box = document.getElementById('prioritasBox');
+  if (!box) return;
+  // jangan timpa ketikan yang sedang berlangsung saat sinkronisasi otomatis
+  if (!force && [...box.querySelectorAll('.fu-in')].some(i => i === document.activeElement || (i.dataset.k !== 'pic' && i.value))) return;
+  const list = rows.filter(r => (r.hari ?? -9999) > 26).sort((a, b) => (b.hari ?? 0) - (a.hari ?? 0));
+  const total = list.reduce((s, r) => s + (Number(r.jumlah) || 0), 0);
+  const debs = new Set(list.map(r => r.nama)).size;
+  let h = `<div class="pr-head"><h3>Prioritas Penagihan</h3><div class="pr-tools"><span>faktur dengan umur &gt; 26 hari &middot; klik baris untuk catatan &amp; tugas</span><button class="fu-ghost" data-a="xpdf"${fuHasNotes() ? '' : ' disabled title="Belum ada catatan untuk direkap"'}>Export PDF</button><button class="fu-ghost" data-a="xxls"${fuHasNotes() ? '' : ' disabled title="Belum ada catatan untuk direkap"'}>Export Excel</button></div></div>`;
+  if (!list.length) h += '<div class="pr-empty">Tidak ada faktur dengan umur &gt; 26 hari saat ini.</div>';
+  else {
+    h += `<div class="pr-banner"><div><span class="pr-dot"></span><b>${list.length} faktur butuh tindak lanjut segera</b></div><span class="pr-sum">total tertunggak <em>Rp ${fmtMoney(total)}</em> &middot; ${debs} debitur</span></div>
+    <div class="pr-wrap"><div class="table-scroll"><table class="detail"><thead><tr><th></th><th class="num">No</th><th>Debitur</th><th>No. Faktur</th><th>Cabang</th><th>Metode</th><th class="num">Jumlah</th><th>Tgl. Jatuh Tempo</th><th class="num">Umur</th><th>Sales PIC</th></tr></thead><tbody>`;
+    list.forEach((r, i) => {
+      const open = fuOpen.has(r.faktur), x = fuRec(r, false);
+      const nt = x ? x.notes.length : 0, tk = x ? x.tasks.filter(t => !t.done).length : 0;
+      const metode = r.cara === 'Tunai' ? '<span class="pr-red">Tunai (langsung)</span>' : `Kredit &middot; ${esc(r.leasing)}`;
+      h += `<tr class="pr-row" data-f="${esc(r.faktur)}"><td><span class="pr-chev">${open ? '&#9662;' : '&#9656;'}</span></td><td class="num">${i + 1}</td><td class="nama">${esc(r.nama)}<br><small style="color:var(--muted)">${esc(r.noCust || '')}</small></td><td>${esc(r.faktur)}</td><td><span class="pr-badge">${TARGET_DIVISI}</span></td><td>${metode}</td><td class="num money">Rp ${fmtMoney(r.jumlah)}</td><td>${fmtDateShort(r.tglJto)}</td><td class="num pr-red">${r.hari} hr</td><td>${esc(r.salesman || '\u2013')}${nt ? `<span class="pr-cnt">${nt} catatan</span>` : ''}${tk ? `<span class="pr-cnt">${tk} tugas</span>` : ''}</td></tr>`;
+      if (open) h += `<tr class="pr-detail"><td colspan="10">${fuDetail(r)}</td></tr>`;
+    });
+    h += '</tbody></table></div></div>';
+  }
+  const arch = Object.entries(fuDB).filter(([, x]) => x.lunasAt).sort((a, b) => b[1].lunasAt.localeCompare(a[1].lunasAt));
+  if (arch.length) {
+    h += `<div class="pr-arch"><div class="pr-arch-h" data-a="arch">${fuArchOpen ? '&#9662;' : '&#9656;'} Riwayat faktur lunas <span>(${arch.length}) &middot; riwayat tetap tersimpan</span></div>`;
+    if (fuArchOpen) arch.forEach(([f, x]) => {
+      h += `<div class="pr-arch-i"><div><b>${esc(x.nama || '')}</b> &middot; ${esc(f)} &middot; Rp ${fmtMoney(x.jumlah || 0)} <small>&middot; lunas terdeteksi ${fuFmt(x.lunasAt)}</small> <button class="fu-x" data-a="del" data-f="${esc(f)}">Hapus riwayat</button></div><ul class="fu-list">${fuNotes(x)}${(x.tasks || []).map(t => `<li class="${t.done ? 'done' : ''}"><span>&#9642; ${esc(t.x)}</span><small>PIC: ${esc(t.pic || '-')}${t.done ? ' &middot; selesai' : ''}</small></li>`).join('')}</ul></div>`;
+    });
+    h += '</div>';
+  }
+  box.innerHTML = h;
+}
+
+(function () {
+  const box = document.getElementById('prioritasBox');
+  if (!box) return;
+  const rowOf = f => rows.find(r => r.faktur === f);
+  box.addEventListener('click', e => {
+    const b = e.target.closest('[data-a]');
+    if (b) {
+      const a = b.dataset.a, f = b.dataset.f;
+      if (a === 'note' || a === 'task') {
+        const scope = b.closest('.fu-form'), r = rowOf(f);
+        if (!r) return;
+        if (a === 'note') {
+          const v = scope.querySelector('[data-k="note"]').value.trim(); if (!v) return;
+          fuRec(r, true).notes.push({ t: fuNow(), x: v });
+        } else {
+          const v = scope.querySelector('[data-k="task"]').value.trim(); if (!v) return;
+          fuRec(r, true).tasks.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5), x: v, pic: scope.querySelector('[data-k="pic"]').value.trim(), done: false, t: fuNow() });
+        }
+        fuSave(); renderPrioritasTab(true);
+      } else if (a === 'td') {
+        const x = fuDB[f]; if (x) { x.tasks = x.tasks.filter(t => t.id !== b.dataset.i); fuSave(); renderPrioritasTab(true); }
+      } else if (a === 'del') {
+        if (confirm('Hapus seluruh riwayat faktur ' + f + '?')) { delete fuDB[f]; fuSave(); renderPrioritasTab(true); }
+      } else if (a === 'arch') { fuArchOpen = !fuArchOpen; renderPrioritasTab(true); }
+      else if (a === 'xpdf') fuExportPdf();
+      else if (a === 'xxls') fuExportExcel();
+      return;
+    }
+    if (e.target.closest('.pr-detail')) return;
+    const tr = e.target.closest('.pr-row');
+    if (tr) { const f = tr.dataset.f; fuOpen.has(f) ? fuOpen.delete(f) : fuOpen.add(f); renderPrioritasTab(true); }
+  });
+  box.addEventListener('change', e => {
+    const c = e.target.closest('input[data-a="tg"]');
+    if (!c) return;
+    const x = fuDB[c.dataset.f], t = x && x.tasks.find(t => t.id === c.dataset.i);
+    if (t) { t.done = c.checked; t.doneAt = c.checked ? fuNow() : null; fuSave(); renderPrioritasTab(true); }
+  });
+})();
+
+/* ================= Penjualan: ringkasan 3 cabang x 3 bulan + tab Detail ================= */
+let SALES_DATE_FMT = "DMY";
+const CAB = [["Gatsu","#2F4FD0"],["Flamboyan","#C2410C"],["Gagak Hitam","#0F766E"]];
+const BLN = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function months() {
+  const a = [];
+  for (let i = 2; i >= 0; i--) {
+    const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+    a.push(d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'));
+  }
+  return a;
+}
+const monName = (m, full) => { const n = BLN[+m.slice(5) - 1]; return full ? n : n.slice(0, 3); };
+function periodLabel() { const M = months(); return monName(M[0]) + '\u2013' + monName(M[2]) + ' ' + M[2].slice(0, 4); }
+const inPeriod = r => months().includes((r.tanggal || '').slice(0, 7));
+
+function monthsN(n) {
+  const a = [];
+  for (let i = n - 1; i >= 0; i--) {
+    const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+    a.push(d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'));
+  }
+  return a;
+}
+const triState = {}, triDefs = {};
+const shortMon = m => monName(m) + ' ' + m.slice(2, 4);
+function rangeLabel(M, sel) {
+  if (!sel.length) return 'belum ada bulan dipilih';
+  if (sel.length === 1) return monName(sel[0], true) + ' ' + sel[0].slice(0, 4);
+  const idx = sel.map(m => M.indexOf(m));
+  if (idx.every((v, i) => i === 0 || v === idx[i - 1] + 1)) {
+    const a = sel[0], z = sel[sel.length - 1];
+    return monName(a) + (a.slice(0, 4) !== z.slice(0, 4) ? ' ' + a.slice(0, 4) : '') + '\u2013' + monName(z) + ' ' + z.slice(0, 4);
+  }
+  return sel.map(shortMon).join(', ');
+}
+
+function renderTri(elId, title, keyFn, colLabel) {
+  triDefs[elId] = [title, keyFn, colLabel];
+  const st = triState[elId] || (triState[elId] = { n: 3, off: new Set() });
+  const M = monthsN(st.n), sel = M.filter(m => !st.off.has(m));
+  const col = (CAB.find(c => c[0] === TARGET_DIVISI) || [0, '#2F4FD0'])[1];
+  let h = `<div class="tri-head"><h2>${title}</h2><span>${rangeLabel(M, sel)}</span><span>&middot; ${TARGET_DIVISI}</span></div>
+    <div class="tri-bar"><select class="select-filter" data-e="${elId}" title="Rentang bulan">${[3, 6].map(n => `<option value="${n}"${n === st.n ? ' selected' : ''}>${n} bulan berjalan</option>`).join('')}</select>
+    <div class="tri-chips"><button type="button" class="tri-chip${st.off.size ? '' : ' on'}" data-m="*">Semua</button>${M.map(m => `<button type="button" class="tri-chip${st.off.has(m) ? '' : ' on'}" data-m="${m}">${shortMon(m)}</button>`).join('')}</div></div><div class="tri">`;
+  sel.forEach(m => {
+    const items = SALES.filter(r => r.divisi === TARGET_DIVISI && r.tanggal.slice(0, 7) === m);
+    const map = new Map();
+    items.forEach(r => { const k = keyFn(r) || '-'; map.set(k, (map.get(k) || 0) + 1); });
+    const rows = [...map.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+    h += `<div class="bcard" style="--c:${col}">
+      <div class="bc-h"><b>${TARGET_DIVISI}</b><small>${items.length} unit &middot; ${monName(m, true)} ${m.slice(0, 4)}</small></div>
+      <div class="bc-body"><table>
+        <thead><tr><th>${colLabel}</th><th class="num">Unit</th></tr></thead>
+        <tbody>${rows.map(([k, n]) => `<tr><td>${esc(k === 'Cash' ? 'Cash (Tunai)' : k)}</td><td class="num">${n}</td></tr>`).join('') || '<tr><td colspan="2" class="z">Belum ada data</td></tr>'}</tbody>
+        <tfoot><tr><td>Total</td><td class="num">${items.length}</td></tr></tfoot>
+      </table></div></div>`;
+  });
+  if (!sel.length) h += '<p class="tri-none">Pilih minimal satu bulan.</p>';
+  $(elId).innerHTML = h + '</div>';
+}
+['triLeasing', 'triAsuransi', 'triSupervisor', 'triSales'].forEach(id => {
+  const box = $(id);
+  box.addEventListener('change', e => {
+    const s = e.target.closest('select[data-e]');
+    if (!s) return;
+    triState[id] = { n: +s.value, off: new Set() };
+    renderTri(id, ...triDefs[id]);
+  });
+  box.addEventListener('click', e => {
+    const b = e.target.closest('.tri-chip');
+    if (!b) return;
+    const st = triState[id], m = b.dataset.m;
+    if (m === '*') st.off = new Set(); else if (st.off.has(m)) st.off.delete(m); else st.off.add(m);
+    renderTri(id, ...triDefs[id]);
+  });
+});
+
+const dS = { k: 'tanggal', d: -1 };
+const dCol = new Set();
+let dNames = [];
+const DCOLS = [['nama','Nama Debitur'],['tanggal','Tanggal'],['namabrg','Tipe Unit'],['leasing','Leasing'],['asuransi','Insurance'],['salesman','Salesman'],['supervisor','Supervisor']];
+
+function fillDetailFilters() {
+  const monSel = $('dMonth'), mv = monSel.value;
+  monSel.innerHTML = `<option value="all">3 bulan (${periodLabel()})</option>` + months().map(m => `<option value="${m}">${monName(m, true)} ${m.slice(0, 4)}</option>`).join('');
+  if ([...monSel.options].some(o => o.value === mv)) monSel.value = mv;
+}
+
+function renderDetail() {
+  const mo = $('dMonth').value, g = $('dGroup').value, q = $('dSearch').value.trim().toLowerCase();
+  const list = SALES.filter(r => inPeriod(r) && r.divisi === TARGET_DIVISI && (mo === 'all' || r.tanggal.slice(0, 7) === mo) &&
+    (!q || (r.nama + ' ' + r.namabrg + ' ' + r.salesman + ' ' + r.faktur).toLowerCase().includes(q)));
+  const cmp = (a, b) => {
+    let c = String(a[dS.k] || '').localeCompare(String(b[dS.k] || '')) * dS.d;
+    return c || b.tanggal.localeCompare(a.tanggal);
+  };
+  const map = new Map();
+  list.forEach(r => { const k = r[g] || '-'; if (!map.has(k)) map.set(k, []); map.get(k).push(r); });
+  const groups = [...map.entries()].sort((a, b) => b[1].length - a[1].length);
+  dNames = groups.map(g => g[0]);
+  $('dInfo').textContent = `${list.length} unit \u00B7 ${TARGET_DIVISI} \u00B7 ${mo === 'all' ? periodLabel() : monName(mo, true) + ' ' + mo.slice(0, 4)}`;
+  const arrow = k => dS.k === k ? `<span class="arrow">${dS.d > 0 ? '\u25B2' : '\u25BC'}</span>` : '';
+  const head = '<th>No</th>' + DCOLS.map(([k, l]) => `<th class="sortable" data-k="${k}">${l}${arrow(k)}</th>`).join('');
+  $('detailSections').innerHTML = groups.length ? groups.map(([name, items]) => `
+    <div class="leasing-section">
+      <div class="leasing-head dtoggle" data-g="${esc(name)}" title="Klik untuk minimize / buka"><span class="chev">${dCol.has(name) ? '\u25B8' : '\u25BE'}</span><span class="name">${esc(name)}</span><span class="meta">${items.length} unit</span></div>
+      <div class="leasing-table-scroll"${dCol.has(name) ? ' hidden' : ''}><table class="detail"><thead><tr>${head}</tr></thead><tbody>
+      ${items.slice().sort(cmp).map((r, i) => `<tr><td class="num">${i + 1}</td><td class="nama">${esc(r.nama)}</td><td>${fmtDateShort(r.tanggal)}</td><td>${esc(r.namabrg || '\u2013')}</td><td>${esc(r.leasing)}</td><td>${esc(r.asuransi)}</td><td>${esc(r.salesman || '\u2013')}</td><td>${esc(r.supervisor || '\u2013')}</td></tr>`).join('')}
+      </tbody></table></div></div>`).join('')
+    : '<p style="color:var(--muted);padding:16px 0;">Tidak ada data penjualan untuk filter ini.</p>';
+}
+$('detailSections').addEventListener('click', e => {
+  const tg = e.target.closest('.dtoggle');
+  if (tg) { const g = tg.dataset.g; dCol.has(g) ? dCol.delete(g) : dCol.add(g); renderDetail(); return; }
+  const th = e.target.closest('th[data-k]');
+  if (!th) return;
+  const k = th.dataset.k;
+  if (dS.k === k) dS.d = -dS.d; else { dS.k = k; dS.d = k === 'tanggal' ? -1 : 1; }
+  renderDetail();
+});
+['dMonth', 'dGroup'].forEach(id => $(id).addEventListener('change', renderDetail));
+$('dSearch').addEventListener('input', renderDetail);
+$('dCollapseAll').addEventListener('click', () => { dNames.forEach(n => dCol.add(n)); renderDetail(); });
+$('dExpandAll').addEventListener('click', () => { dCol.clear(); renderDetail(); });
+
+function renderSalesAll() {
+  renderTri('triLeasing', 'Penjualan per Leasing', r => r.leasing, 'Leasing / Metode');
+  renderTri('triAsuransi', 'Penjualan per Insurance Company', r => r.asuransi, 'Insurance Company');
+  renderTri('triSupervisor', 'Penjualan per Supervisor', r => r.supervisor, 'Supervisor');
+  renderTri('triSales', 'Sales Terbanyak', r => r.salesman, 'Salesman');
+  fillDetailFilters();
+  renderDetail();
+}
+function applySales(list) { if (list && list.length) { SALES = list; renderSalesAll(); } }
+
+/* ---- Ambil data penjualan dari sheet (tab yang punya header "Fakturno") ---- */
+function normDate(v) {
+  if (v == null || v === '') return null;
+  if (v instanceof Date) return v.toISOString().slice(0, 10);
+  if (typeof v === 'number') {
+    const d = XLSX.SSF.parse_date_code(v);
+    return d ? `${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}` : null;
+  }
+  const s = String(v); let m;
+  if (s.startsWith('Date(')) { const [y, mo, d] = s.slice(5, -1).split(',').map(Number); return `${y}-${String(mo + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
+  if ((m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(s))) { const d = SALES_DATE_FMT === 'MDY' ? m[2] : m[1], mo = SALES_DATE_FMT === 'MDY' ? m[1] : m[2]; return `${m[3]}-${mo.padStart(2,'0')}-${d.padStart(2,'0')}`; }
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+  return null;
+}
+// Kolom: B=Tanggal C=Fakturno D=Nama F=Namabrg H=Cara J=Divisi K=Status Fnc(Leasing) L=Salesman(sales) M=Supervisor S=Asuransi
+function mapSales(start, end, get) {
+  const nm = v => { v = v == null ? '' : String(v); return (v.includes('=') ? v.slice(v.indexOf('=') + 1) : v).trim(); };
+  const out = [], seen = new Set();
+  for (let r = start; r < end; r++) {
+    const nama = get(r, 3), divisi = get(r, 9), tgl = normDate(get(r, 1));
+    if (!nama || !tgl || divisi !== TARGET_DIVISI) continue;
+    const fk = get(r, 2); if (fk) { if (seen.has(fk)) continue; seen.add(fk); }
+    const asu = get(r, 18);
+    out.push({
+      tanggal: tgl, faktur: get(r, 2), nama: String(nama).trim(), namabrg: get(r, 5), cara: get(r, 7), divisi,
+      leasing: get(r, 10) || '-', salesman: nm(get(r, 11)) || '-', supervisor: String(get(r, 12) || '-').trim(),
+      asuransi: (!asu || asu === '-') ? 'NON ASURANSI' : String(asu).trim(),
+    });
+  }
+  return out;
+}
+function findHeader(get, max) {
+  for (let r = 0; r < max; r++) { const v = get(r, 2); if (typeof v === 'string' && v.trim().toLowerCase() === 'fakturno') return r; }
+  return -1;
+}
+function extractSalesFromWorkbook(wb) {
+  for (const n of wb.SheetNames) {
+    const ws = wb.Sheets[n]; if (!ws || !ws['!ref']) continue;
+    const rg = XLSX.utils.decode_range(ws['!ref']);
+    const get = (r, c) => { const x = ws[XLSX.utils.encode_cell({ r, c })]; return x ? x.v : undefined; };
+    const h = findHeader(get, Math.min(rg.e.r, 30));
+    if (h >= 0) return mapSales(h + 1, rg.e.r + 1, get);
+  }
+  return null;
+}
+render();
+renderLeasingTab();
+renderFollowupTab();
+renderPrioritasTab();
+renderSalesAll();
+document.getElementById('sourceCount').textContent = rows.length;
+
+/* ================= Live sync dari Google Sheet (tiap 30 detik) ================= */
+const FILE_ID = "1ul2WqwEb4X66Q6CYdycNvtyaLu08axFkZL75FI-qdmM";
+const XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+const KNOWN_DIVISI = ["Gatsu", "Flamboyan", "Gagak Hitam"];
+const syncRowEl = document.getElementById('syncRow');
+const syncTextEl = document.getElementById('syncText');
+let lastSyncedLabel = null; // tanggal-jam refresh terakhir yang BERHASIL, tetap tampil walau status berubah
+
+function setSync(state, message) {
+  syncRowEl.className = 'sync-row ' + state;
+  const suffix = (lastSyncedLabel && state !== 'live')
+    ? ` &middot; Terakhir refresh: <strong>${lastSyncedLabel}</strong>`
+    : '';
+  syncTextEl.innerHTML = message + suffix;
+}
+
+function isoFromExcelDate(v) {
+  if (v == null || v === "") return null;
+  if (v instanceof Date) return v.toISOString().slice(0, 10);
+  if (typeof v === "number") {
+    const d = XLSX.SSF.parse_date_code(v);
+    if (!d) return null;
+    return `${d.y.toString().padStart(4,'0')}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;
+  }
+  return String(v); // free text like "Belum Buat Tagihan" or "Kontrak Go Rental"
+}
+
+function cellVal(ws, colLetter, r) {
+  const addr = colLetter + (r + 1); // r is 0-based row index
+  const cell = ws[addr];
+  return cell ? cell.v : undefined;
+}
+
+function extractGatsuFromWorkbook(wb) {
+  const ws = wb.Sheets["Sheet1"];
+  if (!ws || !ws['!ref']) throw new Error("Sheet 'Sheet1' tidak ditemukan");
+  const range = XLSX.utils.decode_range(ws['!ref']);
+
+  // Cari baris "Per : ..." di kolom A berdasarkan ISINYA (bukan asumsi posisi baris ke-4),
+  // supaya tetap benar walau ada baris disisipkan/dihapus di atasnya.
+  let reportDateLabel = REPORT_DATE_LABEL;
+  for (let r = 0; r < 20; r++) {
+    const v = cellVal(ws, 'A', r);
+    if (typeof v === 'string' && v.trim().toLowerCase().startsWith('per')) {
+      reportDateLabel = v.trim();
+      break;
+    }
+  }
+
+  // Sheet1 adalah laporan final: sudah mengecualikan faktur yang lunas dan sudah
+  // menghitung Divisi/Leasing/Salesman dengan benar. Kolom: A=No, B=No.Cust,
+  // C=Nama Debitur, D=Faktur No., E=TOP, F=Tgl.Jto, G=Jumlah, H=Giro, I=Type,
+  // J=Divisi, K=Cara Pembelian, L=Leasing, M=Salesman ("KODE=Nama Lengkap"),
+  // N=Supervisor, O=Tgl Buat Tagihan, P=Tgl Barcode, Q=Hasil Followup.
+  const out = [];
+  for (let r = range.s.r + 9; r <= range.e.r; r++) { // baris data dimulai dari baris ke-10 (index 9)
+    const nama = cellVal(ws, 'C', r);
+    if (nama == null || nama === "") continue; // lewati baris kosong/sisa template & baris "Total:"
+    const divisi = cellVal(ws, 'J', r);
+    if (divisi !== TARGET_DIVISI) continue; // dashboard ini khusus divisi ini
+
+    let salesman = cellVal(ws, 'M', r);
+    if (typeof salesman === 'string' && salesman.includes('=')) {
+      salesman = salesman.slice(salesman.indexOf('=') + 1).trim();
+    }
+    const followupRaw = cellVal(ws, 'Q', r);
+
+    out.push({
+      noCust: cellVal(ws, 'B', r),
+      nama: nama,
+      faktur: cellVal(ws, 'D', r),
+      top: cellVal(ws, 'E', r) || 0,
+      tglJto: isoFromExcelDate(cellVal(ws, 'F', r)),
+      jumlah: cellVal(ws, 'G', r) || 0,
+      type: cellVal(ws, 'I', r),
+      cara: cellVal(ws, 'K', r) || "-",
+      leasing: cellVal(ws, 'L', r) || "-",
+      salesman: salesman,
+      supervisor: cellVal(ws, 'N', r),
+      tglTagih: isoFromExcelDate(cellVal(ws, 'O', r)),
+      tglBarcode: isoFromExcelDate(cellVal(ws, 'P', r)),
+      followup: (followupRaw === "#N/A" ? null : followupRaw),
+    });
+  }
+  return { rows: out, reportDateLabel };
+}
+
+function applyNewData(list, reportDateLabel, syncedAt) {
+  rows = list.map(r => ({...r, hari: computeHari(r.tglJto), cat: categorize(r)}));
+  render();
+  renderLeasingTab();
+  renderFollowupTab();
+  fuLive = true;
+  fuSyncLunas();
+  renderPrioritasTab();
+  document.getElementById('sourceCount').textContent = rows.length;
+  if (reportDateLabel) {
+    REPORT_DATE_LABEL = reportDateLabel;
+    showPerDate(REPORT_DATE_LABEL);
+  }
+  const bulanFull = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+  const jam = String(syncedAt.getHours()).padStart(2,'0');
+  const menit = String(syncedAt.getMinutes()).padStart(2,'0');
+  lastSyncedLabel = `${syncedAt.getDate()} ${bulanFull[syncedAt.getMonth()]} ${syncedAt.getFullYear()}, ${jam}:${menit}`;
+  setSync('live', `Live &middot; tersinkron <strong>${lastSyncedLabel}</strong> &middot; otomatis tiap 2 menit`);
+}
+
+/* ---------- Sinkronisasi live: CSV "Publish to web" (cara baca sama dengan dashboard gabungan) ---------- */
+const PUB_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8rWnYng7TGqvAMl7aryX7yZE7hQnzwF3Urqwu1t8bPq9AFJBXPfqaGmUzTk08Nw91e6mQGV6kbc2J/pub';
+const PIUTANG_CSV_URL = PUB_BASE + '?gid=860325626&single=true&output=csv'; // tab Sheet1 (piutang)
+const SALES_CSV_URL = PUB_BASE + '?gid=0&single=true&output=csv';           // tab Data (penjualan)
+const SYNC_MS = 120000; // 2 menit
+
+function detectDelimiter(text) {
+  const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0).slice(0, 15);
+  let best = ',', bestMax = 1;
+  for (const d of ['\t', ',', ';']) {
+    const mx = Math.max(...lines.map(l => l.split(d).length));
+    if (mx > bestMax) { bestMax = mx; best = d; }
+  }
+  return best;
+}
+function parseCSVFull(text) {
+  const delim = detectDelimiter(text), out = [];
+  let row = [], field = '', q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) {
+      if (c === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else q = false; }
+      else field += c;
+    } else if (c === '"') q = true;
+    else if (c === delim) { row.push(field); field = ''; }
+    else if (c === '\n') { row.push(field); out.push(row); row = []; field = ''; }
+    else if (c !== '\r') field += c;
+  }
+  if (field.length || row.length) { row.push(field); out.push(row); }
+  return out;
+}
+const cellStr = v => v == null ? '' : String(v).trim();
+function cellNum(v) {
+  if (typeof v === 'number') return v;
+  const n = Number(String(v == null ? '' : v).replace(/[^0-9-]/g, ''));
+  return isNaN(n) ? 0 : n;
+}
+// Deteksi DMY / MDY dari data itu sendiri (angka > 12 pasti hari)
+function detectDateFormat(list) {
+  for (const s of list) {
+    const m = String(s || '').match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.]\d{2,4}(?!\d)/);
+    if (!m) continue;
+    if (+m[1] > 12) return 'DMY';
+    if (+m[2] > 12) return 'MDY';
+  }
+  return 'DMY';
+}
+function csvIso(s, fmt) {
+  s = cellStr(s);
+  const m = s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})(?!\d)/);
+  if (m) {
+    const y = m[3].length === 2 ? 2000 + Number(m[3]) : Number(m[3]);
+    const d = fmt === 'MDY' ? +m[2] : +m[1], mo = fmt === 'MDY' ? +m[1] : +m[2];
+    return `${y}-${String(mo).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+  }
+  return /^\d{4}-\d{2}-\d{2}/.test(s) ? s.slice(0, 10) : null;
+}
+function parsePiutangCsv(csv) {
+  let label = null, h = -1;
+  for (let i = 0; i < csv.length && i < 40; i++) {
+    const row = csv[i] || [];
+    if (!label) for (const c of row) { const m = String(c || '').match(/Per\s*:\s*(\d{1,2}-[A-Za-z]+-\d{4})/i); if (m) { label = 'Per : ' + m[1]; break; } }
+    if ((cellStr(row[0]) === 'No' && cellStr(row[1]) === 'No.Cust') || cellStr(row[2]).toLowerCase() === 'nama debitur') { h = i; break; }
+  }
+  if (h < 0) { const e = new Error('Header tidak ditemukan'); e.code = 'HEADER_NOT_FOUND'; throw e; }
+  const body = csv.slice(h + 1).filter(r => r && cellStr(r[2]) && !['total:', 'nama debitur'].includes(cellStr(r[2]).toLowerCase()) && cellNum(r[6]));
+  const fmt = detectDateFormat(body.map(r => r[5]));
+  const nm = v => { v = cellStr(v); return v.includes('=') ? v.slice(v.indexOf('=') + 1).trim() : v; };
+  const dateOrText = v => { v = cellStr(v); return csvIso(v, fmt) || (v && v !== '#N/A' ? v : null); };
+  const list = body.filter(r => cellStr(r[9]) === TARGET_DIVISI).map(r => {
+    const t = cellStr(r[4]), fu = cellStr(r[16]);
+    return {
+      noCust: cellStr(r[1]), nama: cellStr(r[2]), faktur: cellStr(r[3]),
+      top: t === '' ? 0 : (/^\d+$/.test(t) ? Number(t) : t),
+      tglJto: csvIso(r[5], fmt), jumlah: cellNum(r[6]), type: cellStr(r[8]),
+      cara: cellStr(r[10]) || '-', leasing: cellStr(r[11]) || '-',
+      salesman: nm(r[12]), supervisor: cellStr(r[13]),
+      tglTagih: dateOrText(r[14]), tglBarcode: dateOrText(r[15]),
+      followup: fu === '#N/A' ? null : (fu || null),
+    };
+  });
+  return { rows: list, reportDateLabel: label, totalAll: body.length };
+}
+function parseSalesCsv(csv) {
+  const get = (r, c) => { const row = csv[r]; return row ? row[c] : undefined; };
+  const h = findHeader(get, Math.min(csv.length, 30));
+  if (h < 0) { const e = new Error('Header sheet Data tidak ditemukan'); e.code = 'HEADER_NOT_FOUND'; throw e; }
+  SALES_DATE_FMT = detectDateFormat(csv.slice(h + 1).map(r => r && r[1]));
+  return mapSales(h + 1, csv.length, get);
+}
+
+const refreshBtn = document.getElementById('refreshBtn');
+function setRefreshBtnSpinning(on) {
+  refreshBtn.disabled = on;
+  refreshBtn.classList.toggle('spinning', on);
+}
+async function fetchCsv(url) {
+  const res = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) { const e = new Error('HTTP ' + res.status); e.code = 'HTTP_' + res.status; throw e; }
+  return parseCSVFull(await res.text());
+}
+function syncErrorMessage(err) {
+  const code = err && err.code;
+  if (code === 'HEADER_NOT_FOUND') return 'Format header sheet tidak dikenali — mungkin struktur laporan berubah. Menampilkan data terakhir.';
+  if (String(code).startsWith('HTTP_')) return `Google Sheets menolak permintaan (${code}). Pastikan sheet masih di-publish ke web. Menampilkan data terakhir.`;
+  return 'Gagal mengambil data — periksa koneksi internet. Menampilkan data terakhir.';
+}
+let syncBusy = false;
+async function syncNow(isManual) {
+  if (syncBusy) return;
+  syncBusy = true;
+  setRefreshBtnSpinning(true);
+  if (isManual || !lastSyncedLabel) setSync('stale', 'Menghubungkan ke Google Sheets&hellip;');
   try {
-    const res = await fetch(CSV_URL + '&_ts=' + Date.now(), { cache: 'no-store' });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const text = await res.text();
-    const rows = parseCSV(text);
-    const data = processRows(rows);
-    render(data);
-
-    const now = new Date();
-    statusEl.classList.remove('err');
-    statusEl.innerHTML = 'Terakhir disinkron: <b>' + now.toLocaleString('id-ID') + '</b> &middot; ' + COL_INFO;
+    const { rows: list, reportDateLabel, totalAll } = parsePiutangCsv(await fetchCsv(PIUTANG_CSV_URL));
+    if (list.length || totalAll > 0) applyNewData(list, reportDateLabel, new Date());   // 0 faktur divisi ini = lunas semua (sheet tetap berisi divisi lain)
+    else setSync('stale', 'Sheet piutang terbaca kosong — menampilkan data terakhir.');
   } catch (err) {
-    statusEl.classList.add('err');
-    statusEl.textContent = 'Gagal memuat data.';
-    errBanner.style.display = 'block';
-    errBanner.textContent = 'Error: ' + err.message + '. Pastikan koneksi internet aktif, dan sheet-nya masih "Published to web" (Google Sheets: File > Share > Publish to web).';
+    console.error(err);
+    setSync(rows.length ? 'stale' : 'error', syncErrorMessage(err));
   }
+  try {
+    const sl = parseSalesCsv(await fetchCsv(SALES_CSV_URL));
+    if (sl.length) applySales(sl);
+  } catch (err) { console.error('sales sync', err); }
+  setRefreshBtnSpinning(false);
+  syncBusy = false;
 }
-
-document.getElementById('refresh-btn').addEventListener('click', loadData);
-
-const autoToggle = document.getElementById('auto-toggle');
-function setupAutoRefresh() {
-  if (autoTimer) clearInterval(autoTimer);
-  if (autoToggle.checked) autoTimer = setInterval(loadData, 60000);
-}
-autoToggle.addEventListener('change', setupAutoRefresh);
-
-// Password gerbang masuk — GANTI teks di dalam tanda kutip ini kalau mau password lain
-const DASHBOARD_PASSWORD = "perintispf2026";
-
-function tryLogin(){
-  var val = document.getElementById('gatePassword').value;
-  if (val === DASHBOARD_PASSWORD){
-    document.getElementById('loginGate').style.display = 'none';
-    document.querySelector('.wrap').style.display = '';
-    loadData();
-    setupAutoRefresh();
-  } else {
-    document.getElementById('gateError').style.display = 'block';
-    document.getElementById('gatePassword').value = '';
-    document.getElementById('gatePassword').focus();
-  }
-}
-document.getElementById('gateSubmit').addEventListener('click', tryLogin);
-document.getElementById('gatePassword').addEventListener('keydown', function(e){ if (e.key === 'Enter') tryLogin(); });
-
+refreshBtn.addEventListener('click', () => syncNow(true));
+syncNow(false);
+setInterval(() => syncNow(false), SYNC_MS);
 </script>
 </body>
 </html>
