@@ -452,6 +452,7 @@
   .tri-chip{border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:999px;padding:6px 13px;font:inherit;font-size:13px;cursor:pointer}
   .tri-chip.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
   .tri-none{color:var(--muted);padding:10px 0}
+  .perdate{font-size:12.5px;color:var(--faint);margin:4px 0 0}
 </style>
 </head>
 <body>
@@ -462,6 +463,7 @@
       <div class="header-left">
         <p class="eyebrow">PT Perintis Perkasa, Medan</p>
         <h1 class="page-title">Piutang Flamboyan</h1>
+        <p class="perdate" id="perDateLabel"></p>
       </div>
       <div class="header-right">
         <div class="sync-row" id="syncRow">
@@ -628,13 +630,18 @@
     <div id="detailSections"></div>
   </div>
 
-  <footer>Kategori dihitung otomatis dari Tgl. Jatuh Tempo setiap kali halaman ini dibuka &mdash; angka &ldquo;Hari&rdquo; selalu mengikuti tanggal hari ini.<br>Versi build: 2026-09-29-v13 (kartu ringkasan tanpa scroll samping)</footer>
+  <footer>Kategori dihitung otomatis dari Tgl. Jatuh Tempo setiap kali halaman ini dibuka &mdash; angka &ldquo;Hari&rdquo; selalu mengikuti tanggal hari ini.<br>Versi build: 2026-09-30-v15 (baca live dari CSV Publish to web, sama dengan dashboard gabungan)</footer>
 </div>
 
 <script>
 
 const REPORT_DATE_LABEL_INITIAL = "Per : 28-Sep-2026";
 let REPORT_DATE_LABEL = REPORT_DATE_LABEL_INITIAL;
+function showPerDate(v) {
+  const m = String(v || '').match(/Per\s*:\s*(\d{1,2}-[A-Za-z]+-\d{4})/i);
+  document.getElementById('perDateLabel').textContent = m ? 'Per : ' + m[1] : String(v || '');
+}
+showPerDate(REPORT_DATE_LABEL);
 const TARGET_DIVISI = "Flamboyan";
 const RAW = [{"noCust": "C0031385PUT", "nama": "PUTRI NURLIA KHAIRUNNISA", "faktur": "000226/FKT/PP/0926", "top": "-", "tglJto": "2026-09-26", "jumlah": 159550000.0, "type": "AGYA STYLIX 1.2 G CVT", "cara": "Kredit", "leasing": "TAF", "salesman": "DENNY FRANATA SEMBIRING", "supervisor": "PUTRA", "tglTagih": "Belum Buat Tagihan", "tglBarcode": "-", "followup": null}, {"noCust": "C0031775CVR", "nama": "CV ROCKY GULTOM", "faktur": "000191/FKT/PP/0926", "top": "-", "tglJto": "2026-09-23", "jumlah": 410900000.0, "type": "HILUX DOUBLE CABIN 2.8 G (4X4) DSL M/T", "cara": "Kredit", "leasing": "ACC", "salesman": "ALEXANDRO SITUNGKIR", "supervisor": "ZAIN", "tglTagih": "2026-09-24", "tglBarcode": "2026-09-23", "followup": null}, {"noCust": "C0031867MIT", "nama": "CV MITRA SETIA", "faktur": "000113/FKT/PP/0926", "top": "-", "tglJto": "2026-09-17", "jumlah": 292000000.0, "type": "KIJANG INNOVA ZENIX 2.0 Q HV CVT TSS MODELISTA", "cara": "Kredit", "leasing": "TAF", "salesman": "NIA HENDRIATY", "supervisor": "LIK SIONG", "tglTagih": "2026-09-18", "tglBarcode": "2026-09-18", "followup": null}, {"noCust": "C0032092JER", "nama": "JEREMIA ALEXANDER AGUNG SEMBIRING", "faktur": "000088/FKT/PP/0926", "top": "-", "tglJto": "2026-09-11", "jumlah": 157500000.0, "type": "RUSH 1.5 S M/T GR SPORT", "cara": "Kredit", "leasing": "IMFS", "salesman": "GANDA MARTUA SITUMORANG SE", "supervisor": "LIK SIONG", "tglTagih": "2026-09-12", "tglBarcode": "-", "followup": null}, {"noCust": "C0032206AZR", "nama": "AZRAI RIDHO HANAFIAH SE M SI", "faktur": "000204/FKT/PP/0926", "top": "-", "tglJto": "2026-09-24", "jumlah": 166500000.0, "type": "CALYA 1.2 G A/T", "cara": "Kredit", "leasing": "ACC", "salesman": "ALFIAN R STEFANUS HUTAGALUNG", "supervisor": "PRODIPA", "tglTagih": "2026-09-25", "tglBarcode": "2026-09-25", "followup": null}, {"noCust": "C0032254MAI", "nama": "MAINSYAH PUTRA", "faktur": "000165/FKT/PP/0926", "top": "-", "tglJto": "2026-09-21", "jumlah": 194400000.0, "type": "AVANZA 1.5 G M/T", "cara": "Kredit", "leasing": "ACC", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "tglTagih": "2026-09-22", "tglBarcode": "2026-09-21", "followup": null}, {"noCust": "C0032268DOL", "nama": "DOLLY HAGANTHA", "faktur": "000171/FKT/PP/0926", "top": "-", "tglJto": "2026-09-21", "jumlah": 210400000.0, "type": "AVANZA 1.5 G M/T", "cara": "Kredit", "leasing": "TAF", "salesman": "YOSA AFANDI", "supervisor": "LIK SIONG", "tglTagih": "2026-09-22", "tglBarcode": "2026-09-21", "followup": null}, {"noCust": "C0032419MHD", "nama": "MHD SYAHRIR HAMZAH", "faktur": "000210/FKT/PP/0926", "top": "-", "tglJto": "2026-09-25", "jumlah": 206200000.0, "type": "RUSH 1.5 S A/T GR SPORT", "cara": "Kredit", "leasing": "ACC", "salesman": "DEDI ISWANTO SPD", "supervisor": "LIK SIONG", "tglTagih": "2026-09-26", "tglBarcode": "-", "followup": null}, {"noCust": "C0032469ARI", "nama": "ARIMA NADELA NAINGGOLAN", "faktur": "000141/FKT/PP/0926", "top": "-", "tglJto": "2026-09-18", "jumlah": 207199997.0, "type": "RUSH 1.5 S A/T GR SPORT", "cara": "Kredit", "leasing": "ACC", "salesman": "YOSA AFANDI", "supervisor": "LIK SIONG", "tglTagih": "2026-09-19", "tglBarcode": "-", "followup": null}, {"noCust": "C0032470MAN", "nama": "MANGANTAR SIMBOLON", "faktur": "000167/FKT/PP/0926", "top": "-", "tglJto": "2026-09-21", "jumlah": 125000000.0, "type": "VELOZ 1.5 Q HYBRID CVT MODELLISTA", "cara": "Kredit", "leasing": "ACC", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "tglTagih": "2026-09-22", "tglBarcode": "2026-09-21", "followup": null}, {"noCust": "C0032486MIN", "nama": "MINAH", "faktur": "000219/FKT/PP/0926", "top": "-", "tglJto": "2026-09-26", "jumlah": 404301205.0, "type": "KIJANG INNOVA ZENIX 2.0 V HV CVT MODELISTA", "cara": "Kredit", "leasing": "KKB", "salesman": "FRANKY LUMBANRAJA", "supervisor": "PRODIPA", "tglTagih": "Belum Buat Tagihan", "tglBarcode": "-", "followup": null}, {"noCust": "C0032511DIS", "nama": "DISON PRIMA ANTONI SIMBOLON", "faktur": "000174/FKT/PP/0926", "top": "-", "tglJto": "2026-09-21", "jumlah": 135940000.0, "type": "RAIZE 1.0T GR SPORT CVT TWO TONE", "cara": "Kredit", "leasing": "TAF", "salesman": "MUSA IRAWAN", "supervisor": "LIK SIONG", "tglTagih": "2026-09-22", "tglBarcode": "2026-09-21", "followup": null}, {"noCust": "C0032552YAY", "nama": "YAYASAN UNIVERSITAS PEMBINAAN MASYARAKAT INDONESIA SYAHRUDDIN", "faktur": "000193/FKT/PP/0926", "top": "-", "tglJto": "2026-09-23", "jumlah": 1262600000.0, "type": "ALPHARD 2.5 HYBRID CVT", "cara": "Kredit", "leasing": "ADM", "salesman": "MUHAMMAD FIRQIN QUFRAN", "supervisor": "LIK SIONG", "tglTagih": "2026-09-25", "tglBarcode": "2026-09-23", "followup": null}, {"noCust": "C0032559SIS", "nama": "SISWANTO", "faktur": "000200/FKT/PP/0926", "top": "-", "tglJto": "2026-09-24", "jumlah": 214550000.0, "type": "AVANZA 1.3 E CVT", "cara": "Kredit", "leasing": "ACC", "salesman": "HARDI WIJAYA", "supervisor": "LIK SIONG", "tglTagih": "2026-09-25", "tglBarcode": "2026-09-25", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000055/FKT/PP/0826", "top": "-", "tglJto": "2026-08-11", "jumlah": 446600000.0, "type": "KIJANG INNOVA ZENIX 2.0 V HV CVT MODELISTA", "cara": "Tunai", "leasing": "Cash", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "tglTagih": "2026-08-11", "tglBarcode": "2026-08-11", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000075/FKT/PP/0826", "top": "-", "tglJto": "2026-08-13", "jumlah": 478000000.0, "type": "HILUX DOUBLE CABIN 2.8 V (4X4) A/T", "cara": "Tunai", "leasing": "Cash", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "tglTagih": "2026-08-13", "tglBarcode": "2026-08-14", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000001/FKT/PP/0926", "top": "-", "tglJto": "2026-09-01", "jumlah": 164700000.0, "type": "CALYA 1.2 G A/T", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "tglTagih": "2026-09-01", "tglBarcode": "2026-09-01", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000123/FKT/PP/0926", "top": "-", "tglJto": "2026-09-18", "jumlah": 337200000.0, "type": "KIJANG INNOVA 2.4 G M/T", "cara": "Tunai", "leasing": "Cash", "salesman": "SHINTIA PRIYANTI", "supervisor": "COUNTER", "tglTagih": "2026-09-18", "tglBarcode": "-", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000139/FKT/PP/0926", "top": "-", "tglJto": "2026-09-18", "jumlah": 251400000.0, "type": "RUSH 1.5 S M/T GR SPORT", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "tglTagih": "2026-09-18", "tglBarcode": "2026-09-19", "followup": null}, {"noCust": "F0007224SIA", "nama": "PT SUTAN INDO ANEKA MOBIL", "faktur": "000189/FKT/PP/0926", "top": "-", "tglJto": "2026-09-23", "jumlah": 354600000.0, "type": "KIJANG INNOVA 2.4 G A/T", "cara": "Tunai", "leasing": "Cash", "salesman": "ALIFIA RAMADHANI", "supervisor": "COUNTER", "tglTagih": "2026-09-23", "tglBarcode": "2026-09-23", "followup": null}]
 ;
@@ -1086,7 +1093,7 @@ function fuRec(r, create) {
 }
 // Faktur yang punya riwayat lalu hilang dari Sheet1 (data live berhasil dimuat) = dianggap lunas -> diarsipkan
 function fuSyncLunas() {
-  if (!fuLive || !rows.length) return;
+  if (!fuLive) return;
   const cur = new Set(rows.map(r => r.faktur));
   let ch = false;
   Object.entries(fuDB).forEach(([f, x]) => {
@@ -1208,7 +1215,7 @@ function renderPrioritasTab(force) {
 })();
 
 /* ================= Penjualan: ringkasan 3 cabang x 3 bulan + tab Detail ================= */
-const SALES_SHEETS = ["Data", "Database"];
+let SALES_DATE_FMT = "DMY";
 const CAB = [["Gatsu","#2F4FD0"],["Flamboyan","#C2410C"],["Gagak Hitam","#0F766E"]];
 const BLN = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
 const $ = id => document.getElementById(id);
@@ -1356,7 +1363,7 @@ function normDate(v) {
   }
   const s = String(v); let m;
   if (s.startsWith('Date(')) { const [y, mo, d] = s.slice(5, -1).split(',').map(Number); return `${y}-${String(mo + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
-  if ((m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(s))) return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+  if ((m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(s))) { const d = SALES_DATE_FMT === 'MDY' ? m[2] : m[1], mo = SALES_DATE_FMT === 'MDY' ? m[1] : m[2]; return `${m[3]}-${mo.padStart(2,'0')}-${d.padStart(2,'0')}`; }
   if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
   return null;
 }
@@ -1391,27 +1398,6 @@ function extractSalesFromWorkbook(wb) {
   }
   return null;
 }
-function fetchSales(i) {
-  i = i || 0;
-  if (i >= SALES_SHEETS.length) return;
-  const cb = '__gs' + Date.now() + '_' + i, s = document.createElement('script');
-  let done = false;
-  const end = () => { delete window[cb]; s.remove(); };
-  const next = () => fetchSales(i + 1);
-  window[cb] = resp => {
-    done = true; end();
-    try {
-      const t = resp.table.rows, get = (r, c) => gvizCell(t, r, c), h = findHeader(get, Math.min(t.length, 30));
-      const l = h >= 0 ? mapSales(h + 1, t.length, get) : [];
-      if (l.length) applySales(l); else next();
-    } catch (e) { console.error(e); next(); }
-  };
-  s.onerror = () => { end(); next(); };
-  s.src = `https://docs.google.com/spreadsheets/d/${FILE_ID}/gviz/tq?tqx=out:json;responseHandler:${cb}&sheet=${encodeURIComponent(SALES_SHEETS[i])}&headers=0&_ts=${Date.now()}`;
-  setTimeout(() => { if (!done) { end(); next(); } }, 25000);
-  document.body.appendChild(s);
-}
-
 render();
 renderLeasingTab();
 renderFollowupTab();
@@ -1429,7 +1415,7 @@ let lastSyncedLabel = null; // tanggal-jam refresh terakhir yang BERHASIL, tetap
 
 function setSync(state, message) {
   syncRowEl.className = 'sync-row ' + state;
-  const suffix = lastSyncedLabel
+  const suffix = (lastSyncedLabel && state !== 'live')
     ? ` &middot; Terakhir refresh: <strong>${lastSyncedLabel}</strong>`
     : '';
   syncTextEl.innerHTML = message + suffix;
@@ -1517,234 +1503,146 @@ function applyNewData(list, reportDateLabel, syncedAt) {
   document.getElementById('sourceCount').textContent = rows.length;
   if (reportDateLabel) {
     REPORT_DATE_LABEL = reportDateLabel;
-      }
+    showPerDate(REPORT_DATE_LABEL);
+  }
   const bulanFull = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
   const jam = String(syncedAt.getHours()).padStart(2,'0');
   const menit = String(syncedAt.getMinutes()).padStart(2,'0');
   lastSyncedLabel = `${syncedAt.getDate()} ${bulanFull[syncedAt.getMonth()]} ${syncedAt.getFullYear()}, ${jam}:${menit}`;
-  setSync('live', `Live &middot; otomatis tiap 30 detik`);
+  setSync('live', `Live &middot; tersinkron <strong>${lastSyncedLabel}</strong> &middot; otomatis tiap 2 menit`);
 }
 
-async function handleWatchEvent(ev) {
-  if (ev.type === 'error') {
-    const code = ev.error && ev.error.code;
-    if (code === 'needs_reauth') setSync('error', 'Google Drive perlu disambungkan ulang di Setelan &rarr; Connectors.');
-    else if (code === 'server_not_connected') setSync('error', 'Google Drive belum terhubung di akun ini. Menampilkan data statis.');
-    else if (code === 'not_in_manifest' || code === 'blocked_by_policy') setSync('error', 'Akses Google Drive tidak diizinkan untuk halaman ini. Menampilkan data statis.');
-    else setSync('stale', 'Sinkronisasi tertunda, menampilkan data terakhir yang berhasil dimuat.');
-    return;
+/* ---------- Sinkronisasi live: CSV "Publish to web" (cara baca sama dengan dashboard gabungan) ---------- */
+const PUB_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8rWnYng7TGqvAMl7aryX7yZE7hQnzwF3Urqwu1t8bPq9AFJBXPfqaGmUzTk08Nw91e6mQGV6kbc2J/pub';
+const PIUTANG_CSV_URL = PUB_BASE + '?gid=860325626&single=true&output=csv'; // tab Sheet1 (piutang)
+const SALES_CSV_URL = PUB_BASE + '?gid=0&single=true&output=csv';           // tab Data (penjualan)
+const SYNC_MS = 120000; // 2 menit
+
+function detectDelimiter(text) {
+  const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0).slice(0, 15);
+  let best = ',', bestMax = 1;
+  for (const d of ['\t', ',', ';']) {
+    const mx = Math.max(...lines.map(l => l.split(d).length));
+    if (mx > bestMax) { bestMax = mx; best = d; }
   }
-  try {
-    const payload = ev.result && ev.result.payload;
-    const base64 = payload && payload.content;
-    if (!base64) { setSync('stale', 'Format data tak dikenali, menampilkan data terakhir.'); return; }
-    const wb = XLSX.read(base64, { type: 'base64', cellDates: true });
-    const { rows: list, reportDateLabel } = extractGatsuFromWorkbook(wb);
-    applyNewData(list, reportDateLabel, new Date());
-    try { const sl = extractSalesFromWorkbook(wb); if (sl && sl.length) applySales(sl); } catch (e2) { console.error(e2); }
-  } catch (err) {
-    console.error(err);
-    setSync('stale', 'Gagal memproses data terbaru, menampilkan data terakhir.');
-  } finally {
-    setRefreshBtnSpinning(false);
+  return best;
+}
+function parseCSVFull(text) {
+  const delim = detectDelimiter(text), out = [];
+  let row = [], field = '', q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) {
+      if (c === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else q = false; }
+      else field += c;
+    } else if (c === '"') q = true;
+    else if (c === delim) { row.push(field); field = ''; }
+    else if (c === '\n') { row.push(field); out.push(row); row = []; field = ''; }
+    else if (c !== '\r') field += c;
   }
+  if (field.length || row.length) { row.push(field); out.push(row); }
+  return out;
+}
+const cellStr = v => v == null ? '' : String(v).trim();
+function cellNum(v) {
+  if (typeof v === 'number') return v;
+  const n = Number(String(v == null ? '' : v).replace(/[^0-9-]/g, ''));
+  return isNaN(n) ? 0 : n;
+}
+// Deteksi DMY / MDY dari data itu sendiri (angka > 12 pasti hari)
+function detectDateFormat(list) {
+  for (const s of list) {
+    const m = String(s || '').match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.]\d{2,4}(?!\d)/);
+    if (!m) continue;
+    if (+m[1] > 12) return 'DMY';
+    if (+m[2] > 12) return 'MDY';
+  }
+  return 'DMY';
+}
+function csvIso(s, fmt) {
+  s = cellStr(s);
+  const m = s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})(?!\d)/);
+  if (m) {
+    const y = m[3].length === 2 ? 2000 + Number(m[3]) : Number(m[3]);
+    const d = fmt === 'MDY' ? +m[2] : +m[1], mo = fmt === 'MDY' ? +m[1] : +m[2];
+    return `${y}-${String(mo).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+  }
+  return /^\d{4}-\d{2}-\d{2}/.test(s) ? s.slice(0, 10) : null;
+}
+function parsePiutangCsv(csv) {
+  let label = null, h = -1;
+  for (let i = 0; i < csv.length && i < 40; i++) {
+    const row = csv[i] || [];
+    if (!label) for (const c of row) { const m = String(c || '').match(/Per\s*:\s*(\d{1,2}-[A-Za-z]+-\d{4})/i); if (m) { label = 'Per : ' + m[1]; break; } }
+    if ((cellStr(row[0]) === 'No' && cellStr(row[1]) === 'No.Cust') || cellStr(row[2]).toLowerCase() === 'nama debitur') { h = i; break; }
+  }
+  if (h < 0) { const e = new Error('Header tidak ditemukan'); e.code = 'HEADER_NOT_FOUND'; throw e; }
+  const body = csv.slice(h + 1).filter(r => r && cellStr(r[2]) && !['total:', 'nama debitur'].includes(cellStr(r[2]).toLowerCase()) && cellNum(r[6]));
+  const fmt = detectDateFormat(body.map(r => r[5]));
+  const nm = v => { v = cellStr(v); return v.includes('=') ? v.slice(v.indexOf('=') + 1).trim() : v; };
+  const dateOrText = v => { v = cellStr(v); return csvIso(v, fmt) || (v && v !== '#N/A' ? v : null); };
+  const list = body.filter(r => cellStr(r[9]) === TARGET_DIVISI).map(r => {
+    const t = cellStr(r[4]), fu = cellStr(r[16]);
+    return {
+      noCust: cellStr(r[1]), nama: cellStr(r[2]), faktur: cellStr(r[3]),
+      top: t === '' ? 0 : (/^\d+$/.test(t) ? Number(t) : t),
+      tglJto: csvIso(r[5], fmt), jumlah: cellNum(r[6]), type: cellStr(r[8]),
+      cara: cellStr(r[10]) || '-', leasing: cellStr(r[11]) || '-',
+      salesman: nm(r[12]), supervisor: cellStr(r[13]),
+      tglTagih: dateOrText(r[14]), tglBarcode: dateOrText(r[15]),
+      followup: fu === '#N/A' ? null : (fu || null),
+    };
+  });
+  return { rows: list, reportDateLabel: label, totalAll: body.length };
+}
+function parseSalesCsv(csv) {
+  const get = (r, c) => { const row = csv[r]; return row ? row[c] : undefined; };
+  const h = findHeader(get, Math.min(csv.length, 30));
+  if (h < 0) { const e = new Error('Header sheet Data tidak ditemukan'); e.code = 'HEADER_NOT_FOUND'; throw e; }
+  SALES_DATE_FMT = detectDateFormat(csv.slice(h + 1).map(r => r && r[1]));
+  return mapSales(h + 1, csv.length, get);
 }
 
-let mcpHandle = null;
-let gvizPollTimer = null;
 const refreshBtn = document.getElementById('refreshBtn');
 function setRefreshBtnSpinning(on) {
   refreshBtn.disabled = on;
   refreshBtn.classList.toggle('spinning', on);
 }
-refreshBtn.addEventListener('click', async () => {
-  if (mcpHandle) {
-    setRefreshBtnSpinning(true);
-    setSync('stale', 'Menyegarkan data&hellip;');
-    try {
-      await mcpHandle.invalidate('Google Drive', 'download_file_content', { fileId: FILE_ID, exportMimeType: XLSX_MIME });
-      setTimeout(() => setRefreshBtnSpinning(false), 4000);
-    } catch (e) {
-      console.error(e);
-      setSync('error', 'Gagal menyegarkan data secara manual.');
-      setRefreshBtnSpinning(false);
-    }
-  } else if (window.__gvizFetchNow) {
-    setRefreshBtnSpinning(true);
-    window.__gvizFetchNow();
-  }
-});
-
-/* ---------- Jalur A: dalam Claude (artifact viewer), via Google Drive mcp capability ---------- */
-async function tryMcpSync() {
-  if (typeof XLSX === 'undefined') return false;
-  let mcp = null;
-  try { mcp = await claude.use('mcp'); } catch (e) { mcp = null; }
-  if (!mcp) return false;
-  mcpHandle = mcp;
-  setSync('stale', 'Menghubungkan ke Google Drive&hellip;');
+async function fetchCsv(url) {
+  const res = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) { const e = new Error('HTTP ' + res.status); e.code = 'HTTP_' + res.status; throw e; }
+  return parseCSVFull(await res.text());
+}
+function syncErrorMessage(err) {
+  const code = err && err.code;
+  if (code === 'HEADER_NOT_FOUND') return 'Format header sheet tidak dikenali — mungkin struktur laporan berubah. Menampilkan data terakhir.';
+  if (String(code).startsWith('HTTP_')) return `Google Sheets menolak permintaan (${code}). Pastikan sheet masih di-publish ke web. Menampilkan data terakhir.`;
+  return 'Gagal mengambil data — periksa koneksi internet. Menampilkan data terakhir.';
+}
+let syncBusy = false;
+async function syncNow(isManual) {
+  if (syncBusy) return;
+  syncBusy = true;
+  setRefreshBtnSpinning(true);
+  if (isManual || !lastSyncedLabel) setSync('stale', 'Menghubungkan ke Google Sheets&hellip;');
   try {
-    mcp.watchTool(
-      'Google Drive',
-      'download_file_content',
-      { fileId: FILE_ID, exportMimeType: XLSX_MIME },
-      (ev) => { handleWatchEvent(ev); },
-      { refetchInterval: 30000 }
-    );
-    return true;
-  } catch (e) {
-    console.error(e);
-    return false;
+    const { rows: list, reportDateLabel, totalAll } = parsePiutangCsv(await fetchCsv(PIUTANG_CSV_URL));
+    if (list.length || totalAll > 0) applyNewData(list, reportDateLabel, new Date());   // 0 faktur divisi ini = lunas semua (sheet tetap berisi divisi lain)
+    else setSync('stale', 'Sheet piutang terbaca kosong — menampilkan data terakhir.');
+  } catch (err) {
+    console.error(err);
+    setSync(rows.length ? 'stale' : 'error', syncErrorMessage(err));
   }
+  try {
+    const sl = parseSalesCsv(await fetchCsv(SALES_CSV_URL));
+    if (sl.length) applySales(sl);
+  } catch (err) { console.error('sales sync', err); }
+  setRefreshBtnSpinning(false);
+  syncBusy = false;
 }
-
-/* ---------- Jalur B: di luar Claude (mis. situs yang di-deploy ke Vercel), via endpoint publik Google Sheets ---------- */
-function gvizCell(rows, r, c) {
-  const row = rows[r];
-  if (!row || !row.c) return null;
-  const cell = row.c[c];
-  return cell ? cell.v : null;
-}
-function gvizDateToIso(v) {
-  if (v == null || v === "") return null;
-  if (typeof v === 'string' && v.startsWith('Date(')) {
-    const parts = v.slice(5, -1).split(',').map(Number);
-    const [y, m, d] = parts;
-    return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-  }
-  return v; // sudah teks biasa (mis. "Belum Buat Tagihan")
-}
-function extractFromGvizTable(table) {
-  const trows = table.rows;
-
-  // Cari baris "Per : ..." di kolom A secara isi, bukan asumsi posisi baris.
-  let reportDateLabel = REPORT_DATE_LABEL;
-  for (let r = 0; r < Math.min(trows.length, 20); r++) {
-    const v = gvizCell(trows, r, 0);
-    if (typeof v === 'string' && v.trim().toLowerCase().startsWith('per')) {
-      reportDateLabel = v.trim();
-      break;
-    }
-  }
-
-  // Cari baris header asli ("Nama Debitur" di kolom C) alih-alih menebak nomor barisnya —
-  // supaya tidak bergantung pada bagaimana Google menyusun ulang baris saat dikirim ke browser.
-  let headerRowIdx = -1;
-  for (let r = 0; r < Math.min(trows.length, 30); r++) {
-    const v = gvizCell(trows, r, 2);
-    if (typeof v === 'string' && v.trim().toLowerCase() === 'nama debitur') { headerRowIdx = r; break; }
-  }
-  const startRow = headerRowIdx >= 0 ? headerRowIdx + 1 : 9; // 9 = fallback lama kalau header tak ketemu
-
-  const out = [];
-  for (let r = startRow; r < trows.length; r++) {
-    const nama = gvizCell(trows, r, 2); // C
-    if (nama == null || nama === "" || nama === "Nama Debitur") continue;
-    if (typeof nama === 'string' && nama.trim().toLowerCase() === 'total:') continue;
-    const divisi = gvizCell(trows, r, 9); // J
-    if (divisi !== TARGET_DIVISI) continue;
-
-    let salesman = gvizCell(trows, r, 12); // M
-    if (typeof salesman === 'string' && salesman.includes('=')) {
-      salesman = salesman.slice(salesman.indexOf('=') + 1).trim();
-    }
-    const followupRaw = gvizCell(trows, r, 16); // Q
-
-    out.push({
-      noCust: gvizCell(trows, r, 1),
-      nama: nama,
-      faktur: gvizCell(trows, r, 3),
-      top: gvizCell(trows, r, 4) || 0,
-      tglJto: gvizDateToIso(gvizCell(trows, r, 5)),
-      jumlah: gvizCell(trows, r, 6) || 0,
-      type: gvizCell(trows, r, 8),
-      cara: gvizCell(trows, r, 10) || "-",
-      leasing: gvizCell(trows, r, 11) || "-",
-      salesman: salesman,
-      supervisor: gvizCell(trows, r, 13),
-      tglTagih: gvizDateToIso(gvizCell(trows, r, 14)),
-      tglBarcode: gvizDateToIso(gvizCell(trows, r, 15)),
-      followup: (followupRaw === "#N/A" ? null : followupRaw),
-    });
-  }
-  return { rows: out, reportDateLabel };
-}
-
-function startGvizFallback() {
-  refreshBtn.disabled = false;
-
-  // Beberapa variasi URL dicoba berurutan secara otomatis kalau salah satu gagal/kosong/timeout,
-  // supaya tidak perlu campur tangan manual kalau satu bentuk permintaan diblokir/berubah perilaku.
-  function buildUrl(variant, cbName) {
-    const base = `https://docs.google.com/spreadsheets/d/${FILE_ID}/gviz/tq`;
-    const cb = `tqx=out:json;responseHandler:${cbName}`;
-    const ts = `_ts=${Date.now()}`;
-    if (variant === 0) return `${base}?${cb}&sheet=Sheet1&range=A1:Q500&headers=0&${ts}`;
-    if (variant === 1) return `${base}?${cb}&sheet=Sheet1&${ts}`; // tanpa range/headers eksplisit
-    return `${base}?${cb}&gid=0&${ts}`; // percobaan terakhir: sheet pertama by gid
-  }
-  const VARIANT_COUNT = 3;
-
-  function attempt(variant, isManual) {
-    const cbName = '__gvizCb_' + Date.now() + '_' + variant;
-    let settled = false;
-    const script = document.createElement('script');
-    const cleanup = () => { delete window[cbName]; script.remove(); };
-
-    window[cbName] = function (resp) {
-      settled = true;
-      try {
-        const { rows: list, reportDateLabel } = extractFromGvizTable(resp.table);
-        if (list.length === 0) {
-          if (variant + 1 < VARIANT_COUNT) { cleanup(); attempt(variant + 1, isManual); return; }
-          if (rows.length > 0) setSync('stale', 'Data dari Google Sheets kosong/tidak cocok, menampilkan data terakhir yang valid.');
-          else setSync('error', 'Belum ada data yang cocok dari Google Sheets.');
-        } else {
-          applyNewData(list, reportDateLabel, new Date());
-        }
-      } catch (err) {
-        console.error(err);
-        if (variant + 1 < VARIANT_COUNT) { cleanup(); attempt(variant + 1, isManual); return; }
-        setSync('stale', 'Gagal memproses data dari Google Sheets.');
-      } finally {
-        cleanup();
-        setRefreshBtnSpinning(false);
-      }
-    };
-
-    script.src = buildUrl(variant, cbName);
-    script.onerror = function () {
-      cleanup();
-      if (variant + 1 < VARIANT_COUNT) { attempt(variant + 1, isManual); return; }
-      setSync('error', 'Tidak bisa memuat data dari Google Sheets. Pastikan sheet dibagikan sebagai "Siapa saja yang memiliki link" (Anyone with the link).');
-      setRefreshBtnSpinning(false);
-    };
-    setTimeout(() => {
-      if (settled) return;
-      cleanup();
-      if (variant + 1 < VARIANT_COUNT) { attempt(variant + 1, isManual); return; }
-      setSync('error', 'Waktu tunggu Google Sheets habis. Coba segarkan lagi.');
-      setRefreshBtnSpinning(false);
-    }, 12000);
-    document.body.appendChild(script);
-  }
-
-  function fetchOnce(isManual) {
-    setSync('stale', 'Menghubungkan ke Google Sheets&hellip;');
-    attempt(0, !!isManual);
-  }
-  window.__gvizFetchNow = () => { fetchOnce(true); fetchSales(); };
-  fetchOnce(false);
-  fetchSales();
-  setInterval(() => fetchSales(), 300000);
-  gvizPollTimer = setInterval(() => fetchOnce(false), 30000);
-}
-
-(async function initLiveSync() {
-  const okMcp = await tryMcpSync();
-  if (okMcp) return;
-  startGvizFallback();
-})();
+refreshBtn.addEventListener('click', () => syncNow(true));
+syncNow(false);
+setInterval(() => syncNow(false), SYNC_MS);
 </script>
 </body>
 </html>
