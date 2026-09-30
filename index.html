@@ -486,22 +486,24 @@
 </div>
 <script>
 (function () {
+  // Password wajib setiap kali halaman dibuka / di-reload (tidak ada sesi yang disimpan)
   var PASSWORD = 'perintisflamboyan2026', KEY = 'pp_auth_flamboyan';
   var gate = document.getElementById('passwordGate'), form = document.getElementById('pwForm');
   var input = document.getElementById('pwInput'), err = document.getElementById('pwError');
+  try { sessionStorage.removeItem(KEY); } catch (e) {}   // bersihkan sesi dari versi lama
   function unlock() { gate.classList.add('hidden'); document.body.classList.remove('pw-locked'); }
-  var ok = false;
-  try { ok = sessionStorage.getItem(KEY) === '1'; } catch (e) {}
-  if (ok) unlock(); else input.focus();
+  function lock() {
+    gate.classList.remove('hidden'); document.body.classList.add('pw-locked');
+    input.value = ''; err.classList.add('hidden'); input.focus();
+  }
+  input.focus();
   form.addEventListener('submit', function (e) {
     e.preventDefault();
-    if (input.value === PASSWORD) {
-      try { sessionStorage.setItem(KEY, '1'); } catch (e2) {}
-      unlock();
-    } else {
-      err.classList.remove('hidden'); input.value = ''; input.focus();
-    }
+    if (input.value === PASSWORD) unlock();
+    else { err.classList.remove('hidden'); input.value = ''; input.focus(); }
   });
+  // Tombol Back/Forward yang memulihkan halaman dari cache browser juga harus meminta password lagi
+  window.addEventListener('pageshow', function (e) { if (e.persisted) lock(); });
 })();
 </script>
 
@@ -679,7 +681,7 @@
     <div id="detailSections"></div>
   </div>
 
-  <footer>Kategori dihitung otomatis dari Tgl. Jatuh Tempo setiap kali halaman ini dibuka &mdash; angka &ldquo;Hari&rdquo; selalu mengikuti tanggal hari ini.<br>Versi build: 2026-09-30-v17 (dengan password)</footer>
+  <footer>Kategori dihitung otomatis dari Tgl. Jatuh Tempo setiap kali halaman ini dibuka &mdash; angka &ldquo;Hari&rdquo; selalu mengikuti tanggal hari ini.<br>Versi build: 2026-09-30-v18 (password wajib setiap buka/reload)</footer>
 </div>
 
 <script>
