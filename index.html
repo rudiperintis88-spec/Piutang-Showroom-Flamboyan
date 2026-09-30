@@ -456,10 +456,54 @@
   .tri-none{color:var(--muted);padding:10px 0}
   .perdate{font-size:12.5px;color:var(--faint);margin:4px 0 0}
 
+  .pw-gate{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--header-grad),var(--bg)}
+  .pw-gate.hidden{display:none}
+  .pw-box{width:100%;max-width:380px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px 28px;box-shadow:0 10px 40px rgba(16,24,40,.10);text-align:center}
+  .pw-co{font-size:13px;color:var(--muted);margin-bottom:6px}
+  .pw-title{font-family:var(--serif);font-size:26px;font-weight:500;color:var(--ink);margin-bottom:8px}
+  .pw-sub{font-size:13.5px;color:var(--muted);margin-bottom:20px}
+  .pw-box input{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);color:var(--ink);font:inherit;margin-bottom:12px}
+  .pw-box input:focus{outline:2px solid #6D28D9;outline-offset:1px}
+  .pw-box button{width:100%;padding:12px;border:0;border-radius:10px;background:#6D28D9;color:#fff;font:inherit;font-weight:600;cursor:pointer}
+  .pw-error{margin-top:12px;font-size:13px;color:var(--cat-over)}
+  .pw-error.hidden{display:none}
+  body.pw-locked{overflow:hidden}
   .fu-ghost:disabled{opacity:.45;cursor:not-allowed}
 </style>
 </head>
-<body>
+<body class="pw-locked">
+<div id="passwordGate" class="pw-gate">
+  <div class="pw-box">
+    <div class="pw-co">PT Perintis Perkasa, Medan</div>
+    <div class="pw-title">Piutang Flamboyan</div>
+    <div class="pw-sub">Masukkan password divisi Flamboyan untuk membuka dashboard</div>
+    <form id="pwForm">
+      <input type="password" id="pwInput" placeholder="Password" autocomplete="current-password" required>
+      <button type="submit">Masuk</button>
+    </form>
+    <div id="pwError" class="pw-error hidden">Password salah, coba lagi.</div>
+  </div>
+</div>
+<script>
+(function () {
+  var PASSWORD = 'perintisflamboyan2026', KEY = 'pp_auth_flamboyan';
+  var gate = document.getElementById('passwordGate'), form = document.getElementById('pwForm');
+  var input = document.getElementById('pwInput'), err = document.getElementById('pwError');
+  function unlock() { gate.classList.add('hidden'); document.body.classList.remove('pw-locked'); }
+  var ok = false;
+  try { ok = sessionStorage.getItem(KEY) === '1'; } catch (e) {}
+  if (ok) unlock(); else input.focus();
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (input.value === PASSWORD) {
+      try { sessionStorage.setItem(KEY, '1'); } catch (e2) {}
+      unlock();
+    } else {
+      err.classList.remove('hidden'); input.value = ''; input.focus();
+    }
+  });
+})();
+</script>
 
 <div class="wrap">
 
@@ -635,7 +679,7 @@
     <div id="detailSections"></div>
   </div>
 
-  <footer>Kategori dihitung otomatis dari Tgl. Jatuh Tempo setiap kali halaman ini dibuka &mdash; angka &ldquo;Hari&rdquo; selalu mengikuti tanggal hari ini.<br>Versi build: 2026-09-30-v17 (tanpa password)</footer>
+  <footer>Kategori dihitung otomatis dari Tgl. Jatuh Tempo setiap kali halaman ini dibuka &mdash; angka &ldquo;Hari&rdquo; selalu mengikuti tanggal hari ini.<br>Versi build: 2026-09-30-v17 (dengan password)</footer>
 </div>
 
 <script>
