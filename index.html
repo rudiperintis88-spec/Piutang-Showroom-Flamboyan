@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&family=IBM+Plex+Serif:wght@600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
   :root {
     box-sizing: border-box;
@@ -453,9 +455,12 @@
   .tri-chip.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
   .tri-none{color:var(--muted);padding:10px 0}
   .perdate{font-size:12.5px;color:var(--faint);margin:4px 0 0}
+
+  .fu-ghost:disabled{opacity:.45;cursor:not-allowed}
 </style>
 </head>
 <body>
+
 <div class="wrap">
 
   <div class="header-banner">
@@ -630,7 +635,7 @@
     <div id="detailSections"></div>
   </div>
 
-  <footer>Kategori dihitung otomatis dari Tgl. Jatuh Tempo setiap kali halaman ini dibuka &mdash; angka &ldquo;Hari&rdquo; selalu mengikuti tanggal hari ini.<br>Versi build: 2026-09-30-v15 (baca live dari CSV Publish to web, sama dengan dashboard gabungan)</footer>
+  <footer>Kategori dihitung otomatis dari Tgl. Jatuh Tempo setiap kali halaman ini dibuka &mdash; angka &ldquo;Hari&rdquo; selalu mengikuti tanggal hari ini.<br>Versi build: 2026-09-30-v17 (tanpa password)</footer>
 </div>
 
 <script>
@@ -1116,6 +1121,74 @@ function fuDetail(r) {
   </div>`;
 }
 
+function fuFmtFull(iso) {
+  if (!iso) return '-';
+  const d = new Date(iso), p = n => String(n).padStart(2, '0');
+  return `${p(d.getDate())}/${p(d.getMonth() + 1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+const fuIsoDMY = s => { const m = String(s || '').match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? `${m[3]}/${m[2]}/${m[1]}` : (s || '-'); };
+const fuHasNotes = () => Object.values(fuDB).some(x => (x.notes || []).length);
+
+// Rekap seluruh riwayat catatan (dan tugas) per faktur — aktif maupun yang sudah lunas
+function fuRecap() {
+  const cur = {}; rows.forEach(r => { cur[r.faktur] = r; });
+  const recs = Object.entries(fuDB).filter(([, x]) => (x.notes || []).length || (x.tasks || []).length)
+    .sort((a, b) => String(a[1].nama || '').localeCompare(String(b[1].nama || '')) || a[0].localeCompare(b[0]));
+  const status = x => x.lunasAt ? 'Lunas (' + fuFmtFull(x.lunasAt).slice(0, 10) + ')' : 'Belum lunas';
+  const notes = [], tasks = [];
+  recs.forEach(([f, x]) => {
+    const umur = !x.lunasAt && cur[f] ? cur[f].hari + ' hr' : '-';
+    (x.notes || []).slice().sort((a, b) => String(a.t).localeCompare(String(b.t))).forEach(n => {
+      notes.push([notes.length + 1, n.t ? fuFmtFull(n.t) : 'Catatan lama', x.nama || '-', f, fmtMoney(x.jumlah || 0), fuIsoDMY(x.jto), umur, status(x), n.x]);
+    });
+    (x.tasks || []).forEach(t => {
+      tasks.push([tasks.length + 1, x.nama || '-', f, t.x, t.pic || '-', t.done ? 'Selesai' : 'Belum selesai', fuFmtFull(t.t), t.done ? fuFmtFull(t.doneAt) : '-']);
+    });
+  });
+  return {
+    noteHead: ['No', 'Waktu Catatan', 'Debitur', 'No. Faktur', 'Jumlah (Rp)', 'Jatuh Tempo', 'Umur', 'Status', 'Catatan'],
+    taskHead: ['No', 'Debitur', 'No. Faktur', 'Tugas', 'PIC', 'Status', 'Dibuat', 'Selesai'],
+    notes, tasks,
+  };
+}
+function fuFileName(ext) { return `Riwayat_Catatan_Penagihan_${TARGET_DIVISI.replace(/ /g, '_')}_${fuNow().slice(0, 10)}.${ext}`; }
+function fuExportExcel() {
+  if (typeof XLSX === 'undefined') { alert('Library Excel belum termuat — pastikan koneksi internet aktif, lalu coba lagi.'); return; }
+  const rc = fuRecap();
+  if (!rc.notes.length) return;
+  const wb = XLSX.utils.book_new();
+  const top = [['Riwayat Catatan Penagihan — ' + TARGET_DIVISI], [REPORT_DATE_LABEL + ' · dicetak ' + fuFmtFull(fuNow())], []];
+  const ws = XLSX.utils.aoa_to_sheet(top.concat([rc.noteHead], rc.notes));
+  ws['!cols'] = [6, 17, 28, 22, 16, 13, 9, 18, 70].map(w => ({ wch: w }));
+  XLSX.utils.book_append_sheet(wb, ws, 'Riwayat Catatan');
+  if (rc.tasks.length) {
+    const wt = XLSX.utils.aoa_to_sheet(top.concat([rc.taskHead], rc.tasks));
+    wt['!cols'] = [6, 28, 22, 45, 14, 15, 17, 17].map(w => ({ wch: w }));
+    XLSX.utils.book_append_sheet(wb, wt, 'Tugas');
+  }
+  XLSX.writeFile(wb, fuFileName('xlsx'));
+}
+function fuExportPdf() {
+  if (!window.jspdf) { alert('Library PDF belum termuat — pastikan koneksi internet aktif, lalu coba lagi.'); return; }
+  const rc = fuRecap();
+  if (!rc.notes.length) return;
+  const doc = new window.jspdf.jsPDF({ orientation: 'landscape' });
+  doc.setFontSize(14); doc.text('Riwayat Catatan Penagihan — ' + TARGET_DIVISI, 14, 15);
+  doc.setFontSize(9); doc.text(REPORT_DATE_LABEL + ' · dicetak ' + fuFmtFull(fuNow()), 14, 21);
+  doc.autoTable({
+    head: [rc.noteHead], body: rc.notes, startY: 26, styles: { fontSize: 7.5, cellPadding: 1.6, overflow: 'linebreak' },
+    headStyles: { fillColor: [45, 55, 72] }, rowPageBreak: 'avoid',
+    columnStyles: { 0: { cellWidth: 8 }, 1: { cellWidth: 26 }, 4: { halign: 'right', cellWidth: 25 }, 5: { cellWidth: 20 }, 6: { cellWidth: 14 }, 7: { cellWidth: 24 }, 8: { cellWidth: 'auto' } },
+  });
+  if (rc.tasks.length) {
+    let y = doc.lastAutoTable.finalY + 10;
+    if (y > 180) { doc.addPage(); y = 15; }
+    doc.setFontSize(11); doc.text('Tugas terkait faktur', 14, y);
+    doc.autoTable({ head: [rc.taskHead], body: rc.tasks, startY: y + 3, styles: { fontSize: 7.5, cellPadding: 1.6 }, headStyles: { fillColor: [45, 55, 72] }, rowPageBreak: 'avoid' });
+  }
+  doc.save(fuFileName('pdf'));
+}
+
 function renderPrioritasTab(force) {
   const box = document.getElementById('prioritasBox');
   if (!box) return;
@@ -1124,7 +1197,7 @@ function renderPrioritasTab(force) {
   const list = rows.filter(r => (r.hari ?? -9999) > 26).sort((a, b) => (b.hari ?? 0) - (a.hari ?? 0));
   const total = list.reduce((s, r) => s + (Number(r.jumlah) || 0), 0);
   const debs = new Set(list.map(r => r.nama)).size;
-  let h = `<div class="pr-head"><h3>Prioritas Penagihan</h3><div class="pr-tools"><span>faktur dengan umur &gt; 26 hari &middot; klik baris untuk catatan &amp; tugas</span><button class="fu-ghost" data-a="exp">Ekspor riwayat</button><button class="fu-ghost" data-a="imp">Impor</button></div></div>`;
+  let h = `<div class="pr-head"><h3>Prioritas Penagihan</h3><div class="pr-tools"><span>faktur dengan umur &gt; 26 hari &middot; klik baris untuk catatan &amp; tugas</span><button class="fu-ghost" data-a="xpdf"${fuHasNotes() ? '' : ' disabled title="Belum ada catatan untuk direkap"'}>Export PDF</button><button class="fu-ghost" data-a="xxls"${fuHasNotes() ? '' : ' disabled title="Belum ada catatan untuk direkap"'}>Export Excel</button></div></div>`;
   if (!list.length) h += '<div class="pr-empty">Tidak ada faktur dengan umur &gt; 26 hari saat ini.</div>';
   else {
     h += `<div class="pr-banner"><div><span class="pr-dot"></span><b>${list.length} faktur butuh tindak lanjut segera</b></div><span class="pr-sum">total tertunggak <em>Rp ${fmtMoney(total)}</em> &middot; ${debs} debitur</span></div>
@@ -1152,25 +1225,6 @@ function renderPrioritasTab(force) {
 (function () {
   const box = document.getElementById('prioritasBox');
   if (!box) return;
-  const fileIn = document.createElement('input');
-  fileIn.type = 'file'; fileIn.accept = '.json,application/json';
-  fileIn.onchange = async () => {
-    try {
-      const j = JSON.parse(await fileIn.files[0].text());
-      if (j.divisi !== TARGET_DIVISI) { alert('File ini milik divisi ' + j.divisi + ', bukan ' + TARGET_DIVISI + '.'); fileIn.value = ''; return; }
-      Object.entries(j.db || {}).forEach(([f, x]) => {
-        const c = fuDB[f];
-        if (!c) { fuDB[f] = x; return; }
-        const seen = new Set(c.notes.map(n => n.t + '|' + n.x));
-        (x.notes || []).forEach(n => { if (!seen.has(n.t + '|' + n.x)) c.notes.push(n); });
-        c.notes.sort((a, b) => String(a.t).localeCompare(String(b.t)));
-        const ids = new Set(c.tasks.map(t => t.id));
-        (x.tasks || []).forEach(t => { if (!ids.has(t.id)) c.tasks.push(t); });
-      });
-      fuSave(); fuSyncLunas(); renderPrioritasTab(true);
-    } catch (e) { alert('File riwayat tidak valid.'); }
-    fileIn.value = '';
-  };
   const rowOf = f => rows.find(r => r.faktur === f);
   box.addEventListener('click', e => {
     const b = e.target.closest('[data-a]');
@@ -1192,14 +1246,8 @@ function renderPrioritasTab(force) {
       } else if (a === 'del') {
         if (confirm('Hapus seluruh riwayat faktur ' + f + '?')) { delete fuDB[f]; fuSave(); renderPrioritasTab(true); }
       } else if (a === 'arch') { fuArchOpen = !fuArchOpen; renderPrioritasTab(true); }
-      else if (a === 'imp') fileIn.click();
-      else if (a === 'exp') {
-        const blob = new Blob([JSON.stringify({ divisi: TARGET_DIVISI, exportedAt: fuNow(), db: fuDB }, null, 1)], { type: 'application/json' });
-        const el = document.createElement('a');
-        el.href = URL.createObjectURL(blob);
-        el.download = 'riwayat_followup_' + TARGET_DIVISI.replace(/ /g, '_') + '_' + fuNow().slice(0, 10) + '.json';
-        document.body.appendChild(el); el.click(); el.remove();
-      }
+      else if (a === 'xpdf') fuExportPdf();
+      else if (a === 'xxls') fuExportExcel();
       return;
     }
     if (e.target.closest('.pr-detail')) return;
