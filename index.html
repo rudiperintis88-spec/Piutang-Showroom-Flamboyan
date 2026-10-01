@@ -469,16 +469,42 @@
   .pw-error.hidden{display:none}
   body.pw-locked{overflow:hidden}
   .fu-ghost:disabled{opacity:.45;cursor:not-allowed}
+
+  /* ---- Layar sempit: teks status & sumber turun ke baris berikutnya ---- */
+  @media (max-width: 1180px) {
+    .header-grid { flex-direction: column; align-items: stretch; gap: 14px; }
+    .header-left { min-width: 0; }
+    .header-right { align-items: flex-start; width: 100%; min-width: 0; }
+    .sync-row { justify-content: flex-start; }
+    .sync-text { flex: 1 1 240px; min-width: 0; overflow-wrap: anywhere; }
+    .source-line { overflow-wrap: anywhere; }
+  }
+  @media (max-width: 640px) {
+    .header-banner { padding: 18px 16px 14px; }
+    .header-left .page-title { font-size: 26px; }
+    .sync-row { gap: 8px; }
+  }
+
+  .pw-field{position:relative;margin-bottom:12px}
+  .pw-field input{margin-bottom:0;padding-right:48px}
+  .pw-box .pw-eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;padding:0;margin:0;border:0;border-radius:8px;background:none;color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .pw-box .pw-eye:hover{background:var(--surface-2);color:var(--ink)}
+  .pw-eye svg{width:20px;height:20px}
+
+  /* ---- Baris tab di layar sempit: geser di dalam barisnya sendiri, halaman tidak ikut melebar ---- */
+  @media (max-width: 1180px) {
+    .tabs { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+    .tab { flex: none; white-space: nowrap; margin-bottom: 0; }
+  }
 </style>
 </head>
 <body class="pw-locked">
 <div id="passwordGate" class="pw-gate">
   <div class="pw-box">
     <div class="pw-co">PT Perintis Perkasa, Medan</div>
-    <div class="pw-title">Piutang Flamboyan</div>
-    <div class="pw-sub">Masukkan password divisi Flamboyan untuk membuka dashboard</div>
+    <div class="pw-title">Flamboyan</div>
     <form id="pwForm">
-      <input type="password" id="pwInput" placeholder="Password" autocomplete="current-password" required>
+      <div class="pw-field"><input type="password" id="pwInput" placeholder="Password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" required><button type="button" class="pw-eye" id="pwEye" aria-label="Tampilkan password" title="Tampilkan password"></button></div>
       <button type="submit">Masuk</button>
     </form>
     <div id="pwError" class="pw-error hidden">Password salah, coba lagi.</div>
@@ -489,17 +515,28 @@
   // Password wajib setiap kali halaman dibuka / di-reload (tidak ada sesi yang disimpan)
   var PASSWORD = 'perintisflamboyan2026', KEY = 'pp_auth_flamboyan';
   var gate = document.getElementById('passwordGate'), form = document.getElementById('pwForm');
-  var input = document.getElementById('pwInput'), err = document.getElementById('pwError');
+  var input = document.getElementById('pwInput'), err = document.getElementById('pwError'), eye = document.getElementById('pwEye');
+  var ICON_ON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>', ICON_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.9 10.9 0 0 1 12 19c-6.5 0-10-7-10-7a18.5 18.5 0 0 1 5.06-5.94M9.9 4.24A9.1 9.1 0 0 1 12 4c6.5 0 10 7 10 7a18.5 18.5 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>';
+  function setEye(show) {
+    input.type = show ? 'text' : 'password';
+    eye.innerHTML = show ? ICON_OFF : ICON_ON;
+    var t = show ? 'Sembunyikan password' : 'Tampilkan password';
+    eye.setAttribute('aria-label', t); eye.title = t;
+  }
+  setEye(false);
+  eye.addEventListener('click', function () { setEye(input.type === 'password'); input.focus(); });
   try { sessionStorage.removeItem(KEY); } catch (e) {}   // bersihkan sesi dari versi lama
+  // Abaikan spasi dan huruf besar/kecil (keyboard HP sering menambahkannya otomatis)
+  function norm(v) { return String(v).replace(/\s+/g, '').toLowerCase(); }
   function unlock() { gate.classList.add('hidden'); document.body.classList.remove('pw-locked'); }
   function lock() {
     gate.classList.remove('hidden'); document.body.classList.add('pw-locked');
-    input.value = ''; err.classList.add('hidden'); input.focus();
+    input.value = ''; setEye(false); err.classList.add('hidden'); input.focus();
   }
   input.focus();
   form.addEventListener('submit', function (e) {
     e.preventDefault();
-    if (input.value === PASSWORD) unlock();
+    if (norm(input.value) === norm(PASSWORD)) unlock();
     else { err.classList.remove('hidden'); input.value = ''; input.focus(); }
   });
   // Tombol Back/Forward yang memulihkan halaman dari cache browser juga harus meminta password lagi
@@ -681,7 +718,7 @@
     <div id="detailSections"></div>
   </div>
 
-  <footer>Kategori dihitung otomatis dari Tgl. Jatuh Tempo setiap kali halaman ini dibuka &mdash; angka &ldquo;Hari&rdquo; selalu mengikuti tanggal hari ini.<br>Versi build: 2026-09-30-v18 (password wajib setiap buka/reload)</footer>
+  <footer>Kategori dihitung otomatis dari Tgl. Jatuh Tempo setiap kali halaman ini dibuka &mdash; angka &ldquo;Hari&rdquo; selalu mengikuti tanggal hari ini.<br>Versi build: 2026-09-30-v21 (dengan password)</footer>
 </div>
 
 <script>
@@ -1737,6 +1774,12 @@ async function syncNow(isManual) {
 refreshBtn.addEventListener('click', () => syncNow(true));
 syncNow(false);
 setInterval(() => syncNow(false), SYNC_MS);
+</script>
+<script>
+document.getElementById('tabs').addEventListener('click', function (e) {
+  var t = e.target.closest('.tab');
+  if (t && t.scrollIntoView) t.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+});
 </script>
 </body>
 </html>
