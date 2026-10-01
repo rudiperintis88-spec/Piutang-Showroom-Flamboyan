@@ -496,6 +496,10 @@
     .tabs { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
     .tab { flex: none; white-space: nowrap; margin-bottom: 0; }
   }
+  .fu-sync{font-family:var(--sans);font-size:12.5px;color:var(--muted)}
+  .fu-sync.ok{color:#15803D}
+  .fu-sync.err{color:var(--cat-over)}
+  .fu-sync.off{color:var(--faint)}
 </style>
 </head>
 <body class="pw-locked">
@@ -718,7 +722,7 @@
     <div id="detailSections"></div>
   </div>
 
-  <footer>Kategori dihitung otomatis dari Tgl. Jatuh Tempo setiap kali halaman ini dibuka &mdash; angka &ldquo;Hari&rdquo; selalu mengikuti tanggal hari ini.<br>Versi build: 2026-09-30-v21 (dengan password)</footer>
+  <footer>Kategori dihitung otomatis dari Tgl. Jatuh Tempo setiap kali halaman ini dibuka &mdash; angka &ldquo;Hari&rdquo; selalu mengikuti tanggal hari ini.<br>Versi build: 2026-09-30-v22 (dengan password, sinkron catatan antar-perangkat)</footer>
 </div>
 
 <script>
@@ -1154,12 +1158,35 @@ document.querySelectorAll('#followupTable th[data-key]').forEach(th => {
 });
 
 /* ================= Prioritas Penagihan (di dalam Follow-up Leasing) + riwayat catatan/tugas ================= */
+/* ============ SINKRON ANTAR-PERANGKAT (isi dua baris ini setelah Apps Script di-deploy) ============ */
+const SYNC_URL = "";   // contoh: "https://script.google.com/macros/s/XXXXXXXX/exec"
+const SYNC_KEY = "";   // harus sama dengan SYNC_KEY di Apps Script
+/* ===== Aturan penggabungan catatan/tugas (SAMA persis di dashboard dan di Apps Script) ===== */
+function ppMergeRec(a, b) {
+  a = a || {}; b = b || {};
+  const out = { nama: a.nama || b.nama || '', jumlah: a.jumlah || b.jumlah || 0, leasing: a.leasing || b.leasing || '', jto: a.jto || b.jto || '' };
+  out.delAt = [a.delAt, b.delAt].filter(Boolean).sort().pop() || null;             // hapus-riwayat: yang terbaru menang
+  const pick = (b.lu || '') > (a.lu || '') ? b : a;                                  // status lunas: perubahan terbaru menang
+  out.lunasAt = pick.lunasAt || null; out.lu = pick.lu || null;
+  const notes = {};                                                                  // catatan: gabungan semua perangkat (hanya bertambah)
+  [a, b].forEach(r => (r.notes || []).forEach(n => { const id = n.id || ('L' + (n.t || '') + '|' + n.x); notes[id] = Object.assign({}, n, { id: id }); }));
+  out.notes = Object.keys(notes).map(k => notes[k]).filter(n => !out.delAt || (n.t && n.t > out.delAt))
+    .sort((p, q) => String(p.t || '').localeCompare(String(q.t || '')));
+  const tasks = {};                                                                  // tugas: versi dengan waktu ubah terbaru menang
+  [a, b].forEach(r => (r.tasks || []).forEach(t => { const p = tasks[t.id]; if (!p || (t.u || t.t || '') > (p.u || p.t || '')) tasks[t.id] = t; }));
+  out.tasks = Object.keys(tasks).map(k => tasks[k]).filter(t => !out.delAt || (t.t && t.t > out.delAt));
+  return out;
+}
 const FU_KEY = 'follow_piutang_v1_' + TARGET_DIVISI;   // dipisah per divisi
 const OLD_CAT = 'catatan_piutang_';
 let fuDB = {};
 try { fuDB = JSON.parse(localStorage.getItem(FU_KEY) || '{}') || {}; } catch (e) { fuDB = {}; }
 try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
-function fuSave() { try { localStorage.setItem(FU_KEY, JSON.stringify(fuDB)); } catch (e) {} }
+function fuSaveLocal() { try { localStorage.setItem(FU_KEY, JSON.stringify(fuDB)); } catch (e) {} }
+function fuSave() {
+  fuSaveLocal();
+  if (SYNC_URL) { fuPending = true; clearTimeout(fuTimer); fuTimer = setTimeout(fuSyncRemote, 1200); }
+}
 const fuOpen = new Set();
 let fuArchOpen = false, fuLive = false;
 const fuNow = () => new Date().toISOString();
@@ -1174,7 +1201,7 @@ function fuRec(r, create) {
   if (!x) {
     let old = ''; try { old = localStorage.getItem(OLD_CAT + r.faktur) || ''; } catch (e) {}
     if (!create && !old) return null;
-    x = fuDB[r.faktur] = { notes: old ? [{ t: null, x: old }] : [], tasks: [], lunasAt: null };
+    x = fuDB[r.faktur] = { notes: old ? [{ id: 'old:' + r.faktur, t: null, x: old }] : [], tasks: [], lunasAt: null };
   }
   x.nama = r.nama; x.jumlah = r.jumlah; x.leasing = r.leasing; x.jto = r.tglJto;
   return x;
@@ -1185,8 +1212,8 @@ function fuSyncLunas() {
   const cur = new Set(rows.map(r => r.faktur));
   let ch = false;
   Object.entries(fuDB).forEach(([f, x]) => {
-    if (!cur.has(f) && !x.lunasAt) { x.lunasAt = fuNow(); ch = true; }
-    else if (cur.has(f) && x.lunasAt) { x.lunasAt = null; ch = true; }
+    if (!cur.has(f) && !x.lunasAt && !x.delAt) { x.lunasAt = fuNow(); x.lu = x.lunasAt; ch = true; }
+    else if (cur.has(f) && x.lunasAt) { x.lunasAt = null; x.lu = fuNow(); ch = true; }
   });
   if (ch) fuSave();
 }
@@ -1194,7 +1221,7 @@ const fuNotes = x => (x.notes || []).slice().reverse().map(n => `<li><small>${fu
 
 function fuDetail(r) {
   const x = fuRec(r, false) || { notes: [], tasks: [] }, f = esc(r.faktur);
-  const tasks = x.tasks.map(t => `<li class="${t.done ? 'done' : ''}"><label><input type="checkbox" data-a="tg" data-f="${f}" data-i="${t.id}" ${t.done ? 'checked' : ''}> <span>${esc(t.x)}</span></label><button class="fu-x" title="Hapus tugas" data-a="td" data-f="${f}" data-i="${t.id}">&times;</button><div><small>PIC: ${esc(t.pic || '-')}${t.done && t.doneAt ? ' &middot; selesai ' + fuFmt(t.doneAt) : ''}</small></div></li>`).join('') || '<li class="z">Belum ada tugas.</li>';
+  const tasks = x.tasks.filter(t => !t.del).map(t => `<li class="${t.done ? 'done' : ''}"><label><input type="checkbox" data-a="tg" data-f="${f}" data-i="${t.id}" ${t.done ? 'checked' : ''}> <span>${esc(t.x)}</span></label><button class="fu-x" title="Hapus tugas" data-a="td" data-f="${f}" data-i="${t.id}">&times;</button><div><small>PIC: ${esc(t.pic || '-')}${t.done && t.doneAt ? ' &middot; selesai ' + fuFmt(t.doneAt) : ''}</small></div></li>`).join('') || '<li class="z">Belum ada tugas.</li>';
   const pic = esc((r.salesman || '').split(' ')[0]);
   return `<div class="pr-grid">
     <div><h4>CATATAN &mdash; ${f}</h4><ul class="fu-list">${fuNotes(x)}</ul>
@@ -1202,6 +1229,64 @@ function fuDetail(r) {
     <div><h4>TUGAS TERKAIT FAKTUR INI</h4><ul class="fu-list">${tasks}</ul>
       <div class="fu-form"><input class="fu-in" data-k="task" placeholder="Tugas... (mis. telepon debitur)"><input class="fu-in pic" data-k="pic" value="${pic}" title="PIC"><button class="fu-btn" data-a="task" data-f="${f}">+ Tugas</button></div></div>
   </div>`;
+}
+
+/* ---------- Sinkron catatan & tugas ke server (Google Apps Script) ---------- */
+let fuPending = SYNC_URL ? true : false, fuSyncing = false, fuTimer = null, fuSyncState = SYNC_URL ? 'busy' : 'off', fuLastOk = null;
+const fuUid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+function fuNormalize() {
+  Object.values(fuDB).forEach(x => {
+    x.notes = (x.notes || []).map(n => n.id ? n : Object.assign({}, n, { id: 'L' + (n.t || '') + '|' + n.x }));
+    x.tasks = (x.tasks || []).map(t => t.u ? t : Object.assign({}, t, { u: t.doneAt || t.t || '' }));
+    if (x.lunasAt && !x.lu) x.lu = x.lunasAt;
+  });
+}
+fuNormalize();
+function fuStatusHtml() {
+  const hm = d => String(d.getHours()).padStart(2, '0') + '.' + String(d.getMinutes()).padStart(2, '0');
+  if (fuSyncState === 'off') return '<span class="fu-sync off" title="Isi SYNC_URL dan SYNC_KEY di bagian atas file agar catatan tersinkron antar-perangkat">Sinkron antar-perangkat belum aktif &middot; data hanya di perangkat ini</span>';
+  if (fuSyncState === 'busy') return '<span class="fu-sync">Menyinkronkan&hellip;</span>';
+  if (fuSyncState === 'err') return '<span class="fu-sync err">&#9888; Gagal sinkron &middot; tersimpan di perangkat ini, dicoba lagi otomatis</span>';
+  return '<span class="fu-sync ok">&#10003; Tersinkron ' + hm(fuLastOk) + '</span>';
+}
+function fuSetStatus(s) {
+  fuSyncState = s;
+  const el = document.getElementById('fuSyncStatus');
+  if (el) el.innerHTML = fuStatusHtml();
+}
+function fuMergeInto(remote) {
+  Object.keys(remote || {}).forEach(f => { fuDB[f] = ppMergeRec(fuDB[f], remote[f]); });
+  fuNormalize();
+}
+async function fuSyncRemote() {
+  if (!SYNC_URL) { fuSetStatus('off'); return; }
+  if (fuSyncing) return;
+  fuSyncing = true;
+  const sent = fuPending;
+  fuPending = false;
+  fuSetStatus('busy');
+  try {
+    const res = await fetch(SYNC_URL, { method: 'POST', body: JSON.stringify({ divisi: TARGET_DIVISI, key: SYNC_KEY, db: sent ? fuDB : {} }) });
+    const j = await res.json();
+    if (!j.ok) throw new Error(j.error || 'ditolak server');
+    fuMergeInto(j.db);
+    fuSaveLocal();
+    fuSyncLunas();           // status lunas dihitung dari data live di perangkat ini
+    fuLastOk = new Date();
+    fuSetStatus('ok');
+    renderPrioritasTab();
+  } catch (err) {
+    console.error('sinkron catatan', err);
+    if (sent) fuPending = true;
+    fuSetStatus('err');
+  }
+  fuSyncing = false;
+  if (fuPending) { clearTimeout(fuTimer); fuTimer = setTimeout(fuSyncRemote, 1500); }
+}
+if (SYNC_URL) {
+  fuSyncRemote();
+  setInterval(() => { if (document.visibilityState === 'visible') fuSyncRemote(); }, 30000);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') fuSyncRemote(); });
 }
 
 function fuFmtFull(iso) {
@@ -1215,7 +1300,7 @@ const fuHasNotes = () => Object.values(fuDB).some(x => (x.notes || []).length);
 // Rekap seluruh riwayat catatan (dan tugas) per faktur — aktif maupun yang sudah lunas
 function fuRecap() {
   const cur = {}; rows.forEach(r => { cur[r.faktur] = r; });
-  const recs = Object.entries(fuDB).filter(([, x]) => (x.notes || []).length || (x.tasks || []).length)
+  const recs = Object.entries(fuDB).filter(([, x]) => (x.notes || []).length || (x.tasks || []).some(t => !t.del))
     .sort((a, b) => String(a[1].nama || '').localeCompare(String(b[1].nama || '')) || a[0].localeCompare(b[0]));
   const status = x => x.lunasAt ? 'Lunas (' + fuFmtFull(x.lunasAt).slice(0, 10) + ')' : 'Belum lunas';
   const notes = [], tasks = [];
@@ -1224,7 +1309,7 @@ function fuRecap() {
     (x.notes || []).slice().sort((a, b) => String(a.t).localeCompare(String(b.t))).forEach(n => {
       notes.push([notes.length + 1, n.t ? fuFmtFull(n.t) : 'Catatan lama', x.nama || '-', f, fmtMoney(x.jumlah || 0), fuIsoDMY(x.jto), umur, status(x), n.x]);
     });
-    (x.tasks || []).forEach(t => {
+    (x.tasks || []).filter(t => !t.del).forEach(t => {
       tasks.push([tasks.length + 1, x.nama || '-', f, t.x, t.pic || '-', t.done ? 'Selesai' : 'Belum selesai', fuFmtFull(t.t), t.done ? fuFmtFull(t.doneAt) : '-']);
     });
   });
@@ -1280,25 +1365,25 @@ function renderPrioritasTab(force) {
   const list = rows.filter(r => (r.hari ?? -9999) > 26).sort((a, b) => (b.hari ?? 0) - (a.hari ?? 0));
   const total = list.reduce((s, r) => s + (Number(r.jumlah) || 0), 0);
   const debs = new Set(list.map(r => r.nama)).size;
-  let h = `<div class="pr-head"><h3>Prioritas Penagihan</h3><div class="pr-tools"><span>faktur dengan umur &gt; 26 hari &middot; klik baris untuk catatan &amp; tugas</span><button class="fu-ghost" data-a="xpdf"${fuHasNotes() ? '' : ' disabled title="Belum ada catatan untuk direkap"'}>Export PDF</button><button class="fu-ghost" data-a="xxls"${fuHasNotes() ? '' : ' disabled title="Belum ada catatan untuk direkap"'}>Export Excel</button></div></div>`;
+  let h = `<div class="pr-head"><h3>Prioritas Penagihan</h3><div class="pr-tools"><span>faktur dengan umur &gt; 26 hari &middot; klik baris untuk catatan &amp; tugas</span><span id="fuSyncStatus">${fuStatusHtml()}</span><button class="fu-ghost" data-a="xpdf"${fuHasNotes() ? '' : ' disabled title="Belum ada catatan untuk direkap"'}>Export PDF</button><button class="fu-ghost" data-a="xxls"${fuHasNotes() ? '' : ' disabled title="Belum ada catatan untuk direkap"'}>Export Excel</button></div></div>`;
   if (!list.length) h += '<div class="pr-empty">Tidak ada faktur dengan umur &gt; 26 hari saat ini.</div>';
   else {
     h += `<div class="pr-banner"><div><span class="pr-dot"></span><b>${list.length} faktur butuh tindak lanjut segera</b></div><span class="pr-sum">total tertunggak <em>Rp ${fmtMoney(total)}</em> &middot; ${debs} debitur</span></div>
     <div class="pr-wrap"><div class="table-scroll"><table class="detail"><thead><tr><th></th><th class="num">No</th><th>Debitur</th><th>No. Faktur</th><th>Cabang</th><th>Metode</th><th class="num">Jumlah</th><th>Tgl. Jatuh Tempo</th><th class="num">Umur</th><th>Sales PIC</th></tr></thead><tbody>`;
     list.forEach((r, i) => {
       const open = fuOpen.has(r.faktur), x = fuRec(r, false);
-      const nt = x ? x.notes.length : 0, tk = x ? x.tasks.filter(t => !t.done).length : 0;
+      const nt = x ? x.notes.length : 0, tk = x ? x.tasks.filter(t => !t.done && !t.del).length : 0;
       const metode = r.cara === 'Tunai' ? '<span class="pr-red">Tunai (langsung)</span>' : `Kredit &middot; ${esc(r.leasing)}`;
       h += `<tr class="pr-row" data-f="${esc(r.faktur)}"><td><span class="pr-chev">${open ? '&#9662;' : '&#9656;'}</span></td><td class="num">${i + 1}</td><td class="nama">${esc(r.nama)}<br><small style="color:var(--muted)">${esc(r.noCust || '')}</small></td><td>${esc(r.faktur)}</td><td><span class="pr-badge">${TARGET_DIVISI}</span></td><td>${metode}</td><td class="num money">Rp ${fmtMoney(r.jumlah)}</td><td>${fmtDateShort(r.tglJto)}</td><td class="num pr-red">${r.hari} hr</td><td>${esc(r.salesman || '\u2013')}${nt ? `<span class="pr-cnt">${nt} catatan</span>` : ''}${tk ? `<span class="pr-cnt">${tk} tugas</span>` : ''}</td></tr>`;
       if (open) h += `<tr class="pr-detail"><td colspan="10">${fuDetail(r)}</td></tr>`;
     });
     h += '</tbody></table></div></div>';
   }
-  const arch = Object.entries(fuDB).filter(([, x]) => x.lunasAt).sort((a, b) => b[1].lunasAt.localeCompare(a[1].lunasAt));
+  const arch = Object.entries(fuDB).filter(([, x]) => x.lunasAt && ((x.notes || []).length || (x.tasks || []).some(t => !t.del))).sort((a, b) => b[1].lunasAt.localeCompare(a[1].lunasAt));
   if (arch.length) {
     h += `<div class="pr-arch"><div class="pr-arch-h" data-a="arch">${fuArchOpen ? '&#9662;' : '&#9656;'} Riwayat faktur lunas <span>(${arch.length}) &middot; riwayat tetap tersimpan</span></div>`;
     if (fuArchOpen) arch.forEach(([f, x]) => {
-      h += `<div class="pr-arch-i"><div><b>${esc(x.nama || '')}</b> &middot; ${esc(f)} &middot; Rp ${fmtMoney(x.jumlah || 0)} <small>&middot; lunas terdeteksi ${fuFmt(x.lunasAt)}</small> <button class="fu-x" data-a="del" data-f="${esc(f)}">Hapus riwayat</button></div><ul class="fu-list">${fuNotes(x)}${(x.tasks || []).map(t => `<li class="${t.done ? 'done' : ''}"><span>&#9642; ${esc(t.x)}</span><small>PIC: ${esc(t.pic || '-')}${t.done ? ' &middot; selesai' : ''}</small></li>`).join('')}</ul></div>`;
+      h += `<div class="pr-arch-i"><div><b>${esc(x.nama || '')}</b> &middot; ${esc(f)} &middot; Rp ${fmtMoney(x.jumlah || 0)} <small>&middot; lunas terdeteksi ${fuFmt(x.lunasAt)}</small> <button class="fu-x" data-a="del" data-f="${esc(f)}">Hapus riwayat</button></div><ul class="fu-list">${fuNotes(x)}${(x.tasks || []).filter(t => !t.del).map(t => `<li class="${t.done ? 'done' : ''}"><span>&#9642; ${esc(t.x)}</span><small>PIC: ${esc(t.pic || '-')}${t.done ? ' &middot; selesai' : ''}</small></li>`).join('')}</ul></div>`;
     });
     h += '</div>';
   }
@@ -1318,16 +1403,16 @@ function renderPrioritasTab(force) {
         if (!r) return;
         if (a === 'note') {
           const v = scope.querySelector('[data-k="note"]').value.trim(); if (!v) return;
-          fuRec(r, true).notes.push({ t: fuNow(), x: v });
+          fuRec(r, true).notes.push({ id: fuUid(), t: fuNow(), x: v });
         } else {
           const v = scope.querySelector('[data-k="task"]').value.trim(); if (!v) return;
-          fuRec(r, true).tasks.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5), x: v, pic: scope.querySelector('[data-k="pic"]').value.trim(), done: false, t: fuNow() });
+          fuRec(r, true).tasks.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5), x: v, pic: scope.querySelector('[data-k="pic"]').value.trim(), done: false, t: fuNow(), u: fuNow() });
         }
         fuSave(); renderPrioritasTab(true);
       } else if (a === 'td') {
-        const x = fuDB[f]; if (x) { x.tasks = x.tasks.filter(t => t.id !== b.dataset.i); fuSave(); renderPrioritasTab(true); }
+        const x = fuDB[f], t = x && x.tasks.find(t => t.id === b.dataset.i); if (t) { t.del = true; t.u = fuNow(); fuSave(); renderPrioritasTab(true); }
       } else if (a === 'del') {
-        if (confirm('Hapus seluruh riwayat faktur ' + f + '?')) { delete fuDB[f]; fuSave(); renderPrioritasTab(true); }
+        if (confirm('Hapus seluruh riwayat faktur ' + f + '?')) { const x = fuDB[f] || {}; fuDB[f] = { nama: x.nama, jumlah: x.jumlah, leasing: x.leasing, jto: x.jto, delAt: fuNow(), notes: [], tasks: [], lunasAt: x.lunasAt || null, lu: x.lu || null }; fuSave(); renderPrioritasTab(true); }
       } else if (a === 'arch') { fuArchOpen = !fuArchOpen; renderPrioritasTab(true); }
       else if (a === 'xpdf') fuExportPdf();
       else if (a === 'xxls') fuExportExcel();
@@ -1341,7 +1426,7 @@ function renderPrioritasTab(force) {
     const c = e.target.closest('input[data-a="tg"]');
     if (!c) return;
     const x = fuDB[c.dataset.f], t = x && x.tasks.find(t => t.id === c.dataset.i);
-    if (t) { t.done = c.checked; t.doneAt = c.checked ? fuNow() : null; fuSave(); renderPrioritasTab(true); }
+    if (t) { t.done = c.checked; t.doneAt = c.checked ? fuNow() : null; t.u = fuNow(); fuSave(); renderPrioritasTab(true); }
   });
 })();
 
