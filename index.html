@@ -722,7 +722,7 @@
     <div id="detailSections"></div>
   </div>
 
-  <footer>Kategori dihitung otomatis dari Tgl. Jatuh Tempo setiap kali halaman ini dibuka &mdash; angka &ldquo;Hari&rdquo; selalu mengikuti tanggal hari ini.<br>Versi build: 2026-09-30-v22 (dengan password, sinkron catatan antar-perangkat)</footer>
+  <footer>Kategori dihitung otomatis dari Tgl. Jatuh Tempo setiap kali halaman ini dibuka &mdash; angka &ldquo;Hari&rdquo; selalu mengikuti tanggal hari ini.<br>Versi build: 2026-09-30-v24 (dengan password, sinkron catatan aktif)</footer>
 </div>
 
 <script>
@@ -1159,8 +1159,8 @@ document.querySelectorAll('#followupTable th[data-key]').forEach(th => {
 
 /* ================= Prioritas Penagihan (di dalam Follow-up Leasing) + riwayat catatan/tugas ================= */
 /* ============ SINKRON ANTAR-PERANGKAT (isi dua baris ini setelah Apps Script di-deploy) ============ */
-const SYNC_URL = "";   // contoh: "https://script.google.com/macros/s/XXXXXXXX/exec"
-const SYNC_KEY = "";   // harus sama dengan SYNC_KEY di Apps Script
+const SYNC_URL = "https://script.google.com/macros/s/AKfycbxXC24jfCbbG8gfjE1WBB5pFhR1mctX2xzENis6I9IIn98PWQ2RVxJshxHBsq9OJPb0/exec";   // contoh: "https://script.google.com/macros/s/XXXXXXXX/exec"
+const SYNC_KEY = "pp-Fnf_3aQWRDr1AtzjBjfS";   // sudah sama dengan SYNC_KEY di apps_script_sinkron_catatan.gs
 /* ===== Aturan penggabungan catatan/tugas (SAMA persis di dashboard dan di Apps Script) ===== */
 function ppMergeRec(a, b) {
   a = a || {}; b = b || {};
