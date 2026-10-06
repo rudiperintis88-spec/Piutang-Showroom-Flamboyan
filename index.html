@@ -727,11 +727,11 @@
 
 <script>
 
-const REPORT_DATE_LABEL_INITIAL = "Per : 28-Sep-2026";
+const REPORT_DATE_LABEL_INITIAL = ""; // tidak ada tanggal bawaan: teks "Per : ..." hanya disalin dari Google Sheet
 let REPORT_DATE_LABEL = REPORT_DATE_LABEL_INITIAL;
 function showPerDate(v) {
-  const m = String(v || '').match(/Per\s*:\s*(\d{1,2}-[A-Za-z]+-\d{4})/i);
-  document.getElementById('perDateLabel').textContent = m ? 'Per : ' + m[1] : String(v || '');
+  // Tampilkan persis seperti teks di sel Google Sheet (tanpa diformat ulang / dibangun oleh dashboard)
+  document.getElementById('perDateLabel').textContent = String(v || '');
 }
 showPerDate(REPORT_DATE_LABEL);
 const TARGET_DIVISI = "Flamboyan";
@@ -1325,7 +1325,7 @@ function fuExportExcel() {
   const rc = fuRecap();
   if (!rc.notes.length) return;
   const wb = XLSX.utils.book_new();
-  const top = [['Riwayat Catatan Penagihan — ' + TARGET_DIVISI], [REPORT_DATE_LABEL + ' · dicetak ' + fuFmtFull(fuNow())], []];
+  const top = [['Riwayat Catatan Penagihan — ' + TARGET_DIVISI], [(REPORT_DATE_LABEL ? REPORT_DATE_LABEL + ' · ' : '') + 'dicetak ' + fuFmtFull(fuNow())], []];
   const ws = XLSX.utils.aoa_to_sheet(top.concat([rc.noteHead], rc.notes));
   ws['!cols'] = [6, 17, 28, 22, 16, 13, 9, 18, 70].map(w => ({ wch: w }));
   XLSX.utils.book_append_sheet(wb, ws, 'Riwayat Catatan');
@@ -1342,7 +1342,7 @@ function fuExportPdf() {
   if (!rc.notes.length) return;
   const doc = new window.jspdf.jsPDF({ orientation: 'landscape' });
   doc.setFontSize(14); doc.text('Riwayat Catatan Penagihan — ' + TARGET_DIVISI, 14, 15);
-  doc.setFontSize(9); doc.text(REPORT_DATE_LABEL + ' · dicetak ' + fuFmtFull(fuNow()), 14, 21);
+  doc.setFontSize(9); doc.text((REPORT_DATE_LABEL ? REPORT_DATE_LABEL + ' · ' : '') + 'dicetak ' + fuFmtFull(fuNow()), 14, 21);
   doc.autoTable({
     head: [rc.noteHead], body: rc.notes, startY: 26, styles: { fontSize: 7.5, cellPadding: 1.6, overflow: 'linebreak' },
     headStyles: { fillColor: [45, 55, 72] }, rowPageBreak: 'avoid',
@@ -1789,7 +1789,7 @@ function parsePiutangCsv(csv) {
   let label = null, h = -1;
   for (let i = 0; i < csv.length && i < 40; i++) {
     const row = csv[i] || [];
-    if (!label) for (const c of row) { const m = String(c || '').match(/Per\s*:\s*(\d{1,2}-[A-Za-z]+-\d{4})/i); if (m) { label = 'Per : ' + m[1]; break; } }
+    if (!label) for (const c of row) { const t = String(c || '').trim(); if (/^Per\b/i.test(t)) { label = t; break; } }  // salin teks sel apa adanya
     if ((cellStr(row[0]) === 'No' && cellStr(row[1]) === 'No.Cust') || cellStr(row[2]).toLowerCase() === 'nama debitur') { h = i; break; }
   }
   if (h < 0) { const e = new Error('Header tidak ditemukan'); e.code = 'HEADER_NOT_FOUND'; throw e; }
