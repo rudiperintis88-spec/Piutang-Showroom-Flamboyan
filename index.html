@@ -16,12 +16,13 @@
   body{background:var(--bg);color:var(--ink);font-family:var(--sans);display:flex;flex-direction:column;
     padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);overflow:hidden}
   .appbar{flex:none;display:flex;align-items:stretch;justify-content:space-between;gap:16px;padding:0 0 0 2px;background:var(--surface);border-bottom:1px solid var(--border)}
-  .tabs{display:flex;gap:6px;overflow-x:auto}
+  .tabs{display:flex;gap:2px;overflow:visible;min-width:0;flex:0 1 auto}
   .tab{appearance:none;border:0;background:transparent;cursor:pointer;font:inherit;font-size:15px;font-weight:500;color:var(--muted);
     padding:16px 18px 15px;border-bottom:3px solid transparent;margin-bottom:-1px;white-space:nowrap}
+  @media (max-width:560px){.who{display:none}.tab{padding:14px 14px 13px;font-size:14px}}
   .tab:hover{color:var(--ink)}
   .tab[aria-selected="true"]{color:var(--accent);font-weight:600;border-bottom-color:var(--accent)}
-  .who{align-self:center;padding-right:18px;color:var(--muted);font-size:13.5px;white-space:nowrap}
+  .who{align-self:center;padding-right:18px;color:var(--muted);font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
   .panels{flex:1;min-height:0;position:relative}
   iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--bg);display:none}
   iframe.on{display:block}
