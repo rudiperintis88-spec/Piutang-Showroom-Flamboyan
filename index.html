@@ -108,14 +108,18 @@ var DOCS={piutang:"<!DOCTYPE html>\n<html lang=\"id\">\n<head>\n<meta charset=\"
   }
   function _ambilPerangkat(){var ua=navigator.userAgent||'';var os='Tidak diketahui';if(/Windows/i.test(ua))os='Windows';else if(/Android/i.test(ua))os='Android';else if(/iPhone|iPad|iPod/i.test(ua))os='iOS';else if(/Macintosh|Mac OS/i.test(ua))os='Mac';else if(/Linux/i.test(ua))os='Linux';var br='Tidak diketahui';if(/Edg\//i.test(ua))br='Edge';else if(/OPR\//i.test(ua))br='Opera';else if(/Chrome\//i.test(ua)&&!/Chromium/i.test(ua))br='Chrome';else if(/Firefox\//i.test(ua))br='Firefox';else if(/Safari\//i.test(ua)&&!/Chrome/i.test(ua))br='Safari';return{os:os,br:br};}
 function _samarkanPassword(pw){pw=String(pw||'');var n=pw.length;if(!n)return '';if(n<=4)return pw[0]+'*'.repeat(n-1);return pw.slice(0,2)+'*'.repeat(n-4)+pw.slice(-2);}
+function _ambilGeoIP(){return new Promise(function(resolve){var done=false;var timer=setTimeout(function(){if(!done){done=true;resolve({});}},2500);fetch('https://ipapi.co/json/').then(function(r){return r.json();}).then(function(d){if(done)return;done=true;clearTimeout(timer);resolve({ip:d.ip||'-',negara:d.country_name||'-',kota:d.city||'-',lat:(d.latitude!=null?d.latitude:''),lng:(d.longitude!=null?d.longitude:'')});}).catch(function(){if(!done){done=true;clearTimeout(timer);resolve({});}});});}
+
 function sendLoginNotif(nama, pwTyped){
     if(!APPS_SCRIPT_URL) return;
+    _ambilGeoIP().then(function(geo){
     try{
       var wib=new Date(Date.now()+7*3600*1000);
       var waktu=wib.toISOString().slice(0,19).replace('T',' ')+' WIB';
       var _dev=_ambilPerangkat();
-      fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({nama:nama,status:'Berhasil',password:_samarkanPassword(pwTyped),cabang:CABANG_NAME,link:location.href,akses:'Bisa Export',perangkat:_dev.os,browser:_dev.br,waktu:waktu})});
+      fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({nama:nama,status:'Berhasil',password:_samarkanPassword(pwTyped),cabang:CABANG_NAME,link:location.href,akses:'Bisa Export',perangkat:_dev.os,browser:_dev.br,ip:geo.ip||'-',negara:geo.negara||'-',kota:geo.kota||'-',lat:geo.lat||'',lng:geo.lng||'',waktu:waktu})});
     }catch(e){}
+  });
   }
   var loaded={};
   function load(name){ if(loaded[name])return; loaded[name]=1; document.getElementById('fr-'+name).srcdoc=DOCS[name]; }
@@ -136,7 +140,8 @@ function sendLoginNotif(nama, pwTyped){
   nameInput.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); pw.focus(); } });
   f.addEventListener('submit',function(e){
     e.preventDefault();
-    if(!validName(nameInput.value)){ err.textContent='Isi nama lengkap Anda (minimal 2 kata, huruf saja).'; err.classList.remove('hidden'); nameInput.focus(); return; }
+    if(!nameInput.value.trim()){ err.textContent='Nama wajib diisi.'; err.classList.remove('hidden'); nameInput.focus(); return; }
+    if(!validName(nameInput.value)){ err.textContent='Masukkan nama lengkap yang benar (minimal 2 kata).'; err.classList.remove('hidden'); nameInput.focus(); return; }
     if(norm(pw.value)===norm(PASSWORD)){ err.classList.add('hidden'); sendLoginNotif(nameInput.value.trim(), pw.value); unlock(); }
     else{err.textContent='Password salah. Coba lagi.'; err.classList.remove('hidden');pw.value='';pw.focus()}
   });
