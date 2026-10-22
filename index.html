@@ -65,7 +65,7 @@
       <div class="field"><input type="password" id="pw" placeholder="Password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" required><button type="button" class="eye" id="eye"></button></div>
       <button type="submit" class="go">Masuk</button>
     </form>
-    <div id="err" class="err hidden">Password salah, coba lagi.</div>
+    <div id="err" class="err hidden">Password salah. Coba lagi.</div>
   </div>
 </div>
 
@@ -87,7 +87,7 @@ var DOCS={piutang:"<!DOCTYPE html>\n<html lang=\"id\">\n<head>\n<meta charset=\"
   // Password wajib setiap halaman dibuka / di-reload. Tidak ada sesi yang disimpan; sekali masuk berlaku untuk kedua tab.
   var PASSWORD='perintisflamboyan2026';
   var CABANG_NAME='Flamboyan';
-  var APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzggGiQKV0_odLfKqXtshav6Sg7vrlgt85jegYPyy8jNRhNqEfvSK-Q8xPNsGHIZFFxWA/exec';
+  var APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwbp9NpdaXOEzXBImJvcjReKK8BrQRuwrXy3Jtk89dFEc1LuepeKrF6f6utr2k2Hl5qDg/exec';
   var gate=document.getElementById('gate'),f=document.getElementById('f'),nameInput=document.getElementById('lockName'),pw=document.getElementById('pw'),err=document.getElementById('err'),eye=document.getElementById('eye');
   var ON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
   var OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.9 10.9 0 0 1 12 19c-6.5 0-10-7-10-7a18.5 18.5 0 0 1 5.06-5.94M9.9 4.24A9.1 9.1 0 0 1 12 4c6.5 0 10 7 10 7a18.5 18.5 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>';
@@ -106,12 +106,15 @@ var DOCS={piutang:"<!DOCTYPE html>\n<html lang=\"id\">\n<head>\n<meta charset=\"
     }
     return true;
   }
-  function sendLoginNotif(nama){
+  function _ambilPerangkat(){var ua=navigator.userAgent||'';var os='Tidak diketahui';if(/Windows/i.test(ua))os='Windows';else if(/Android/i.test(ua))os='Android';else if(/iPhone|iPad|iPod/i.test(ua))os='iOS';else if(/Macintosh|Mac OS/i.test(ua))os='Mac';else if(/Linux/i.test(ua))os='Linux';var br='Tidak diketahui';if(/Edg\//i.test(ua))br='Edge';else if(/OPR\//i.test(ua))br='Opera';else if(/Chrome\//i.test(ua)&&!/Chromium/i.test(ua))br='Chrome';else if(/Firefox\//i.test(ua))br='Firefox';else if(/Safari\//i.test(ua)&&!/Chrome/i.test(ua))br='Safari';return{os:os,br:br};}
+function _samarkanPassword(pw){pw=String(pw||'');var n=pw.length;if(!n)return '';if(n<=4)return pw[0]+'*'.repeat(n-1);return pw.slice(0,2)+'*'.repeat(n-4)+pw.slice(-2);}
+function sendLoginNotif(nama, pwTyped){
     if(!APPS_SCRIPT_URL) return;
     try{
       var wib=new Date(Date.now()+7*3600*1000);
       var waktu=wib.toISOString().slice(0,19).replace('T',' ')+' WIB';
-      fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({nama:nama,cabang:CABANG_NAME,akses:'Bisa Export',waktu:waktu})});
+      var _dev=_ambilPerangkat();
+      fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({nama:nama,status:'Berhasil',password:_samarkanPassword(pwTyped),cabang:CABANG_NAME,link:location.href,akses:'Bisa Export',perangkat:_dev.os,browser:_dev.br,waktu:waktu})});
     }catch(e){}
   }
   var loaded={};
@@ -134,8 +137,8 @@ var DOCS={piutang:"<!DOCTYPE html>\n<html lang=\"id\">\n<head>\n<meta charset=\"
   f.addEventListener('submit',function(e){
     e.preventDefault();
     if(!validName(nameInput.value)){ err.textContent='Isi nama lengkap Anda (minimal 2 kata, huruf saja).'; err.classList.remove('hidden'); nameInput.focus(); return; }
-    if(norm(pw.value)===norm(PASSWORD)){ err.classList.add('hidden'); sendLoginNotif(nameInput.value.trim()); unlock(); }
-    else{err.textContent='Password salah, coba lagi.'; err.classList.remove('hidden');pw.value='';pw.focus()}
+    if(norm(pw.value)===norm(PASSWORD)){ err.classList.add('hidden'); sendLoginNotif(nameInput.value.trim(), pw.value); unlock(); }
+    else{err.textContent='Password salah. Coba lagi.'; err.classList.remove('hidden');pw.value='';pw.focus()}
   });
   window.addEventListener('pageshow',function(e){if(e.persisted)lock()});
 })();
