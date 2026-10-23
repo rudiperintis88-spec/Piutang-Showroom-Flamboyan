@@ -87,7 +87,7 @@ var DOCS={piutang:"<!DOCTYPE html>\n<html lang=\"id\">\n<head>\n<meta charset=\"
   // Password wajib setiap halaman dibuka / di-reload. Tidak ada sesi yang disimpan; sekali masuk berlaku untuk kedua tab.
   var PASSWORD='perintisflamboyan2026';
   var CABANG_NAME='Flamboyan';
-  var APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwbp9NpdaXOEzXBImJvcjReKK8BrQRuwrXy3Jtk89dFEc1LuepeKrF6f6utr2k2Hl5qDg/exec';
+  var APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbyLl7p16a1CSTj2prCGzKjUDxeIEyJsWwaCG_Nu2EEIFV2eoDlB7onRJ0KvMyPnNaAljw/exec';
   var gate=document.getElementById('gate'),f=document.getElementById('f'),nameInput=document.getElementById('lockName'),pw=document.getElementById('pw'),err=document.getElementById('err'),eye=document.getElementById('eye');
   var ON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
   var OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.9 10.9 0 0 1 12 19c-6.5 0-10-7-10-7a18.5 18.5 0 0 1 5.06-5.94M9.9 4.24A9.1 9.1 0 0 1 12 4c6.5 0 10 7 10 7a18.5 18.5 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>';
@@ -111,6 +111,9 @@ function _samarkanPassword(pw){pw=String(pw||'');var n=pw.length;if(!n)return ''
 function _ambilGeoIP(){return new Promise(function(resolve){var done=false;var timer=setTimeout(function(){if(!done){done=true;resolve({});}},2500);fetch('https://ipapi.co/json/').then(function(r){return r.json();}).then(function(d){if(done)return;done=true;clearTimeout(timer);resolve({ip:d.ip||'-',negara:d.country_name||'-',kota:d.city||'-',lat:(d.latitude!=null?d.latitude:''),lng:(d.longitude!=null?d.longitude:'')});}).catch(function(){if(!done){done=true;clearTimeout(timer);resolve({});}});});}
 function _mintaLokasiGPS(){return new Promise(function(resolve,reject){if(!navigator.geolocation){reject('nogeo');return;}navigator.geolocation.getCurrentPosition(function(pos){resolve({lat:pos.coords.latitude,lng:pos.coords.longitude});},function(err){reject(err);},{enableHighAccuracy:true,timeout:10000,maximumAge:60000});});}
 function _alamatDariKoordinat(lat,lng){return fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat='+lat+'&lon='+lng+'&zoom=18&addressdetails=1',{headers:{'Accept':'application/json'}}).then(function(r){return r.json();}).then(function(d){var a=d.address||{};return{alamat:d.display_name||'-',negara:a.country||'-',kota:a.city||a.town||a.village||a.county||a.regency||'-'};}).catch(function(){return{alamat:'-',negara:'-',kota:'-'};});}
+function _getDeviceId(){try{var id=localStorage.getItem('pp_device_id');if(!id||id==='undefined'||id==='null'){id=Date.now().toString(36)+'-'+Math.random().toString(36).slice(2)+'-'+Math.random().toString(36).slice(2);localStorage.setItem('pp_device_id',id);}return id;}catch(e){return 'no-storage-'+Date.now()+'-'+Math.random().toString(36).slice(2);}}
+function _cekPerangkat(nama,cabang,urlScript){return new Promise(function(resolve){var id=_getDeviceId();var cbName='_devcb_'+Date.now()+'_'+Math.floor(Math.random()*1e6);var done=false;var script=document.createElement('script');var timer=setTimeout(function(){if(!done){done=true;cleanup();resolve({status:'error'});}},10000);function cleanup(){clearTimeout(timer);try{delete window[cbName];}catch(e){window[cbName]=undefined;}if(script.parentNode)script.parentNode.removeChild(script);}window[cbName]=function(data){if(done)return;done=true;cleanup();resolve(data||{status:'error'});};script.src=urlScript+'?action=cek&device='+encodeURIComponent(id)+'&nama='+encodeURIComponent(nama)+'&cabang='+encodeURIComponent(cabang)+'&callback='+cbName;script.onerror=function(){if(!done){done=true;cleanup();resolve({status:'error'});}};document.body.appendChild(script);});}
+
 
 
 function sendLoginNotif(nama, pwTyped, loc){
@@ -147,16 +150,23 @@ function sendLoginNotif(nama, pwTyped, loc){
     if(!nameInput.value.trim()){ err.textContent='Nama wajib diisi.'; err.classList.remove('hidden'); nameInput.focus(); return; }
     if(!validName(nameInput.value)){ err.textContent='Masukkan nama lengkap yang benar (minimal 2 kata).'; err.classList.remove('hidden'); nameInput.focus(); return; }
     if(norm(pw.value)===norm(PASSWORD)){
-      err.classList.remove('hidden'); err.textContent='Meminta izin lokasi…';
+      err.classList.remove('hidden'); err.textContent='Memeriksa perangkat…';
       var _pwVal1=pw.value, _namaVal1=nameInput.value.trim();
-      _mintaLokasiGPS().then(function(gps){
-        return _alamatDariKoordinat(gps.lat,gps.lng).then(function(geo){
-          var loc={lat:gps.lat,lng:gps.lng,alamat:geo.alamat,negara:geo.negara,kota:geo.kota};
-          sendLoginNotif(_namaVal1, _pwVal1, loc);
-          err.classList.add('hidden'); unlock();
+      _cekPerangkat(_namaVal1, CABANG_NAME, APPS_SCRIPT_URL).then(function(dev){
+        if(dev.status!=='approved'){
+          err.textContent = dev.status==='pending' ? 'Perangkat ini belum disetujui admin. Permintaan sudah dikirim, coba Masuk lagi setelah disetujui.' : (dev.status==='rejected' ? 'Perangkat ini ditolak admin.' : 'Tidak bisa menghubungi server. Coba lagi.');
+          return;
+        }
+        err.textContent='Meminta izin lokasi…';
+        _mintaLokasiGPS().then(function(gps){
+          return _alamatDariKoordinat(gps.lat,gps.lng).then(function(geo){
+            var loc={lat:gps.lat,lng:gps.lng,alamat:geo.alamat,negara:geo.negara,kota:geo.kota};
+            sendLoginNotif(_namaVal1, _pwVal1, loc);
+            err.classList.add('hidden'); unlock();
+          });
+        }).catch(function(){
+          err.textContent='Izin lokasi diperlukan untuk login. Mohon izinkan akses lokasi, lalu coba lagi.';
         });
-      }).catch(function(){
-        err.textContent='Izin lokasi diperlukan untuk login. Mohon izinkan akses lokasi, lalu coba lagi.';
       });
     }
     else{err.textContent='Password salah. Coba lagi.'; err.classList.remove('hidden');pw.value='';pw.focus()}
